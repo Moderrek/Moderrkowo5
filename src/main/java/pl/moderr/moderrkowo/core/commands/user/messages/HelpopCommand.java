@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -36,7 +35,7 @@ public class HelpopCommand implements CommandExecutor {
                 final Title title = Title.title(mainTitle, subtitle);
                 player.showTitle(title);
                 int administratorOnlineCount = (int) Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).count();
-                Main.getInstance().discordManager.sendHelpop(player, Logger.getMessage(args, 0, true), administratorOnlineCount != 0);
+//                Main.getInstance().discordManager.sendHelpop(player, Logger.getMessage(args, 0, true), administratorOnlineCount != 0);
                 return true;
             } else {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);

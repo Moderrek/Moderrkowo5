@@ -1,5 +1,10 @@
 package pl.moderr.moderrkowo.core;
 
+import me.catcoder.sidebar.ProtocolSidebar;
+import me.catcoder.sidebar.Sidebar;
+import me.catcoder.sidebar.text.TextIterators;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,7 +17,6 @@ import pl.moderr.moderrkowo.core.bazar.BazarManager;
 import pl.moderr.moderrkowo.core.commands.ModerrkowoCommand;
 import pl.moderr.moderrkowo.core.commands.admin.*;
 import pl.moderr.moderrkowo.core.commands.user.*;
-import pl.moderr.moderrkowo.core.commands.user.information.CraftingDzialkaCommand;
 import pl.moderr.moderrkowo.core.commands.user.information.DiscordCommand;
 import pl.moderr.moderrkowo.core.commands.user.information.RegulaminCommand;
 import pl.moderr.moderrkowo.core.commands.user.messages.HelpopCommand;
@@ -22,7 +26,6 @@ import pl.moderr.moderrkowo.core.commands.user.teleportation.*;
 import pl.moderr.moderrkowo.core.commands.user.weather.PogodaCommand;
 import pl.moderr.moderrkowo.core.cuboids.CuboidsManager;
 import pl.moderr.moderrkowo.core.customitems.CustomItemsManager;
-import pl.moderr.moderrkowo.core.discord.DiscordManager;
 import pl.moderr.moderrkowo.core.economy.PortfelCommand;
 import pl.moderr.moderrkowo.core.economy.PrzelejCommand;
 import pl.moderr.moderrkowo.core.economy.WithdrawCommand;
@@ -46,13 +49,11 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
 public final class Main extends JavaPlugin {
-
-    public final static boolean IS_DEBUG = true;
 
     public final java.util.logging.Logger logger = getLogger();
     public final FileConfiguration config = getConfig();
@@ -66,11 +67,11 @@ public final class Main extends JavaPlugin {
     public ModerrkowoAutoMessage autoMessage;
     public RynekManager instanceRynekManager;
     public EventManager eventManager;
-    public DiscordManager discordManager;
     public NPCManager NPCManager;
     public FileConfiguration dataConfig;
     //</editor-fold>
     public ModerrCaseManager caseManager;
+    public Sidebar<Component> sidebar;
     //</editor-fold>
     //<editor-fold> Files
     public File dataFile = new File(getDataFolder(), "data.yml");
@@ -90,7 +91,7 @@ public final class Main extends JavaPlugin {
     @Contract(pure = true)
     public static @NotNull
     String getVersion() {
-        return "v1.0.5";
+        return "v1.1.0";
     }
 
     @Contract(pure = true)
@@ -103,7 +104,7 @@ public final class Main extends JavaPlugin {
         long start = System.currentTimeMillis();
         instance = this;
         Logger.logPluginMessage("Wczytywanie..");
-        if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false) {
+        if (getServer().getPluginManager().getPlugin("Citizens") == null || !Objects.requireNonNull(getServer().getPluginManager().getPlugin("Citizens")).isEnabled()) {
             getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -141,7 +142,7 @@ public final class Main extends JavaPlugin {
         // AutoMessage
         initializeAutoMessage();
 
-        new TimeVoter();
+        new TimeVoter(this);
 
         Bukkit.getPluginManager().registerEvents(new FishingListener(), this);
 
@@ -168,14 +169,6 @@ public final class Main extends JavaPlugin {
                 u.getPlayer().sendMessage(ColorUtils.color("&aOtrzymano " + ChatUtil.getMoney(d)) + " za aktywność na serwerze");
             }
         }, 0, 20 * 60 * 10);
-        // Discord
-//        discordManager = new DiscordManager();
-//        try {
-//            discordManager.StartBot();
-//        } catch (LoginException e) {
-//            e.printStackTrace();
-//            discordManager = null;
-//        }
         Logger.logPluginMessage(MessageFormat.format("Wczytano w &a{0}ms", System.currentTimeMillis() - start));
     }
 
@@ -201,13 +194,6 @@ public final class Main extends JavaPlugin {
             e.printStackTrace();
         }
         SaveDataYML();
-        if(discordManager != null){
-            try {
-                discordManager.EndBot();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         Logger.logPluginMessage("Wyłączono plugin");
     }
 
@@ -216,6 +202,7 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(instanceAntyLogout, this);
         Logger.logPluginMessage("Wczytano AntyLogout");
     }
+
     private void LoadPluginConfig() {
         //<editor-fold> Config
         saveDefaultConfig();
@@ -225,11 +212,11 @@ public final class Main extends JavaPlugin {
         Logger.logPluginMessage("Wczytano config");
         //</editor-fold> Config
     }
+
     public void initializeCommands() {
         Objects.requireNonNull(getCommand("asklep")).setExecutor(new ASklepCommand());
         Objects.requireNonNull(getCommand("moderrkowo")).setExecutor(new ModerrkowoCommand(this));
         Objects.requireNonNull(getCommand("playerid")).setExecutor(new PlayerIDCommand());
-        Objects.requireNonNull(getCommand("adminchat")).setExecutor(new AdminChatCommand());
         Objects.requireNonNull(getCommand("ahelpop")).setExecutor(new AHelpopCommand());
         Objects.requireNonNull(getCommand("chat")).setExecutor(new ChatCommand());
         Objects.requireNonNull(getCommand("endersee")).setExecutor(new EnderseeCommand());
@@ -249,9 +236,7 @@ public final class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("abank")).setExecutor(new ABankCommand());
         Objects.requireNonNull(getCommand("arank")).setExecutor(new ARankCommand());
         Objects.requireNonNull(getCommand("tpw")).setExecutor(new TPWCommand());
-
         Objects.requireNonNull(getCommand("ranking")).setExecutor(new RankingCommand());
-        Objects.requireNonNull(getCommand("craftingdzialka")).setExecutor(new CraftingDzialkaCommand());
         Objects.requireNonNull(getCommand("discord")).setExecutor(new DiscordCommand(config.getString("discord-link")));
         Objects.requireNonNull(getCommand("helpop")).setExecutor(new HelpopCommand());
         Objects.requireNonNull(getCommand("message")).setExecutor(new MessageCommand());
@@ -269,21 +254,18 @@ public final class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("acheststorage")).setExecutor(new AChestStorageCommand());
         Objects.requireNonNull(getCommand("przelej")).setExecutor(new PrzelejCommand());
         Objects.requireNonNull(getCommand("rynek")).setExecutor(new RynekCommand());
-//        Objects.requireNonNull(getCommand("zetony")).setExecutor(new ZetonyCommand());
         Objects.requireNonNull(getCommand("przedmioty")).setExecutor(new PrzedmiotyCommand(this));
         Objects.requireNonNull(getCommand("sidebar")).setExecutor(new SidebarCommand());
         Objects.requireNonNull(getCommand("poziom")).setExecutor(new PoziomCommand());
         Objects.requireNonNull(getCommand("poradnik")).setExecutor(new PoradnikCommand());
-        Objects.requireNonNull(getCommand("listanpc")).setExecutor(new ListaNPC());
-//        Objects.requireNonNull(getCommand("wpln")).setExecutor(new WPLNCommand());
         Objects.requireNonNull(getCommand("odbierz")).setExecutor(new OdbierzCommand(this));
         Objects.requireNonNull(getCommand("sklep")).setExecutor(new SklepCommand());
         Objects.requireNonNull(getCommand("crafting")).setExecutor(new CraftingCommand());
         Objects.requireNonNull(getCommand("enderchest")).setExecutor(new EnderchestCommand());
         Objects.requireNonNull(getCommand("delhome")).setExecutor(new DelHomeCommand());
-
         Logger.logPluginMessage("Wczytano komendy");
     }
+
     public void initializeListeners() {
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
@@ -300,6 +282,7 @@ public final class Main extends JavaPlugin {
         new AnimalBreedingListener(this);
         Logger.logPluginMessage("Wczytano listenery");
     }
+
     //<editor-fold> YML
     private void LoadDataYML() {
         //<editor-fold> Data.yml
@@ -311,6 +294,7 @@ public final class Main extends JavaPlugin {
         Logger.logPluginMessage("Wczytano rekord graczy");
         //</editor-fold> Data.yml
     }
+
     private void SaveDataYML() {
         try {
             dataConfig.save(dataFile);
@@ -319,31 +303,25 @@ public final class Main extends JavaPlugin {
             Logger.logAdminLog("Wystąpił błąd podczas zapisywania data.yml");
         }
     }
+
     //</editor-fold>
     public void initializeAutoMessage() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             Bukkit.broadcastMessage(" ");
             Bukkit.broadcastMessage(ChatUtil.centerText("⛃ Moderrkowo ⛃").replace("⛃ Moderrkowo ⛃", ColorUtils.color("&e⛃ &6Moderrkowo &e⛃")));
-            Bukkit.broadcastMessage(ChatUtil.centerText("▪ Tu kupisz rangi i doładujesz wirtualny portfel").replace("▪ Tu kupisz rangi i doładujesz wirtualny portfel", ColorUtils.color("&8▪ &7Tu kupisz rangi i doładujesz wirtualny portfel")));
-//            Bukkit.broadcastMessage(ChatUtil.centerText("https://tipo.live/p/moderrkowo").replace("https://tipo.live/p/moderrkowo", ColorUtils.color("&ehttps://tipo.live/p/moderrkowo")));
+            Bukkit.broadcastMessage(ChatUtil.centerText("▪ Tutaj zakupisz rangi i wesprzesz nasz serwer").replace("▪ Tutaj zakupisz rangi i wesprzesz nasz serwer", ColorUtils.color("&8▪ &7▪ Tutaj zakupisz rangi i wesprzesz nasz serwer")));
             Bukkit.broadcastMessage(ChatUtil.centerText("▪ Zobacz rangi pod /sklep").replace("▪ Zobacz rangi pod /sklep", ColorUtils.color("&8▪ &7Zobacz rangi pod &e/sklep")));
             Bukkit.broadcastMessage(" ");
         }, 0, 20 * 60 * 30);
-        autoMessage = new ModerrkowoAutoMessage(this, 60 * 8, new ArrayList<>() {
-            {
-                add("&fTymczasowo w pierwsze dni będą testy ekonomii, będzie prowadzana powoli");
-                add("&fNa tym serwerze umożliwiamy prostą prośbę o teleportacje! &a/tpa <nick>");
-                add("&fJeżeli zobaczyć jakiś błąd zgłoś go odrazu! &c/helpop");
-                add("&fZadania jak i sklepy znajdziesz na &9/spawn");
-                add("&fDołącz do naszego &9&lDISCORD&f'a &9/discord");
-                add("&fPieniądze można wypłacić za pomocą &a/wyplac <kwota>");
-                add("&fGrając na serwerze akceptujesz aktualne zasady &c/regulamin");
-                add("&fNie wiesz jak grać? Wpisz &c/poradnik");
-                add("&fJest &9brzydka pogoda&f? &aStwórz głosowanie! /pogoda");
-                add("&fZdajemy sobie sprawę że samemu jest nudno, ale czemu by nie zaprosić znajomych?");
-                add("&fGdy łowisz mogą ci wypaść legendarne skrzynie!");
-            }
-        });
+        autoMessage = new ModerrkowoAutoMessage(this, 60 * 8, Arrays.asList(
+                "Aby przenieść się do znajomego użyj /tpa <nick>",
+                "Zgłoś błąd/problem na /helpop",
+                "Zadania jak i sklepy znajdziesz na /spawn",
+                "Dołącz do naszego DISCORD'a /discord",
+                "Pieniądze można wypłacić za pomocą /wyplac <kwota>",
+                "Skrzynie mozesz otwierać na spawnie",
+                "Jest brzydka pogoda? Stwórz głosowanie! /pogoda"
+        ));
         Logger.logPluginMessage("Wczytano AutoMessage");
     }
 }

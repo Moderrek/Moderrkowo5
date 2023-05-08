@@ -31,16 +31,16 @@ public class MotdListener implements Listener {
             e.setKickMessage(Main.getServerName() + ColorUtils.color("\n&cPoczekaj na start sezonu V!\n&fza " + ChatUtil.getTime(SERVER_START_DATE) + "\n\n&7Więcej informacji\n&9Discord: &f" + Main.getInstance().config.getString("discord-link")));
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             e.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
-            Main.getInstance().discordManager.sendTryJoin(e.getName());
+//            Main.getInstance().discordManager.sendTryJoin(e.getName());
         }
     }
 
     @EventHandler
     public void ping(PaperServerListPingEvent e) {
-        String line1 = ColorUtils.color("&c&k::&6Moderrkowo.PL&c&k:: &8| &fSezon V &f1.19+");
+        String line1 = ColorUtils.color("&c&k:: &6&lModerrkowo.PL &c&k:: &7[1.19+]");
         if (LocalDateTime.now().isAfter(SERVER_START_DATE)) {
             String line2 = ColorUtils.color(HexResolver.parseHexString(Main.getInstance().getConfig().getString("motd-secound")));
-            String line3 = "::Moderrkowo.PL:: | Sezon V 1.19+";
+            String line3 = ":: Moderrkowo.PL :: [1.19+]";
             String line4 = Main.getInstance().getConfig().getString("motd-secound2");
             e.setMotd(centerText(line3).replace(line3, line1) + "\n" + centerText("Zadania - Działki - Ekonomia - Dodatki").replace("Zadania - Działki - Ekonomia - Dodatki", ColorUtils.color("&aZadania &9- &6Działki &9- &eEkonomia &9- &cDodatki")));
         } else {

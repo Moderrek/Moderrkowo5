@@ -1,5 +1,8 @@
 package pl.moderr.moderrkowo.core.marketplace;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -188,7 +191,7 @@ public class RynekManager implements Listener {
             lore.add(ColorUtils.color("&7Wystawione przez: &c" + "Ciebie"));
             lore.add(ColorUtils.color("&7Wygasa: &c" + ChatUtil.getTime(item.getExpire())));
             lore.add(" ");
-            lore.add(ColorUtils.color("&cKliknij aby zwrócić ofertę"));
+            lore.add(ColorUtils.color("&cKliknij, aby zwrócić ofertę"));
         } else {
             if (u.getMoney() >= item.getCost()) {
                 lore.add(ColorUtils.color("&7Cena: &a" + ChatUtil.getMoney(item.getCost())));
@@ -199,15 +202,15 @@ public class RynekManager implements Listener {
             lore.add(ColorUtils.color("&7Wygasa: &c" + ChatUtil.getTime(item.getExpire())));
             lore.add(" ");
             if (u.getMoney() >= item.getCost()) {
-                lore.add(ColorUtils.color("&aKliknij aby zakupić"));
+                lore.add(ColorUtils.color("&aKliknij, aby zakupić"));
             } else {
-                lore.add(ColorUtils.color("&cKliknij aby zakupić"));
+                lore.add(ColorUtils.color("&cKliknij, aby zakupić"));
             }
         }
         if (meta.hasDisplayName()) {
             meta.setDisplayName(meta.getDisplayName());
         } else {
-            meta.setDisplayName(ColorUtils.color("&e" + ChatUtil.materialName(i.getType())));
+            meta.displayName(Component.translatable(i.getType().translationKey(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         }
         meta.setLore(lore);
         i.setItemMeta(meta);

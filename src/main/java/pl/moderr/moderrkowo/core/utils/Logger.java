@@ -1,5 +1,10 @@
 package pl.moderr.moderrkowo.core.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -43,9 +48,10 @@ public class Logger {
     }
 
     public static void logAdminChat(String message) {
+        final Component component = Component.text().content("[ADMINLOG]").color(NamedTextColor.RED).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color("&cAC &6» &f" + message));
+            if (p.hasPermission("moderrkowo.logs")) {
+                p.sendMessage(component);
             }
         }
     }
@@ -54,9 +60,10 @@ public class Logger {
         logAdminChat(message);
     }
     public static void logPluginMessage(String message) {
+        final Component component = Component.text().content("[PLUGIN]").color(TextColor.color(0xF29111)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color(HexResolver.parseHexString("<gradient:#F7C13C:#D4E443>Log") + " &r&6» &f" + message));
+            if (p.hasPermission("moderrkowo.logs")) {
+                p.sendMessage(component);
             }
         }
     }
@@ -68,21 +75,15 @@ public class Logger {
         }
     }
     public static void logDatabaseMessage(String message) {
+        final Component component = Component.text().content("[MySQL]").color(TextColor.color(0x00758F)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color("&9DB &6» &f" + message));
+            if (p.hasPermission("moderrkowo.logs")) {
+                p.sendMessage(component);
             }
         }
-        Main.getInstance().getLogger().log(Level.SEVERE, ColorUtils.color("&9DB &6» &7" + message));
+        Main.getInstance().getLogger().log(Level.SEVERE, PlainTextComponentSerializer.plainText().serialize(component));
     }
-    public static void logDiscordMessage(String message) {
-        String prefix = "";
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color(prefix + "&9DC &6» &8" + message));
-            }
-        }
-    }
+
     public static String getMessage(String[] args, int startFromArg, boolean removeFirstSpace) {
         StringBuilder out = new StringBuilder();
         for (int i = startFromArg; i != args.length; i++) {

@@ -63,21 +63,33 @@ public class KopanieListener implements Listener {
     private double getExpValue(@NotNull Block block) {
         switch (block.getType()) {
             case COAL_ORE:
+            case COPPER_ORE:
             case REDSTONE_ORE:
+            case DEEPSLATE_LAPIS_ORE:
                 return 0.2;
             case IRON_ORE:
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
                 return 0.4;
             case NETHER_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
                 return 0.7;
             case GOLD_ORE:
             case LAPIS_ORE:
-                return 0.6;
+                return 0.1;
             case NETHER_QUARTZ_ORE:
                 return 0.5;
             case DIAMOND_ORE:
                 return 1.2;
             case EMERALD_ORE:
                 return 2.2;
+            case DEEPSLATE_GOLD_ORE:
+                return 0.9;
+            case DEEPSLATE_DIAMOND_ORE:
+                return 2;
+            case DEEPSLATE_EMERALD_ORE:
+                return 3.1;
             default:
                 return 0;
         }

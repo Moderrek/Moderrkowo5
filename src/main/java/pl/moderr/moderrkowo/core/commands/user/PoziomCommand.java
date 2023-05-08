@@ -61,7 +61,7 @@ public class PoziomCommand implements CommandExecutor, Listener {
     }
 
     @EventHandler
-    public void onClick(InventoryClickEvent e) {
+    public void onClick(@NotNull InventoryClickEvent e) {
         if (e.getView().getTitle().equals(title)) {
             e.setCancelled(true);
         }

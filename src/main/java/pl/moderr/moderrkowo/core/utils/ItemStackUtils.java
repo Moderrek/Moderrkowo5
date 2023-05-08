@@ -10,7 +10,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ItemStackUtils {
 
@@ -136,17 +139,14 @@ public class ItemStackUtils {
     }
 
     public static int getSameItems(@NotNull Player player, ItemStack item) {
-        int howMany = 0;
-        for (ItemStack invStack : player.getInventory().getContents()) {
-            if (invStack != null) {
-                if (invStack.getType() == item.getType()) {
-                    if (invStack.getItemMeta().equals(item.getItemMeta())) {
-                        howMany += invStack.getAmount();
-                    }
-                }
+        int found = 0;
+        for(ItemStack is : player.getInventory().getContents()){
+            if(is == null) continue;
+            if(is.isSimilar(item)){
+                found += is.getAmount();
             }
         }
-        return howMany;
+        return found;
     }
 
     public static boolean consumeItem(@NotNull Player player, int count, Material mat) {
@@ -198,27 +198,31 @@ public class ItemStackUtils {
     }
 
     public static boolean consumeItem(@NotNull Player player, int count, ItemStack item) {
-        Map<Integer, ? extends ItemStack> ammo = player.getInventory().all(item);
-
-        int found = 0;
-        for (ItemStack stack : ammo.values())
-            found += stack.getAmount();
+        int found = getSameItems(player, item);
         if (count > found)
             return false;
 
-        for (Integer index : ammo.keySet()) {
-            ItemStack stack = ammo.get(index);
-
-            int removed = Math.min(count, stack.getAmount());
+        for(ItemStack is : player.getInventory().getContents()){
+            if(is == null) continue;
+            if(!is.isSimilar(item)) continue;
+            int removed = Math.min(count, is.getAmount());
             count -= removed;
-
-            if (stack.getAmount() == removed)
-                player.getInventory().setItem(index, null);
-            else
-                stack.setAmount(stack.getAmount() - removed);
-
+            is.setAmount(is.getAmount() - removed);
         }
-        return true;
+//
+//        for (Integer index : ammo.keySet()) {
+//            ItemStack stack = ammo.get(index);
+//
+//            int removed = Math.min(count, stack.getAmount());
+//            count -= removed;
+//
+//            if (stack.getAmount() == removed)
+//                player.getInventory().setItem(index, null);
+//            else
+//                stack.setAmount(stack.getAmount() - removed);
+//
+//        }
+        return count == 0;
     }
 
     public static boolean getBooleanOfMaterial(@NotNull Player player, Material mat, int count) {

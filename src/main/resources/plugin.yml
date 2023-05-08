@@ -15,10 +15,6 @@ commands:
   playerid:
     description: Sprawdza UUID gracza
     permission: moderrkowo.checkid
-  adminchat:
-    aliases: [ ac ]
-    description: Prywatny chat dla administratorów
-    permission: moderr.checkid
   ahelpop:
     description: Odpowiadanie na helpop graczy
     permission: moderr.adminhelpop
@@ -56,8 +52,6 @@ commands:
     aliases: [ v ]
     description: Ukrywa cie
     permission: moderr.vanish
-  craftingdzialka:
-    description: Wysyla link do craftingu dzialki
   discord:
     description: Wysyla link do discorda
   helpop:
@@ -127,7 +121,6 @@ commands:
     aliases: [ level ]
   poradnik:
     aliases: [ tutorial,oprowadzenie,help ]
-  listanpc:
   odbierz:
   sklep:
     aliases: [rangi,range,wsparcie,shop,itemshop]

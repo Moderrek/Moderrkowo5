@@ -50,10 +50,7 @@ public class NPCManager implements Listener {
     public static final IdentityHashMap<String, NPCDelayData> questDelay = new IdentityHashMap<>();
     public final Map<String, NPCData> npcs = new HashMap<>();
     public final String NpcIdKey = "npcquestkey";
-
-    private void AddVillager(NPCData npcData){
-        RegisterNPC(npcData);
-    }
+    private final Map<UUID, Instant> commandDelay = new IdentityHashMap<>();
 
     public NPCManager() {
         AddVillager(new NPCData("Rzeznik", new ArrayList<>() {
@@ -642,6 +639,8 @@ public class NPCManager implements Listener {
                 add(new NPCShopItem(new ItemStack(Material.BEETROOT, 1), 0, 0, "", 4.2, 0.6, false));
                 add(new NPCShopItem(new ItemStack(Material.CARROT, 1), 0, 0, "", 5, 0.7, false));
                 add(new NPCShopItem(new ItemStack(Material.POTATO, 1), 0, 0, "", 5, 1, true));
+                add(new NPCShopItem(new ItemStack(Material.HONEY_BOTTLE), 0, 0, "", 0, 12, false));
+                add(new NPCShopItem(new ItemStack(Material.HONEYCOMB), 0, 0, "", 0, 4, false));
                 add(new NPCShopItem(new ItemStack(Material.SUGAR_CANE, 1), 0, 0, "", 15, 1, false));
                 add(new NPCShopItem(new ItemStack(Material.CACTUS, 1), 0, 0, "", 9.5, 1.1, true));
                 add(new NPCShopItem(new ItemStack(Material.MELON_SLICE, 1), 0, 0, "", 7.3, 0.9, false));
@@ -777,9 +776,11 @@ public class NPCManager implements Listener {
                 add(new NPCShopItem(new ItemStack(Material.COAL, 1), 0, 0, "", 18, 3.5, false));
                 add(new NPCShopItem(new ItemStack(Material.CHARCOAL, 1), 0, 0, "", 18, 3, false));
                 add(new NPCShopItem(new ItemStack(Material.IRON_INGOT, 1), 0, 0, "", 25, 7.5, false));
+                add(new NPCShopItem(new ItemStack(Material.COPPER_INGOT), 0, 0, "", 0, 6, false));
                 add(new NPCShopItem(new ItemStack(Material.GOLD_INGOT, 1), 0, 0, "", 91.5, 10.2, false));
                 add(new NPCShopItem(new ItemStack(Material.REDSTONE, 1), 0, 0, "", 15, 0.6, false));
                 add(new NPCShopItem(new ItemStack(Material.LAPIS_LAZULI, 1), 0, 0, "", 32.5, 2.25, false));
+                add(new NPCShopItem(new ItemStack(Material.AMETHYST_SHARD), 0, 0, "", 0, 9, false));
                 add(new NPCShopItem(new ItemStack(Material.DIAMOND, 1), 0, 0, "", 0, 50, false));
                 add(new NPCShopItem(new ItemStack(Material.QUARTZ, 1), 0, 0, "", 30, 2, false));
                 add(new NPCShopItem(new ItemStack(Material.OBSIDIAN, 1), 0, 0, "", 300, 42, false));
@@ -1214,15 +1215,18 @@ public class NPCManager implements Listener {
                 add(new NPCShopItem(new ItemStack(Material.BIRCH_LOG, 1), 0, 0, "", 0, 0.6, false));
                 add(new NPCShopItem(new ItemStack(Material.SPRUCE_LOG, 1), 0, 0, "", 0, 1, false));
                 add(new NPCShopItem(new ItemStack(Material.ACACIA_LOG, 1), 0, 0, "", 0, 6, false));
+                add(new NPCShopItem(new ItemStack(Material.MANGROVE_LOG), 0, 0, "", 0, 5, false));
                 add(new NPCShopItem(new ItemStack(Material.DARK_OAK_LOG, 1), 0, 0, "", 0, 2, false));
                 add(new NPCShopItem(new ItemStack(Material.JUNGLE_LOG, 1), 0, 0, "", 0, 2.25, true));
                 add(new NPCShopItem(new ItemStack(Material.WARPED_STEM, 1), 0, 0, "", 0, 4, false));
                 add(new NPCShopItem(new ItemStack(Material.CRIMSON_STEM, 1), 0, 0, "", 0, 4, false));
 
+
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_OAK_LOG, 1), 0, 0, "", 0, 2, false));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_BIRCH_LOG, 1), 0, 0, "", 0, 0.9, false));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_SPRUCE_LOG, 1), 0, 0, "", 0, 1.5, false));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_ACACIA_LOG, 1), 0, 0, "", 0, 9, false));
+                add(new NPCShopItem(new ItemStack(Material.STRIPPED_MANGROVE_LOG), 0, 0, "", 0, 7, false));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_DARK_OAK_LOG, 1), 0, 0, "", 0, 3, false));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_JUNGLE_LOG, 1), 0, 0, "", 0, 3.50, true));
                 add(new NPCShopItem(new ItemStack(Material.STRIPPED_WARPED_STEM, 1), 0, 0, "", 0, 6, false));
@@ -1580,56 +1584,6 @@ public class NPCManager implements Listener {
                 }
                 ));
                 //</editor-fold>
-                //<editor-fold> 6. Generator potworów
-                add(new Quest(
-                        "Generator potworów",
-                        "Dostałem cynk od innych\n" +
-                                "łowców na temat tajemniczego\n" +
-                                "bloku, podobno nazywa się\n" +
-                                "GENERATOREM POTWORÓW.\n" +
-                                "Przynieś mi taki\n" +
-                                "(SPAWNER MOŻNA ZEBRAĆ Z SILKTOUCHEM)",
-                        QuestDifficulty.HARD, new ArrayList<>() {
-                    {
-                        add(new IQuestItemGive() {
-                            @Override
-                            public Material getMaterial() {
-                                return Material.SPAWNER;
-                            }
-
-                            @Override
-                            public int getCount() {
-                                return 1;
-                            }
-
-                            @Override
-                            public String getQuestItemDataId() {
-                                return "1";
-                            }
-
-                            @Override
-                            public String materialName() {
-                                return "Generator potworów";
-                            }
-                        });
-                    }
-                }, new ArrayList<>() {
-                    {
-                        add((IQuestRewardMoney) () -> 25000);
-                        add(new IQuestRewardExp() {
-                            @Override
-                            public double exp() {
-                                return 2000;
-                            }
-
-                            @Override
-                            public LevelCategory category() {
-                                return LevelCategory.Walka;
-                            }
-                        });
-                    }
-                }
-                ));
                 //</editor-fold>
                 //<editor-fold> 7. Naiwny rybak
                 add(new Quest(
@@ -2512,6 +2466,54 @@ public class NPCManager implements Listener {
         Bukkit.getPluginManager().registerEvents(this, Main.getInstance());
     }
 
+    public static int fits(ItemStack stack, @NotNull Inventory inv) {
+        ItemStack[] contents = inv.getContents();
+        int result = 0;
+
+        for (ItemStack is : contents)
+            if (is == null)
+                result += stack.getMaxStackSize();
+            else if (is.isSimilar(stack))
+                result += Math.max(stack.getMaxStackSize() - is.getAmount(), 0);
+
+        return result;
+    }
+
+    public static int getMaxCraftAmount(@NotNull CraftingInventory inv) {
+        if (inv.getResult() == null)
+            return 0;
+
+        int resultCount = inv.getResult().getAmount();
+        int materialCount = Integer.MAX_VALUE;
+
+        for (ItemStack is : inv.getMatrix())
+            if (is != null && is.getAmount() < materialCount)
+                materialCount = is.getAmount();
+
+        return resultCount * materialCount;
+    }
+
+    // Fireworks effect
+    public static void spawnFireworks(Location location, int amount) {
+        Firework fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+        FireworkMeta fwm = fw.getFireworkMeta();
+
+        fwm.setPower(2);
+        fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
+
+        fw.setFireworkMeta(fwm);
+        fw.detonate();
+
+        for (int i = 0; i < amount; i++) {
+            Firework fw2 = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+            fw2.setFireworkMeta(fwm);
+        }
+    }
+
+    private void AddVillager(NPCData npcData) {
+        RegisterNPC(npcData);
+    }
+
     public int getRewardMoneyDifficulty(QuestDifficulty difficulty) {
         switch (difficulty) {
             case EASY:
@@ -2555,6 +2557,7 @@ public class NPCManager implements Listener {
             }
         };
     }
+
     public IQuestItemGive TaskGive(Material material, int count, String questData, String materialName) {
         return new IQuestItemGive() {
             @Override
@@ -2578,6 +2581,7 @@ public class NPCManager implements Listener {
             }
         };
     }
+
     public IQuestItemCraft TaskCraft(Material material, int count, String questData, String materialName) {
         return new IQuestItemCraft() {
             @Override
@@ -2601,6 +2605,7 @@ public class NPCManager implements Listener {
             }
         };
     }
+
     public IQuestItemCollect TaskFarm(Material material, int count, String questData, String materialName) {
         return new IQuestItemCollect() {
             @Override
@@ -2624,6 +2629,7 @@ public class NPCManager implements Listener {
             }
         };
     }
+
     public IQuestItemKill TaskKill(EntityType entity, int count, String questData, String entityName) {
         return new IQuestItemKill() {
             @Override
@@ -2647,6 +2653,7 @@ public class NPCManager implements Listener {
             }
         };
     }
+
     public IQuestItemBreed TaskBreed(BreedingAnimal breedingAnimal, int count, String questData, String entityName) {
         return new IQuestItemBreed() {
 
@@ -2675,40 +2682,14 @@ public class NPCManager implements Listener {
     public IQuestRewardMoney RewardMoney(int money) {
         return () -> money;
     }
-    public IQuestRewardItemStack RewardItemStack(ItemStack item){
+
+    public IQuestRewardItemStack RewardItemStack(ItemStack item) {
         return () -> item;
     }
-
 
     public void RegisterNPC(NPCData shop) {
         npcs.put(shop.getId(), shop);
         Logger.logNpcMessage("Zarejestrowano nowy sklep " + shop.getId());
-    }
-
-    public static int fits(ItemStack stack, @NotNull Inventory inv) {
-        ItemStack[] contents = inv.getContents();
-        int result = 0;
-
-        for (ItemStack is : contents)
-            if (is == null)
-                result += stack.getMaxStackSize();
-            else if (is.isSimilar(stack))
-                result += Math.max(stack.getMaxStackSize() - is.getAmount(), 0);
-
-        return result;
-    }
-    public static int getMaxCraftAmount(@NotNull CraftingInventory inv) {
-        if (inv.getResult() == null)
-            return 0;
-
-        int resultCount = inv.getResult().getAmount();
-        int materialCount = Integer.MAX_VALUE;
-
-        for (ItemStack is : inv.getMatrix())
-            if (is != null && is.getAmount() < materialCount)
-                materialCount = is.getAmount();
-
-        return resultCount * materialCount;
     }
 
     public ItemStack getItemOfShop(User u, NPCData NPCData, NPCShopItem item) {
@@ -2845,6 +2826,7 @@ public class NPCManager implements Listener {
         i.setItemMeta(meta);
         return i;
     }
+
     public void loreCheck(ArrayList<String> lore, final int count, final boolean isActiveQuest, final int questProgress, final String itemPrefix, final String suffix) {
         if (count == 1) {
             int value;
@@ -2876,6 +2858,7 @@ public class NPCManager implements Listener {
             }
         }
     }
+
     public void loreCheckMoney(ArrayList<String> lore, final int count, final boolean isActiveQuest, final int questProgress, final String itemPrefix) {
         int value;
         if (isActiveQuest) {
@@ -2934,7 +2917,7 @@ public class NPCManager implements Listener {
             // no return
             return instant;
         });
-        if(delay.get()){
+        if (delay.get()) {
             ItemStack item = new ItemStack(Material.CLOCK, playerNPCData.getQuestIndex() + 1);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ColorUtils.color("&ePoczekaj na kolejne zlecenia"));
@@ -3406,9 +3389,9 @@ public class NPCManager implements Listener {
                                     ItemStackUtils.addItemStackToPlayer(p, new ItemStack(((IQuestItemGive) item).getMaterial(), data.getQuestItemData().get(item.getQuestItemDataId())));
                                 }
                             }
-                            if(item instanceof IQuestItemPay){
+                            if (item instanceof IQuestItemPay) {
                                 int money = data.getQuestItemData().get(item.getQuestItemDataId());
-                                if(money > 0){
+                                if (money > 0) {
                                     u.addMoney(money);
                                     p.sendMessage(ColorUtils.color("&9" + NPCData.getId() + " &6» &aZwracam twoje " + ChatUtil.getMoney(money) + ", które wpłaciłeś"));
                                 }
@@ -3440,10 +3423,10 @@ public class NPCManager implements Listener {
                                 int ileJestPotrzebne = itemGive.getCount();
                                 int ileMa = ItemStackUtils.getCountOfMaterial(p, itemGive.getMaterial());
                                 int ileBrakuje = ileJestPotrzebne - ileJuzWplacil;
-                                if(ileJuzWplacil == ileJestPotrzebne){
+                                if (ileJuzWplacil == ileJestPotrzebne) {
                                     // jezeli nic nie brakuje do zaplaty
                                     haveItem++;
-                                }else{
+                                } else {
                                     // jezeli cos brakuje do zaplaty
                                     // zabiera mu pieniadze tyle ile moze i sprawdza czy brakuje nadal
                                     if (ileBrakuje > ileMa) {
@@ -3634,7 +3617,7 @@ public class NPCManager implements Listener {
                                         p.sendMessage(ColorUtils.color("&cMasz pełny ekwipunek. Więc przedmiot wyleciał z Ciebie"));
                                     }
                                 }
-                                if(reward instanceof IQuestRewardCustom){
+                                if (reward instanceof IQuestRewardCustom) {
                                     IQuestRewardCustom custom = (IQuestRewardCustom) reward;
                                     custom.Action(p, u);
                                 }
@@ -3674,7 +3657,7 @@ public class NPCManager implements Listener {
                         // no return
                         return instant;
                     });
-                    if(blocked.get()){
+                    if (blocked.get()) {
                         return;
                     }
                     // Przyjmuje zadanie
@@ -3696,8 +3679,6 @@ public class NPCManager implements Listener {
             e.setCancelled(true);
         }
     }
-
-    private final Map<UUID, Instant> commandDelay = new IdentityHashMap<>();
 
     @EventHandler
     public void villagerClick(@NotNull NPCRightClickEvent e) {
@@ -3791,14 +3772,13 @@ public class NPCManager implements Listener {
         if (e.getEntity().getKiller() == null) {
             return;
         }
-        if(e.isCancelled()){
+        if (e.isCancelled()) {
             return;
         }
 //        if(e.getEntityType().equals(EntityType.ENDERMAN)){
 //            Random r = new Random();
 //            int game = r.nextInt(100);
-//            int mnoznik = 1;
-//            if(e.getEntity().getKiller().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_MOBS)){
+//            int mnoznik = 1;//            if(e.getEntity().getKiller().getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_MOBS)){
 //                mnoznik = e.getEntity().getKiller().getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)+1;
 //            }
 //            if(game < 10*mnoznik){
@@ -3839,10 +3819,11 @@ public class NPCManager implements Listener {
             exception.printStackTrace();
         }
     }
+
     //IQuestItemBreak
     @EventHandler(priority = EventPriority.MONITOR)
-    public void breakBlock(BlockBreakEvent e){
-        if(e.isCancelled()){
+    public void breakBlock(BlockBreakEvent e) {
+        if (e.isCancelled()) {
             return;
         }
         try {
@@ -3882,6 +3863,7 @@ public class NPCManager implements Listener {
             exception.printStackTrace();
         }
     }
+
     //IQuestItemCraft
     @EventHandler(priority = EventPriority.MONITOR)
     public void craft(CraftItemEvent e) {
@@ -3951,22 +3933,6 @@ public class NPCManager implements Listener {
             }
         } catch (Exception exception) {
             exception.printStackTrace();
-        }
-    }
-    // Fireworks effect
-    public static void spawnFireworks(Location location, int amount){
-        Firework fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-        FireworkMeta fwm = fw.getFireworkMeta();
-
-        fwm.setPower(2);
-        fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
-
-        fw.setFireworkMeta(fwm);
-        fw.detonate();
-
-        for(int i = 0;i<amount; i++){
-            Firework fw2 = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-            fw2.setFireworkMeta(fwm);
         }
     }
 

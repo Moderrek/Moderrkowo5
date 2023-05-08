@@ -5,15 +5,19 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
 
-public class DelHomeCommand implements CommandExecutor {
+public class DelHomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
@@ -30,6 +34,13 @@ public class DelHomeCommand implements CommandExecutor {
                 if (loc != null) {
                     Main.getInstance().dataConfig.set("homes." + p.getUniqueId() + "." + args[0], null);
                     Main.getInstance().dataConfig.set("homescount." + p.getUniqueId(), temp - 1);
+                    try{
+                        List<String> homes = Main.getInstance().dataConfig.getStringList(MessageFormat.format("homeslist.{0}", p.getUniqueId()));
+                        homes.remove(args[0]);
+                        Main.getInstance().dataConfig.set(MessageFormat.format("homeslist.{0}", p.getUniqueId()), homes);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     try {
                         Main.getInstance().dataConfig.save(Main.getInstance().dataFile);
                     } catch (IOException e) {
@@ -40,12 +51,22 @@ public class DelHomeCommand implements CommandExecutor {
                 } else {
                     p.sendMessage(ColorUtils.color("&cTen dom nie istnieje!"));
                 }
-                return false;
             } else {
                 p.sendMessage(ColorUtils.color("&c/delhome <nazwa>"));
-                return false;
             }
+            return false;
         }
         return false;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if(!(sender instanceof Player)){
+            return null;
+        }
+        if(args.length == 1){
+            return Main.getInstance().dataConfig.getStringList(MessageFormat.format("homeslist.{0}", ((Player) sender).getUniqueId()));
+        }
+        return null;
     }
 }

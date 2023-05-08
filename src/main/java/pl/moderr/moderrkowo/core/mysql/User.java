@@ -123,55 +123,6 @@ public class User {
         _LEVELS.get(category).addExp(exp);
     }
 
-    /*// EXP
-    public int getExp() {
-        return Exp;
-    }
-    public void setExp(int exp) {
-        this.Exp = exp;
-        UpdateScoreboard();
-    }
-    public void addExp(int exp) {
-        this.Exp += exp;
-        if(getLevel() > oldLevel){
-            oldLevel = getLevel();
-            getPlayer().sendMessage(ColorUtils.color("  "));
-            getPlayer().sendMessage(ColorUtils.color("  "));
-            getPlayer().sendMessage(ColorUtils.color("  &fGratulacje odblokowałeś &a" + getLevel() + " poziom &fpostaci!"));
-            getPlayer().sendMessage(ColorUtils.color("  "));
-            getPlayer().sendMessage(ColorUtils.color("  "));
-            getPlayer().sendTitle(ColorUtils.color("&6POSTAĆ"), ColorUtils.color("&7[&a" + (oldLevel-1) + "&7] → [&a" + oldLevel + "&7]"));
-            getPlayer().spawnParticle(Particle.TOTEM, getPlayer().getLocation().getX(), getPlayer().getLocation().getY(), getPlayer().getLocation().getZ(), 20, 1, 1, 1, 0.1f);
-            getPlayer().playSound(getPlayer().getLocation(), Sound.ENTITY_WITHER_SHOOT, 1,2);
-        }
-        UpdateScoreboard();
-    }
-    public void subtractExp(int exp) {
-        this.Exp += exp;
-        UpdateScoreboard();
-    }
-    // LEVEL
-    public int getLevel(int pd) {
-        if (pd >= 390) {
-            return 6;
-        }
-        if (pd >= 244) {
-            return 5;
-        }
-        if (pd >= 100) {
-            return 4;
-        }
-        if (pd >= 75) {
-            return 3;
-        }
-        if (pd >= 49) {
-            return 2;
-        }
-        return 1;
-    }
-    public int getLevel(){
-        return getLevel(this.Exp);
-    }*/
     // SEASON ONE COINS
     public int getSeasonOneCoins() {
         return _SEASON_ONE_COINS;
@@ -233,12 +184,12 @@ public class User {
 
         }
         Score score1 = objective.getScore(ColorUtils.color(RankManager.getRankNameShort(_RANK, true) + "&9" + _NAME));
-        Score score2 = objective.getScore(ColorUtils.color("&fPostać: &c" + _LEVELS.playerLevel() + " lvl"));
-        Score score3 = objective.getScore(ColorUtils.color("&fPortfel: &6" + ChatUtil.getMoney(getMoney())));
-        Score score4 = objective.getScore(ColorUtils.color("&fCzas gry: &a" + ChatUtil.getTicksToTime(getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE))));
+        Score score2 = objective.getScore(ColorUtils.color("&fPostać &c" + _LEVELS.playerLevel() + " lvl"));
+        Score score3 = objective.getScore(ColorUtils.color("&fPortfel &6" + ChatUtil.getMoney(getMoney())));
+        Score score4 = objective.getScore(ColorUtils.color("&fCzas gry &a" + ChatUtil.getTicksToTime(getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE))));
         Score score7 = objective.getScore(ColorUtils.color("&6moderrkowo.pl"));
         if (data == null) {
-            Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest: &abrak"));
+            Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest &abrak"));
             Score score6 = objective.getScore("  ");
             score1.setScore(-1);
             score2.setScore(-2);
@@ -249,7 +200,7 @@ public class User {
             score7.setScore(-7);
         } else {
             if (!Main.getInstance().NPCManager.npcs.containsKey(data.getNpcId())) {
-                Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest: &abrak"));
+                Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest &abrak"));
                 Score score6 = objective.getScore("  ");
                 score1.setScore(-1);
                 score2.setScore(-2);
@@ -262,7 +213,7 @@ public class User {
                 return;
             }
             Quest q = Main.getInstance().NPCManager.npcs.get(data.getNpcId()).getQuests().get(data.getQuestIndex());
-            Score score6 = objective.getScore(ColorUtils.color("&fAktywny quest: &a" + q.getName()));
+            Score score6 = objective.getScore(ColorUtils.color("&fAktywny quest &a" + q.getName()));
             int itemI = 0;
             int last = 0;
             for (int i = -6; i != -6 - Main.getInstance().NPCManager.npcs.get(data.getNpcId()).getQuests().get(data.getQuestIndex()).getQuestItems().size(); i--) {

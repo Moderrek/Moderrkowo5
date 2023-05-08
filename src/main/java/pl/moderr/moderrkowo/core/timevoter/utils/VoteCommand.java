@@ -1,14 +1,17 @@
 package pl.moderr.moderrkowo.core.timevoter.utils;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.timevoter.TimeVoter;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
+
+import java.text.MessageFormat;
 
 
 public class VoteCommand implements CommandExecutor {
@@ -32,19 +35,19 @@ public class VoteCommand implements CommandExecutor {
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("tak")) {
-                        //player.sendMessage(ColorUtils.color("&aZagłosowałeś na TAK"));
-                        Main.getInstance().getServer().broadcastMessage(ColorUtils.color("&a" + player.getName() + " zagłosował na tak"));
+                        Component votedYes = Component.text().content(MessageFormat.format("{0} zagłosował na tak.", player.getName())).color(NamedTextColor.GREEN).build();
+                        timeVoter.getPlugin().getServer().broadcast(votedYes);
                         timeVoter.getYesVote().add(player.getUniqueId());
                         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                         return true;
                     } else if (args[0].equalsIgnoreCase("nie")) {
-                        //player.sendMessage(ColorUtils.color("&cZagłosowałeś na NIE"));
-                        Main.getInstance().getServer().broadcastMessage(ColorUtils.color("&c" + player.getName() + " zagłosował na nie"));
+                        Component votedNo = Component.text().content(MessageFormat.format("{0} zagłosował na nie.", player.getName())).color(NamedTextColor.RED).build();
+                        timeVoter.getPlugin().getServer().broadcast(votedNo);
                         timeVoter.getNoVote().add(player.getUniqueId());
                         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                         return true;
                     } else {
-                        player.sendMessage(ColorUtils.color("&cUżyj: /timevote <tak,nie>"));
+                        player.sendMessage(ColorUtils.color("&cUżyj: /timevote <tak/nie>"));
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                         return false;
                     }

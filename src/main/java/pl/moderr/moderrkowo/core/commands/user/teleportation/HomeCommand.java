@@ -1,17 +1,25 @@
 package pl.moderr.moderrkowo.core.commands.user.teleportation;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
-public class HomeCommand implements CommandExecutor {
+import java.text.MessageFormat;
+import java.util.List;
+
+public class HomeCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
@@ -32,19 +40,29 @@ public class HomeCommand implements CommandExecutor {
                 //Logger.logAdminLog(p.getName() + " przeteleportował się do domu");
                 p.sendMessage(ColorUtils.color("&8[!] &aWitaj w domu"));
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-            } else {
-                Location loc = Main.getInstance().dataConfig.getLocation("homes." + p.getUniqueId());
-                if (loc == null) {
-                    p.sendMessage(ColorUtils.color("&cNajpierw ustaw dom /sethome <nazwa>"));
-                    return false;
-                }
-                p.teleport(loc);
-                //Logger.logAdminLog(p.getName() + " przeteleportował się do domu");
-                p.sendMessage(ColorUtils.color("&8[!] &aWitaj w domu"));
-                p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-                p.sendMessage(ColorUtils.color("&e/home <nazwa>"));
+                return true;
             }
+            List<String> homes = Main.getInstance().dataConfig.getStringList(MessageFormat.format("homeslist.{0}", p.getUniqueId()));
+            if(!homes.isEmpty()){
+                TextComponent.Builder builder = Component.text();
+                for(String homeName : homes){
+                    builder.appendSpace().append(Component.text(homeName));
+                }
+                p.sendMessage(Component.text("Twoje domy:").append(builder.build()));
+            }
+            p.sendMessage(Component.text("Uzyj: /home <nazwa>, bądź /sethome <nazwa>").color(NamedTextColor.YELLOW));
         }
         return false;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if(!(sender instanceof Player)){
+            return null;
+        }
+        if(args.length == 1){
+            return Main.getInstance().dataConfig.getStringList(MessageFormat.format("homeslist.{0}", ((Player) sender).getUniqueId()));
+        }
+        return null;
     }
 }

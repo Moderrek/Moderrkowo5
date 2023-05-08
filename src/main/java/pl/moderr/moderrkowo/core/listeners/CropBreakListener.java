@@ -1,5 +1,7 @@
 package pl.moderr.moderrkowo.core.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,6 +18,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.mysql.LevelCategory;
 import pl.moderr.moderrkowo.core.mysql.User;
@@ -28,7 +32,6 @@ import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemCollect;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -39,19 +42,12 @@ public class CropBreakListener implements Listener {
     private final Map<Player, Instant> cropMessage = new IdentityHashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)
-    private void farmBreak(BlockBreakEvent event) {
+    private void farmBreak(@NotNull BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
-        if (block.getType().equals(Material.EMERALD_ORE) || block.getType().equals(Material.DIAMOND_ORE) || block.getType().equals(Material.ANCIENT_DEBRIS)) {
-            StringBuilder s = new StringBuilder();
-            for (ItemStack i : block.getDrops(player.getInventory().getItemInMainHand())) {
-                s.append(ChatUtil.materialName(i.getType())).append(" x").append(i.getAmount()).append(" ");
-            }
-            Logger.logAdminLog("&6" + player.getName() + " &7wykopał &7" + "&8(&7" + s + "&8) &8[&7" + ChatUtil.materialName(player.getInventory().getItemInMainHand().getType()) + "&8]");
-        }
         if (player.isSneaking()) {
             return;
         }
@@ -91,7 +87,9 @@ public class CropBreakListener implements Listener {
                 if (instant != null && now.isBefore(instant)) {
                     return instant;
                 }
-                player.sendMessage("§6[SP] §eKucnij aby zniszczyć małe nasionka.");
+                final Component component = Component.text("Kucnij, aby zniszczyć małe ").color(NamedTextColor.YELLOW).append(Component.translatable(getCropSeeds(block).translationKey()).append(Component.text(".")));
+                player.sendMessage(component);
+                player.sendActionBar(component);
                 return now.plusSeconds(10);
             });
         }
@@ -107,7 +105,7 @@ public class CropBreakListener implements Listener {
         }
     }
 
-    private double getExpValue(Block block) {
+    private double getExpValue(@NotNull Block block) {
         switch (block.getType()) {
             case WHEAT:
             case POTATOES:
@@ -158,7 +156,7 @@ public class CropBreakListener implements Listener {
     }
 
     @EventHandler
-    private void cropTrample(PlayerInteractEvent event) {
+    private void cropTrample(@NotNull PlayerInteractEvent event) {
         if (event.getAction() != Action.PHYSICAL) {
             return;
         }
@@ -173,14 +171,14 @@ public class CropBreakListener implements Listener {
         }
         event.setCancelled(true);
     }
-    private void spawnParticles(Location location) {
+    private void spawnParticles(@NotNull Location location) {
         location.add(.5, .5, .5);
         location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, location, 10, .5, .5, .5, 0);
     }
-    private void autoReplant(Block block) {
+    private void autoReplant(@NotNull Block block) {
         block.setType(block.getType());
     }
-    private Material getCropSeeds(Block block) {
+    private @Nullable Material getCropSeeds(Block block) {
         if (isNotCrop(block)) {
             return null;
         }
@@ -202,7 +200,7 @@ public class CropBreakListener implements Listener {
         }
         return null;
     }
-    private boolean isNotCrop(Block block) {
+    private boolean isNotCrop(@NotNull Block block) {
         switch (block.getType()) {
             case WHEAT:
             case CARROTS:

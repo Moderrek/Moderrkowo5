@@ -1,5 +1,6 @@
 package pl.moderr.moderrkowo.core.timevoter;
 
+import lombok.Getter;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.timevoter.utils.VoteCommand;
 import pl.moderr.moderrkowo.core.timevoter.utils.VoteEvent;
@@ -22,7 +23,11 @@ public class TimeVoter {
     public Instant lastVote;
     public VoteUtil voteUtil;
 
-    public TimeVoter() {
+    @Getter
+    private final Main plugin;
+
+    public TimeVoter(Main plugin) {
+        this.plugin = plugin;
         timeToVote = Main.getInstance().getConfig().getInt("time-to-vote");
         voteDelay = Main.getInstance().getConfig().getInt("vote-delay");
         voteUtil = new VoteUtil(this);

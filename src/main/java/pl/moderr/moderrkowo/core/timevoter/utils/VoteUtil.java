@@ -1,11 +1,9 @@
 package pl.moderr.moderrkowo.core.timevoter.utils;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.boss.BarColor;
@@ -13,10 +11,12 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.timevoter.TimeVoter;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
+import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -30,9 +30,9 @@ public class VoteUtil {
         this.timeVoter = timeVoter;
     }
 
-    public void StartVote(Player player) {
-        World world = player.getWorld();
-        if (!isOverworld(player)) {
+    public void StartVote(@NotNull Player startingPlayer) {
+        World world = startingPlayer.getWorld();
+        if (!isOverworld(startingPlayer)) {
             return;
         }
         double timeElapsed = 0;
@@ -45,71 +45,65 @@ public class VoteUtil {
                 timeVoter.lastVote = Instant.now();
             }
 
-            TextComponent yes = new TextComponent("Tak");
-            yes.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tv tak"));
-            yes.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ColorUtils.color("&aZagłosuj na TAK"))));
-            yes.setColor(ChatColor.GREEN);
+            TextComponent yes = Component.text("Tak")
+                    .color(NamedTextColor.GREEN)
+                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/tv tak"))
+                    .hoverEvent(Component.text("Zagłosuj na TAK")
+                            .color(NamedTextColor.GREEN)
+                    );
+            TextComponent no = Component.text("Nie")
+                    .color(NamedTextColor.RED)
+                    .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/tv nie"))
+                    .hoverEvent(Component.text("Zagłosuj na NIE")
+                            .color(NamedTextColor.RED)
+                    );
 
-            TextComponent no = new TextComponent("Nie");
-            no.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tv nie"));
-            no.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ColorUtils.color("&cZagłosuj na NIE"))));
-            no.setColor(ChatColor.RED);
+            boolean isNight = world.getTime() >= 12600L;
+            TextComponent timeOfDay = isNight ? Component.text().content("☀ dzień").color(NamedTextColor.YELLOW).build() : Component.text().content("⭐ noc").color(NamedTextColor.BLUE).build();
+            final TextComponent playerName = Component.text().content(startingPlayer.getName()).color(NamedTextColor.GOLD).build();
+            final TextComponent header = Component.text().content("właśnie rozpoczął głosowanie o").color(NamedTextColor.GRAY).build();
+            final TextComponent timeToVote = Component.text().content(MessageFormat.format("Masz {0}s na głosowanie.", timeVoter.timeToVote)).color(NamedTextColor.GRAY).build();
+            final TextComponent howToVote = Component.text().content("KLIKNIJ! TAK lub NIE aby zagłosować!").color(NamedTextColor.GRAY).build();
+            final TextComponent.Builder voteDay = Component.text()
+                    .append(playerName).appendSpace().append(header).appendSpace().append(timeOfDay)
+                    .appendNewline().append(timeToVote)
+                    .appendNewline().append(howToVote);
 
-            boolean day = world.getTime() >= 12600L;
-            if (day) {
-                Main.getInstance().getServer().broadcastMessage(
-                        ColorUtils.color(
-                                "&6" + player.getName() + " &7właśnie rozpoczął głosowanie o &e☀ dzień&7" +
-                                        "\nMasz &6" + timeVoter.timeToVote + " &7sekund na głosowanie." +
-                                        "\nKliknij TAK lub NIE albo połóż się spać aby zagłosować na TAK"
-                        )
-                );
-            } else {
-                Main.getInstance().getServer().broadcastMessage(
-                        ColorUtils.color(
-                                "&6" + player.getName() + " &7właśnie rozpoczął głosowanie o &9⭐ noc&7" +
-                                        "\nMasz &6" + timeVoter.timeToVote + " &7sekund na głosowanie." +
-                                        "\nKliknij TAK lub NIE albo połóż się spać aby zagłosować na TAK"
-                        )
-                );
-            }
-            Main.getInstance().getServer().broadcast(
-                    new ComponentBuilder()
-                            .append(yes)
-                            .append(" / ").color(ChatColor.GOLD)
-                            .append(no)
-                            .create()
-            );
-            timeVoter.getYesVote().add(player.getUniqueId());
-            player.sendMessage(ColorUtils.color("&aAutomatycznie zagłosowałeś na tak, ponieważ zacząłeś głosowanie"));
+            timeVoter.getPlugin().getServer().broadcast(voteDay.build());
+            timeVoter.getPlugin().getServer().broadcast(Component.text().append(yes).append(Component.text(" / ").color(NamedTextColor.GOLD)).append(no).build());
+            timeVoter.getYesVote().add(startingPlayer.getUniqueId());
+            startingPlayer.sendMessage(ColorUtils.color("&aAutomatycznie zagłosowałeś na tak, ponieważ zacząłeś głosowanie"));
 
-            createBossBar(day);
+            createBossBar(isNight);
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 if (timeVoter.getYesVote().size() > timeVoter.getNoVote().size()) {
                     if (world.getTime() >= 12600L) {
                         world.setTime(0L);
-                        Main.getInstance().getServer().broadcastMessage(
-                                ColorUtils.color(
-                                        "&aGłosowanie zostało zakończone sukcesem." +
-                                                "\n&7Cykl nocy zostanie pominięty."
-                                )
+                        timeVoter.getPlugin().getServer().broadcast(Component.text()
+                                .append(Component.text("Głosowanie zostało zakończone sukcesem.")
+                                        .color(NamedTextColor.GREEN))
+                                .appendNewline()
+                                .append(Component.text("Cykl nocy zostanie pominięty.").color(NamedTextColor.GRAY))
+                                .build()
                         );
                     } else {
                         world.setTime(12600L);
-                        Main.getInstance().getServer().broadcastMessage(
-                                ColorUtils.color(
-                                        "&aGłosowanie zostało zakończone sukcesem." +
-                                                "\n&7Cykl dnia zostanie pominięty."
-                                )
+                        timeVoter.getPlugin().getServer().broadcast(Component.text()
+                                .append(Component.text("Głosowanie zostało zakończone sukcesem.")
+                                        .color(NamedTextColor.GREEN))
+                                .appendNewline()
+                                .append(Component.text("Cykl dnia zostanie pominięty.").color(NamedTextColor.GRAY))
+                                .build()
                         );
                     }
                 } else {
-                    Main.getInstance().getServer().broadcastMessage(
-                            ColorUtils.color(
-                                    "&cGłosowanie zostało zakończone niepowodzeniem." +
-                                            "\n&7Czas upłynie w sposób naturalny."
-                            )
+                    timeVoter.getPlugin().getServer().broadcast(Component.text()
+                            .append(Component.text("Głosowanie zostało zakończone niepowodzeniem.")
+                                    .color(NamedTextColor.RED))
+                            .appendNewline()
+                            .append(Component.text("Czas upłynie w sposób naturalny.").color(NamedTextColor.GRAY))
+                            .build()
                     );
                 }
                 timeVoter.isVoteActive = false;
@@ -119,7 +113,7 @@ public class VoteUtil {
                 bossBar.removeAll();
             }, timeVoter.timeToVote * 20L);
         } else {
-            player.sendMessage(ColorUtils.color("&cZa wcześnie, aby rozpocząć głosowanie innym razem."));
+            startingPlayer.sendMessage(ColorUtils.color("&cZa wcześnie, aby rozpocząć głosowanie innym razem."));
         }
     }
 
@@ -130,9 +124,7 @@ public class VoteUtil {
             bossBar = Bukkit.createBossBar(ColorUtils.color("&9⭐ Noc"), BarColor.BLUE, BarStyle.SOLID);
         }
         bossBar.setProgress(1);
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            bossBar.addPlayer(player);
-        });
+        Bukkit.getOnlinePlayers().forEach(bossBar::addPlayer);
         timer = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             float increment = (float) 1 / timeVoter.timeToVote;
             double newProgress = bossBar.getProgress() - increment;
@@ -144,7 +136,7 @@ public class VoteUtil {
         }, 0, 20);
     }
 
-    public boolean isOverworld(Player player) {
+    public boolean isOverworld(@NotNull Player player) {
         if (player.getWorld().getEnvironment() != World.Environment.NORMAL) {
             player.sendMessage(ColorUtils.color("&cMożesz głosować tylko w normalnym świecie!"));
             return false;

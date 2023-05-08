@@ -97,7 +97,7 @@ public class ChatUtil {
         try {
             NumberFormat nf = NumberFormat.getNumberInstance(new Locale("pl-PL"));
             nf.setMaximumFractionDigits(2);
-            return nf.parse(money.substring(0, 3)).doubleValue();
+            return nf.parse(money.substring(0, 1)).doubleValue();
         } catch (Exception e) {
             throw new Exception("Nie można przeliczyć");
         }
@@ -110,9 +110,14 @@ public class ChatUtil {
     }
 
     public static String getMoney(final double money) {
-        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("pl-PL"));
+        NumberFormat nf;
+        if(money > 1000){
+            nf = NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT);
+        }else{
+            nf = NumberFormat.getNumberInstance(Locale.US);
+        }
         nf.setMaximumFractionDigits(2);
-        return nf.format(money) + " zł";
+        return nf.format(money) + "$";
     }
 
     public static String getSeasonCoins(final int coins) {

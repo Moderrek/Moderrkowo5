@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.automessage.ModerrkowoAutoMessage;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -24,8 +26,8 @@ import java.util.UUID;
 public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
 
 
-    ArrayList<UUID> votedList = new ArrayList<>();
-    boolean rain = false;
+    private ArrayList<UUID> votedList = new ArrayList<>();
+    private boolean rain = false;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -78,7 +80,8 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                     if (votedList.size() >= i) {
                         Objects.requireNonNull(Bukkit.getWorld("world")).setStorm(false);
-                        Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Przegłosowano na zmianę pogody! Pogoda została zmieniona."));
+                        ModerrkowoAutoMessage.SendServerMessage(Main.getInstance(), "Przegłosowano zmianę pogody. Pogoda została zmieniona!");
+//                        Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Przegłosowano na zmianę pogody! Pogoda została zmieniona."));
                         rain = false;
                         votedList = new ArrayList<>();
                     }
@@ -94,13 +97,14 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
     }
 
     @EventHandler
-    public void onRain(WeatherChangeEvent e) {
+    public void onRain(@NotNull WeatherChangeEvent e) {
         if (e.getWorld() != Bukkit.getWorld("world")) {
             return;
         }
         if (e.toWeatherState()) {
             votedList = new ArrayList<>();
-            Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Rozpoczęto głosowanie na zmianę pogody! &7/pogoda &7aby zagłosować."));
+            ModerrkowoAutoMessage.SendServerMessage(Main.getInstance(), "Rozpoczęto głosowanie na zmianę pogody! Aby zagłosować /pogoda");
+//            Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Rozpoczęto głosowanie na zmianę pogody! &7/pogoda &7aby zagłosować."));
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             }

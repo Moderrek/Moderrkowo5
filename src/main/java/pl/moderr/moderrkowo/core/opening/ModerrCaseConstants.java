@@ -45,24 +45,27 @@ public class ModerrCaseConstants {
                     public ArrayList<ModerrCaseItem> itemList() {
                         return new ArrayList<ModerrCaseItem>(){
                             {
-                                add(new ModerrCaseItem(new ItemStack(Material.ACACIA_SAPLING,8), ModerrCaseItemRarity.POSPOLITE,70));
-                                add(new ModerrCaseItem(new ItemStack(Material.OAK_WOOD,64), ModerrCaseItemRarity.POSPOLITE,70));
-                                add(new ModerrCaseItem(new ItemStack(Material.COOKED_BEEF,16), ModerrCaseItemRarity.POSPOLITE,70));
+                                add(new ModerrCaseItem(new ItemStack(Material.ACACIA_SAPLING,8), ModerrCaseItemRarity.POSPOLITE,50));
+                                add(new ModerrCaseItem(new ItemStack(Material.MANGROVE_LOG,32), ModerrCaseItemRarity.POSPOLITE,70));
+                                add(new ModerrCaseItem(new ItemStack(Material.COOKED_BEEF,16), ModerrCaseItemRarity.POSPOLITE,20));
+                                add(new ModerrCaseItem(new ItemStack(Material.COOKED_PORKCHOP,16), ModerrCaseItemRarity.POSPOLITE,20));
+                                add(new ModerrCaseItem(new ItemStack(Material.COOKED_MUTTON,16), ModerrCaseItemRarity.POSPOLITE,20));
                                 add(new ModerrCaseItem(new ItemStack(Material.IRON_INGOT,32), ModerrCaseItemRarity.POSPOLITE,70));
                                 add(new ModerrCaseItem(new ItemStack(Material.SUGAR_CANE,48), ModerrCaseItemRarity.POSPOLITE,70));
-                                add(new ModerrCaseItem(new ItemStack(Material.EMERALD,20), ModerrCaseItemRarity.POSPOLITE,70));
+                                add(new ModerrCaseItem(new ItemStack(Material.EMERALD,20), ModerrCaseItemRarity.POSPOLITE,40));
                                 add(new ModerrCaseItem(new ItemStack(Material.ENDER_PEARL,8), ModerrCaseItemRarity.RZADKIE,25));
+                                add(new ModerrCaseItem(new ItemStack(Material.DIAMOND,2), ModerrCaseItemRarity.RZADKIE,25));
                                 add(new ModerrCaseItem(new ItemStack(Material.ENCHANTING_TABLE,1), ModerrCaseItemRarity.RZADKIE,25));
                                 add(new ModerrCaseItem(new ItemStack(Material.BLAZE_ROD,2), ModerrCaseItemRarity.RZADKIE,25));
-                                add(new ModerrCaseItem(new ItemStack(Material.HOPPER,1), ModerrCaseItemRarity.RZADKIE,15));
+                                add(new ModerrCaseItem(new ItemStack(Material.HOPPER,6), ModerrCaseItemRarity.RZADKIE,15));
                                 add(new ModerrCaseRandomEnchantment(ModerrCaseItemRarity.RZADKIE,25));
                                 add(new ModerrCaseItem(new ItemStack(Material.SLIME_BALL,16), ModerrCaseItemRarity.RZADKIE,20));
                                 add(new ModerrCaseRandomDisc(ModerrCaseItemRarity.RZADKIE,15));
                                 add(new ModerrCaseRandomTool(ModerrCaseItemRarity.LEGENDARNE,10));
-                                add(new ModerrCaseItem(new ItemStack(Material.OBSERVER,1), ModerrCaseItemRarity.LEGENDARNE,10));
+                                add(new ModerrCaseItem(new ItemStack(Material.OBSERVER,8), ModerrCaseItemRarity.LEGENDARNE,10));
                                 add(new ModerrCaseItem(new ItemStack(Material.GOLDEN_APPLE,2), ModerrCaseItemRarity.LEGENDARNE,10));
-                                add(new ModerrCaseItem(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE,1), ModerrCaseItemRarity.MITYCZNE,10));
-                                add(new ModerrCaseItem(new ItemStack(Material.TOTEM_OF_UNDYING,1), ModerrCaseItemRarity.MITYCZNE,10));
+                                add(new ModerrCaseItem(new ItemStack(Material.ENCHANTED_GOLDEN_APPLE,1), ModerrCaseItemRarity.MITYCZNE,5));
+                                add(new ModerrCaseItem(new ItemStack(Material.TOTEM_OF_UNDYING,1), ModerrCaseItemRarity.MITYCZNE,5));
                             }
                         };
                     }

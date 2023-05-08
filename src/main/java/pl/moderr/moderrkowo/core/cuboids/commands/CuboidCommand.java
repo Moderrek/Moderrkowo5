@@ -9,6 +9,8 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -25,17 +27,16 @@ import pl.moderr.moderrkowo.core.mysql.UserManager;
 import pl.moderr.moderrkowo.core.ranks.Rank;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.text.MessageFormat;
+import java.util.*;
 
 public class CuboidCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
-            Player p = (Player) sender;
+            final Player p = (Player) sender;
+            final String name = p.getName();
             if (args.length > 0) {
                 // Administrators
                 if (p.hasPermission("moderr.cuboids.admin")) {
@@ -50,7 +51,7 @@ public class CuboidCommand implements CommandExecutor, TabExecutor {
                 if (args[0].equalsIgnoreCase("dodaj")) {
                     if (args.length > 1) {
                         OfflinePlayer addPlayer = Bukkit.getOfflinePlayer(args[1]);
-                        if (addPlayer != null) {
+                        if (addPlayer.hasPlayedBefore()) {
                             if (p.getUniqueId().equals(addPlayer.getUniqueId())) {
                                 p.sendMessage(Main.getServerName() + ColorUtils.color(" &cNie możesz dodać siebie!"));
                                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -97,7 +98,7 @@ public class CuboidCommand implements CommandExecutor, TabExecutor {
                 if (args[0].equalsIgnoreCase("usun")) {
                     if (args.length > 1) {
                         OfflinePlayer addPlayer = Bukkit.getOfflinePlayer(args[1]);
-                        if (addPlayer != null) {
+                        if (addPlayer.hasPlayedBefore()) {
                             if (p.getUniqueId().equals(addPlayer.getUniqueId())) {
                                 p.sendMessage(Main.getServerName() + ColorUtils.color(" &cNie możesz usunąć siebie!"));
                                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -212,7 +213,18 @@ public class CuboidCommand implements CommandExecutor, TabExecutor {
                 // If null
                 p.sendMessage(Main.getServerName() + ColorUtils.color(" &e"));
             } else {
-                p.sendMessage(Main.getServerName() + ColorUtils.color(" &cBłąd! Brak argumentów"));
+                final String worldName = p.getWorld().getName();
+                final String path = MessageFormat.format("cuboid.{0}.{1}{2}", worldName, CuboidsManager.getCuboidNamePrefix(), name.toLowerCase());
+                final Location cuboidLocation = Main.getInstance().dataConfig.getLocation(path);
+                if (cuboidLocation == null) {
+                    p.sendMessage(Component.text().content("Nie posiadasz postawionej działki.").color(NamedTextColor.WHITE).build());
+                    return false;
+                }
+                p.sendMessage(Component.text().content(MessageFormat.format("Twoja działka znajduję się na x: {0} y: {1} z: {2}",
+                        cuboidLocation.getBlockX(),
+                        cuboidLocation.getBlockY(),
+                        cuboidLocation.getBlockZ())
+                ).color(NamedTextColor.WHITE));
             }
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
@@ -221,7 +233,7 @@ public class CuboidCommand implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
         if (args.length == 1) {
             ArrayList<String> hints = new ArrayList<>();
             hints.add("info");
@@ -230,22 +242,16 @@ public class CuboidCommand implements CommandExecutor, TabExecutor {
             if (UserManager.getUser(((Player) sender).getUniqueId()).hasRank(Rank.Zelazo)) {
                 hints.add("ustawienie");
             }
-
             if (sender.hasPermission("moderr.cuboids.admin")) {
                 hints.add("admin-give");
             }
             return hints;
         }
         if (args[0].equalsIgnoreCase("ustawienie") && args.length == 2) {
-            ArrayList<String> hints = new ArrayList<>();
-            hints.add("PvP");
-            return hints;
+            return Arrays.asList("PvP");
         }
         if (args[0].equalsIgnoreCase("ustawienie") && args.length == 3) {
-            ArrayList<String> hints = new ArrayList<>();
-            hints.add("Tak");
-            hints.add("Nie");
-            return hints;
+            return Arrays.asList("Tak", "Nie");
         }
         return null;
     }

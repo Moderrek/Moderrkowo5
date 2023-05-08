@@ -31,9 +31,6 @@ public class WithdrawCommand implements CommandExecutor, Listener {
         return ItemStackUtils.createGuiItem(Material.GOLD_NUGGET, count, banknotPrefix + money + banknotSuffix);
     }
 
-    /**
-     * Komenda po wywołaniu <b>/wyplac</b>
-     **/
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {

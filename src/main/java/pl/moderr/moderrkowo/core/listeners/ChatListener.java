@@ -77,23 +77,26 @@ public class ChatListener implements Listener {
             switch (u.getRank()) {
                 case None:
                     max = 1.5d;
+                    e.setMessage(ColorUtils.color(e.getMessage()));
                     break;
                 case Zelazo:
                     max = 0.7d;
+                    e.setMessage(ColorUtils.color(e.getMessage()));
                     break;
                 case Zloto:
                     max = 0.5d;
+                    e.setMessage(ColorUtils.color(e.getMessage()));
                     break;
                 case Diament:
                     max = 0.3d;
-                    e.setMessage(ColorUtils.color(e.getMessage()));
+                    e.setMessage(ColorUtils.color(HexResolver.parseHexString(e.getMessage())));
                     break;
                 case Emerald:
                     max = 0.2d;
                     e.setMessage(ColorUtils.color(HexResolver.parseHexString(e.getMessage())));
                     break;
             }
-            e.setFormat(ColorUtils.color(RankManager.getChat(u.getRank(), u.getStuffRank()) + e.getPlayer().getName() + " &f") + e.getMessage());
+            e.setFormat(ColorUtils.color(RankManager.getChat(u.getRank(), u.getStuffRank()) + e.getPlayer().getName() + " " + RankManager.getMessageColor(u.getRank())) + e.getMessage());
             return now.plusMillis((long) (max * 1000));
         });
         //TODO Cenzura

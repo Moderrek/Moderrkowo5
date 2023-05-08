@@ -1,5 +1,7 @@
 package pl.moderr.moderrkowo.core.mysql;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -51,7 +53,14 @@ public class UserManager {
             if (!Main.getMySQL().getQuery().userExists(uuid)) {
                 u = getDefaultUser(p);
                 Main.getMySQL().getQuery().insertUser(u);
-                p.teleport(Objects.requireNonNull(Main.getInstance().config.getLocation("spawn.location")));
+                try{
+                    p.teleport(Objects.requireNonNull(Main.getInstance().config.getLocation("spawn.location")));
+                }catch (Exception e){
+                    try{
+                        p.teleport(Objects.requireNonNull(Bukkit.getWorld("void")).getSpawnLocation());
+                    }catch (Exception ignored){}
+                }
+
                 p.getInventory().addItem(new ItemStack(Material.STONE_AXE));
                 p.getInventory().addItem(new ItemStack(Material.OAK_LOG, 2));
                 p.getInventory().addItem(new ItemStack(Material.BREAD, 16));
@@ -74,13 +83,14 @@ public class UserManager {
             if (!u.getVersion().equals(Main.getVersion())) {
                 // TODO wyswielt książke
                 //p.openBook(Main.changeLogItem());
+                p.sendMessage(Component.text("Podczas twojej nieobecności serwer przeszedł aktualizację.").color(NamedTextColor.YELLOW));
             }
             u.LoadNotifications();
-            try {
-                u.UpdateScoreboard();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Main.getInstance().sidebar.addViewer(p);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             Logger.logDatabaseMessage("Wczytano gracza");
         }
     }
@@ -108,6 +118,9 @@ public class UserManager {
         } else {
             Logger.logDatabaseMessage("Gracz nie byłwczytany");
         }
+//        try{
+//            Main.getInstance().sidebar.removeViewer(Objects.requireNonNull(Bukkit.getPlayer(uuid)));
+//        }catch (Exception ignored){}
     }
 
 }

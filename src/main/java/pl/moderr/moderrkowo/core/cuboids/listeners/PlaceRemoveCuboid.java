@@ -69,9 +69,9 @@ public class PlaceRemoveCuboid implements Listener {
             boolean canBuild = !e.isCancelled();
             BlockVector3 center = BukkitAdapter.asBlockVector(e.getBlockPlaced().getLocation());
             BlockVector3 minCheck = center.subtract(64 - 1, 0, 64 - 1);
-            minCheck = minCheck.withY(0);
+            minCheck = minCheck.withY(e.getPlayer().getLocation().getWorld().getMinHeight());
             BlockVector3 maxCheck = center.add(64 - 1, 0, 64 - 1);
-            maxCheck = maxCheck.withY(255);
+            maxCheck = maxCheck.withY(e.getPlayer().getLocation().getWorld().getMaxHeight());
             ProtectedRegion checkArea = new ProtectedCuboidRegion("check", minCheck, maxCheck);
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionManager regions = container.get(BukkitAdapter.adapt(e.getBlockPlaced().getWorld()));
@@ -100,9 +100,9 @@ public class PlaceRemoveCuboid implements Listener {
             }
             if (canBuild) {
                 BlockVector3 min = center.subtract(64 - 1, 0, 64 - 1);
-                min = min.withY(0);
+                min = min.withY(e.getPlayer().getLocation().getWorld().getMinHeight());
                 BlockVector3 max = center.add(64 - 1, 0, 64 - 1);
-                max = max.withY(255);
+                max = max.withY(e.getPlayer().getLocation().getWorld().getMaxHeight());
                 ProtectedRegion newCuboid = new ProtectedCuboidRegion(CuboidsManager.getCuboidNamePrefix().toLowerCase() + e.getPlayer().getName().toLowerCase(), min, max);
                 newCuboid.getOwners().addPlayer(e.getPlayer().getUniqueId());
                 newCuboid.setFlag(Flags.GREET_MESSAGE,

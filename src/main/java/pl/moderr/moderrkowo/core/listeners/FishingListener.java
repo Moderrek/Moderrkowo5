@@ -1,5 +1,9 @@
 package pl.moderr.moderrkowo.core.listeners;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.customitems.CustomItemsManager;
 import pl.moderr.moderrkowo.core.economy.WithdrawCommand;
@@ -73,11 +78,7 @@ interface FishDropRandomItemStack extends FishDrop {
 
 public class FishingListener implements Listener {
 
-    private final WeightedList<FishDrop> randomDrop = new WeightedList<>() {
-        {
-
-        }
-    };
+    private final WeightedList<FishDrop> randomDrop = new WeightedList<>();
 
     public FishingListener() {
         randomDrop.put((FishDropItemStack) () -> Material.CHARCOAL, 24);
@@ -103,29 +104,29 @@ public class FishingListener implements Listener {
         randomDrop.put((FishDropItemStack) () -> Material.NAME_TAG, 2);
         randomDrop.put((FishDropItemStack) () -> Material.ENDER_PEARL, 2);
         randomDrop.put((FishDropItemStack) () -> Material.COD, 8);
-        randomDrop.put(new FishDropShulkerBox() {
-        }, 1);
+//        randomDrop.put(new FishDropShulkerBox() {
+//        }, 1);
         randomDrop.put((FishDropBanknot) () -> new RandomRange(1, 100), 10);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onFish(PlayerFishEvent e) {
+    public void onFish(@NotNull PlayerFishEvent e) {
         if (e.isCancelled()) {
             return;
         }
         if (e.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)) {
-            e.setExpToDrop(e.getExpToDrop() * 2);
-            tryAddQuestData(e);
+            e.setExpToDrop((int) (e.getExpToDrop() * 1.5));
             try {
                 ItemStack drop = randomDrop.get(new Random()).getItemStack();
                 ((Item) Objects.requireNonNull(e.getCaught())).setItemStack(drop);
                 UserManager.getUser(e.getPlayer().getUniqueId()).addExp(LevelCategory.Lowienie, getExp(drop, e.getPlayer().getInventory().getItemInMainHand()));
                 double d = ((double) RandomUtils.getRandomInt(1, 9) / 15) * UserManager.getUser(e.getPlayer().getUniqueId()).getUserLevel().get(LevelCategory.Lowienie).getLevel();
                 UserManager.getUser(e.getPlayer().getUniqueId()).addMoney(d);
-                e.getPlayer().sendActionBar(ColorUtils.color("&a+" + ChatUtil.getMoney(d)));
+                e.getPlayer().sendActionBar(Component.text("+" + ChatUtil.getMoney(d)).color(NamedTextColor.GREEN));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            tryAddQuestData(e);
         }
     }
 
@@ -155,7 +156,15 @@ public class FishingListener implements Listener {
                 int temp = items;
                 temp += recipeAmount;
                 data.getQuestItemData().replace(craftItem.getQuestItemDataId(), items, temp);
-                e.getPlayer().sendMessage(ColorUtils.color("&c&lQ &6» &2Zarzucono wędkę"));
+                final TextComponent component = Component.text()
+                        .color(NamedTextColor.GREEN)
+                        .append(Component.text("Q").decoration(TextDecoration.BOLD, true).color(NamedTextColor.RED))
+                        .appendSpace()
+                        .append(Component.text("»").color(NamedTextColor.GOLD))
+                        .appendSpace()
+                        .append(Component.text("Zarzucono wędkę"))
+                        .build();
+                e.getPlayer().sendMessage(component);
                 u.UpdateScoreboard();
             }
             if (item instanceof IQuestItemFish) {
@@ -166,7 +175,17 @@ public class FishingListener implements Listener {
                     int temp = items;
                     temp += recipeAmount;
                     data.getQuestItemData().replace(craftItem.getQuestItemDataId(), items, temp);
-                    e.getPlayer().sendMessage(ColorUtils.color("&c&lQ &6» &aZłowiono &2" + ChatUtil.materialName(is.getItemStack().getType())));
+                    final TextComponent component = Component.text()
+                            .color(NamedTextColor.GREEN)
+                            .append(Component.text("Q").decoration(TextDecoration.BOLD, true).color(NamedTextColor.RED))
+                            .appendSpace()
+                            .append(Component.text("»").color(NamedTextColor.GOLD))
+                            .appendSpace()
+                            .append(Component.text("Złowiono"))
+                            .appendSpace()
+                            .append(Component.translatable(is.getItemStack().getType().translationKey()))
+                            .build();
+                    e.getPlayer().sendMessage(component);
                     u.UpdateScoreboard();
                 }
             }

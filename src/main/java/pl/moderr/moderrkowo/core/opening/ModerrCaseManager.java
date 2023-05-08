@@ -1,8 +1,14 @@
 package pl.moderr.moderrkowo.core.opening;
 
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,6 +21,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import pl.moderr.moderrkowo.core.Main;
 import pl.moderr.moderrkowo.core.customitems.CustomItemsManager;
 import pl.moderr.moderrkowo.core.mysql.User;
@@ -97,7 +104,7 @@ public class ModerrCaseManager implements Listener {
                 ColorUtils.color("   &7Klucze: &6" + ItemStackUtils.getSameItems(u.getPlayer(), CustomItemsManager.getZwyklaKey()) + "   "),
                 ColorUtils.color(" "),
                 ColorUtils.color("   &8Kliknij aby otworzyć" + "   "),
-                ColorUtils.color("   &8PPM szczegóły"),
+                ColorUtils.color("   &8Kliknij prawym aby zobaczyć drop"),
                 ColorUtils.color(" ")
         ));
         /*ModerrCase chest2 = ModerrCaseConstants.getCase(ModerrCaseEnum.SKAZENIA);
@@ -154,23 +161,11 @@ public class ModerrCaseManager implements Listener {
         if (!silent) {
             Bukkit.broadcastMessage(ColorUtils.color("  &e&l" + Bukkit.getPlayer(playerId).getName() + " &7otwiera skrzynie &f" + data.name()));
         }
-        String color = "";
-        switch (data.getReward().rarity()) {
-            case POSPOLITE:
-                color = "&f&lP &e";
-                break;
-            case RZADKIE:
-                color = "&9&lR &e";
-                break;
-            case LEGENDARNE:
-                color = "&d&lL &e";
-                break;
-            case MITYCZNE:
-                color = "&c&lM &e";
-                break;
-        }
         if (!silent) {
-            Bukkit.broadcastMessage(ColorUtils.color("  &7znajduje " + color + ChatUtil.materialName(data.getReward().item().getType())));
+            Component displayName = data.getReward().rarity().getPrefix().appendSpace().append(Component.translatable(data.getReward().item().getType().translationKey()).color(NamedTextColor.WHITE).decoration(TextDecoration.BOLD, false))
+                    .hoverEvent(HoverEvent.showItem(HoverEvent.ShowItem.of(data.getReward().item().getType().key(), 1)));
+//            Bukkit.broadcastMessage(ColorUtils.color("  &7znajduje " + color + ChatUtil.materialName(data.getReward().item().getType())));
+            Main.getInstance().getServer().broadcast(Component.text("  znajduje ").color(NamedTextColor.GRAY).append(displayName));
         }
         Player p = Bukkit.getPlayer(playerId);
         assert p != null;
@@ -200,26 +195,12 @@ public class ModerrCaseManager implements Listener {
 
     public void anim(Player p, Inventory inv, ArrayList<ModerrCaseItemTemp> rewards, int offset){
         for(int i = 10; i != 17; i++){
-            String color = "";
             ModerrCaseItemTemp item = rewards.get((i-10)+offset);
-            switch (item.rarity()){
-                case POSPOLITE:
-                    color = "&f&lP &e";
-                    break;
-                case RZADKIE:
-                    color = "&9&lR &e";
-                    break;
-                case LEGENDARNE:
-                    color = "&d&lL &e";
-                    break;
-                case MITYCZNE:
-                    color = "&c&lM &e";
-                    break;
-                case ZALAMANY:
-                    color = "&d&lZ &e";
-                    break;
-            }
-            inv.setItem(i, ItemStackUtils.changeName(item.item(), color + ChatUtil.materialName(item.item().getType())));
+            ItemStack inventoryItem = item.item();
+            ItemMeta meta = inventoryItem.getItemMeta();
+            meta.displayName(item.rarity().getPrefix().appendSpace().append(Component.translatable(inventoryItem.getType().translationKey()).color(NamedTextColor.WHITE).decoration(TextDecoration.BOLD, false)));
+            inventoryItem.setItemMeta(meta);
+            inv.setItem(i, inventoryItem);
         }
     }
 

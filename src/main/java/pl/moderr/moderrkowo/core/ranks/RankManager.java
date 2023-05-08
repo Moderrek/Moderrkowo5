@@ -2,6 +2,8 @@ package pl.moderr.moderrkowo.core.ranks;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
@@ -179,7 +181,21 @@ public class RankManager {
         }
     }
 
-    public static int getPriority(Rank rank) {
+    @Contract(pure = true)
+    public static @NotNull String getMessageColor(@NotNull Rank rank){
+        switch (rank) {
+            case Zelazo:
+            case Zloto:
+            case Diament:
+            case Emerald:
+                return "&f";
+            default:
+                return "&7";
+        }
+    }
+
+    @Contract(pure = true)
+    public static int getPriority(@NotNull Rank rank) {
         switch (rank) {
             case Zelazo:
                 return 1;

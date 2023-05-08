@@ -1,5 +1,8 @@
 package pl.moderr.moderrkowo.core.marketplace;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,19 +20,18 @@ import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
-import java.text.NumberFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class RynekCommand implements CommandExecutor, TabCompleter {
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (args.length > 0) {
-                if (args[0].equalsIgnoreCase("wystaw")) {
+                if (args[0].equalsIgnoreCase("wystaw") || args[0].equalsIgnoreCase("sell")) {
                     User u = UserManager.getUser(p.getUniqueId());
                     int max = 0;
                     switch (u.getRank()) {
@@ -89,12 +91,11 @@ public class RynekCommand implements CommandExecutor, TabCompleter {
                                 players.openInventory(Main.getInstance().instanceRynekManager.getRynekInventory(Integer.parseInt(players.getOpenInventory().getTitle().replace(Main.getInstance().instanceRynekManager.RynekGui_WithoutPage, "")), p));
                             }
                         }
-                        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("pl-PL"));
-                        nf.setMaximumFractionDigits(2);
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7wystawił &6" + p.getInventory().getItemInMainHand().getType() + " &7za &6" + nf.format(cost) + " zł"));
-                        p.getInventory().getItemInMainHand().setAmount(0);
+                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7wystawił &6" + p.getInventory().getItemInMainHand().getType() + " &7za &6" + ChatUtil.getMoney(cost)));
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_CELEBRATE, 1, 1);
-                        p.sendTitle(ColorUtils.color("&2Wystawiono"), ColorUtils.color("&a" + ChatUtil.materialName(p.getInventory().getItemInMainHand().getType())));
+//                        p.sendTitle(ColorUtils.color("&2Wystawiono"), ColorUtils.color("&a" + ChatUtil.materialName(p.getInventory().getItemInMainHand().getType())));
+                        p.showTitle(Title.title(Component.text("Wystawiono").color(NamedTextColor.DARK_GREEN), Component.translatable(p.getInventory().getItemInMainHand().getType().translationKey()).color(NamedTextColor.GREEN)));
+                        p.getInventory().getItemInMainHand().setAmount(0);
                         p.sendMessage(ColorUtils.color("&aPomyślnie wystawiono twój przedmiot na rynku!"));
                         return false;
                     }
@@ -112,12 +113,11 @@ public class RynekCommand implements CommandExecutor, TabCompleter {
         }
         return false;
     }
+
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         if (args.length == 1) {
-            ArrayList<String> list = new ArrayList<>();
-            list.add("wystaw");
-            return list;
+            return Arrays.asList("sell", "wystaw");
         }
         return null;
     }

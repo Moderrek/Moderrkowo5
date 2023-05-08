@@ -1,5 +1,8 @@
 package pl.moderr.moderrkowo.core.cuboids;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -14,6 +17,7 @@ import pl.moderr.moderrkowo.core.cuboids.listeners.PlaceRemoveCuboid;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class CuboidsManager {
@@ -21,13 +25,13 @@ public class CuboidsManager {
     private static final Material cuboidMaterial = Material.LODESTONE;
     private static final String cuboidDisplayName = ColorUtils.color("&bBlok działki");
 
-    public static ItemStack getCuboidItem(int count) {
-        if (count > 64 || count <= 0) {
-            return null;
-        }
+    public static @NotNull ItemStack getCuboidItem(int count) {
         ItemStack item = new ItemStack(cuboidMaterial, count);
         ItemMeta im = item.getItemMeta();
         im.setDisplayName(cuboidDisplayName);
+        im.lore(Arrays.asList(
+                Component.text("Rozmiar ").color(NamedTextColor.GOLD).append(Component.text("> 127 x 127").color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false))
+        ));
         item.setItemMeta(im);
         return item;
     }

@@ -1,0 +1,20 @@
+# MySQL
+mysql:
+  host: 'host'
+  port: 3306
+  database: 'database'
+  username: 'root'
+  password: 'password'
+# Time Vote
+time-to-vote: 15
+vote-delay: 10
+disable-command: true
+# Discord
+discord-token: "token"
+discord-link: "https://discord.gg/invite"
+# Motd
+motd-secound: "&aPrace techniczne"
+motd-secound2: "Prace techniczne"
+# Spawn
+spawn:
+  world: 'spawn'

@@ -1,0 +1,162 @@
+name: Moderrkowo
+version: 5.0
+main: pl.moderr.moderrkowo.core.Main
+api-version: 1.19
+authors: [ MODERR ]
+description: Główny plugin do serwera Minecraft z dodatkami Moderrkowo Sezon 5
+softdepend: [WorldGuard,Citizens]
+commands:
+  asklep:
+    permission: moderr.admin
+  moderrkowo:
+    permission: moderr.admin
+  ranking:
+    description: Komenda umożliwiającą pokazanie top listy graczy
+  playerid:
+    description: Sprawdza UUID gracza
+    permission: moderrkowo.checkid
+  adminchat:
+    aliases: [ ac ]
+    description: Prywatny chat dla administratorów
+    permission: moderr.checkid
+  ahelpop:
+    description: Odpowiadanie na helpop graczy
+    permission: moderr.adminhelpop
+  chat:
+    description: Ustawienia chatu
+    permission: moderr.admin.chat
+  endersee:
+    description: Podgląd skrzyni kresu
+    permission: moderr.admin.viewinv
+  fly:
+    description: Umożliwia latanie
+    permission: moderr.admin
+  gamemode:
+    description: Zmienia tryb gry
+    permission: moderr.admin
+  invsee:
+    description: Poglad ekwipunku
+    permission: moderr.admin
+  mban:
+    description: Banuje graczy
+    permission: moderr.ban
+  mkick:
+    description: Wyrzuca graczy
+    permission: moderr.kick
+  nazwa:
+    description: Zmienia nazwe przedmiotu
+    permission: moderr.admin
+  say:
+    description: Wysyla wiadomosc na chat jako administracja
+    permission: moderr.admin
+  sendalert:
+    description: Wysyla powiadomienie na chacie
+    permission: moderr.admin
+  vanish:
+    aliases: [ v ]
+    description: Ukrywa cie
+    permission: moderr.vanish
+  craftingdzialka:
+    description: Wysyla link do craftingu dzialki
+  discord:
+    description: Wysyla link do discorda
+  helpop:
+    aliases: [ pomoc ]
+    description: Mozliwosc pisania do administratorow
+  message:
+    aliases: [ msg ]
+    description: Mozliwosc pisania do graczy w prywatnej wiadomosci
+  reply:
+    aliases: [ r ]
+    description: Mozliwosc odpisania prywatnej wiadomosci
+  tpr:
+    aliases: [tpa]
+    description: Prosba o teleportacje do gracza
+  tpaccept:
+    description: Akceptacje teleportacji
+  tpdeny:
+    description: Odrzucanie teleportacji
+  pogoda:
+    aliases: [ weather ]
+    description: Glosowanie na zmiane pogody
+  dzialka:
+    aliases: [ cuboid ]
+    description: Zarzadzanie dzialka
+  timevote:
+    aliases: [ tv ]
+    description: Glosowanie na czas
+  regulamin:
+    description: Caly regulamin serwera
+  villager:
+    permission: moderr.admin.npc
+    description: Respi villagerow
+  spawn:
+    description: Teleportuje na spawna
+  setspawn:
+    permission: moderr.admin.setspawn
+    description: Ustawia teleportacje na spawna
+  wyplac:
+    aliases: [ withdraw,banknot ]
+    description: wyplaca pieniadze z banku
+  portfel:
+    aliases: [ bank ]
+  home:
+    aliases: [ dom, homes ]
+  sethome:
+    aliases: [ ustawdom ]
+  saveusers:
+    permission: moderr.op.saveusers
+  holo:
+    permission: moderr.op.holo
+  abank:
+    permission: moderr.op.abank
+  acheststorage:
+    permission: moderr.op.acheststorage
+  rynek:
+    aliases: [ ah,sprzedaz ]
+  przelej:
+    aliases: [ pay,przelew,share ]
+  przedmioty:
+  arank:
+    permission: moderr.op.arank
+  tpw:
+    permission: moderr.op.tpw
+  sidebar:
+    aliases: [ tabela,tablica ]
+  poziom:
+    aliases: [ level ]
+  poradnik:
+    aliases: [ tutorial,oprowadzenie,help ]
+  listanpc:
+  odbierz:
+  sklep:
+    aliases: [rangi,range,wsparcie,shop,itemshop]
+  enderchest:
+    aliases: [ ender ]
+  crafting:
+    aliases: [ craft ]
+  delhome:
+    aliases: [ usundom,deletehome ]
+  bazar:
+    permission: moderrkowo.cmd.bazar
+permissions:
+  moderrkowo.cmd.bazar:
+    default: true
+  moderr.vanish:
+    default: op
+  moderr.kick:
+    default: op
+  moderr.ban:
+    default: op
+  moderr.adminhelpop:
+    default: op
+  moderr.player:
+    default: true
+  moderr.admin:
+    default: op
+  moderr.adminchat:
+    default: op
+  moderrkowo.checkid:
+    default: op
+  moderr.cuboids.admin:
+    default: op

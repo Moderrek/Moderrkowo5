@@ -23,7 +23,7 @@ public class HoloCommand implements CommandExecutor {
             e.setSmall(true);
             e.setGravity(false);
             e.setBasePlate(false);
-            e.setCustomName(ColorUtils.color(Logger.getMessage(args, 0, true).replace("\\n","\n")));
+            e.setCustomName(ColorUtils.color(Logger.getMessage(args, 0, true).replace("\\n", "\n")));
             e.setSilent(true);
             e.setRemoveWhenFarAway(false);
             Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7postawił hologram &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));

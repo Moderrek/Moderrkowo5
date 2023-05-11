@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 public class DiscordCommand implements CommandExecutor {
 
     private final String discordLink;
-    public DiscordCommand(final String discordLink){
+
+    public DiscordCommand(final String discordLink) {
         this.discordLink = discordLink;
     }
 
@@ -30,7 +31,7 @@ public class DiscordCommand implements CommandExecutor {
                         )
                         .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, discordLink))
                 );
-        sender.sendMessage(textComponent);;
+        sender.sendMessage(textComponent);
         return false;
     }
 }

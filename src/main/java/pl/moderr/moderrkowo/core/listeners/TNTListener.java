@@ -43,6 +43,7 @@ public class TNTListener implements Listener {
         }
 
     }
+
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
         if (e.getEntityType() == EntityType.PRIMED_TNT) {

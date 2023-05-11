@@ -7,9 +7,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.commands.admin.ChatCommand;
-import pl.moderr.moderrkowo.core.mysql.User;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
 import pl.moderr.moderrkowo.core.ranks.RankManager;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.HexResolver;
 import pl.moderr.moderrkowo.core.utils.Logger;
@@ -73,6 +74,7 @@ public class ChatListener implements Listener {
             }
             e.setCancelled(false);
             e.setMessage(e.getMessage().replace("%", "%%"));
+            e.setMessage(filterMessage(e.getMessage()));
             double max = 0;
             switch (u.getRank()) {
                 case None:
@@ -99,7 +101,31 @@ public class ChatListener implements Listener {
             e.setFormat(ColorUtils.color(RankManager.getChat(u.getRank(), u.getStuffRank()) + e.getPlayer().getName() + " " + RankManager.getMessageColor(u.getRank())) + e.getMessage());
             return now.plusMillis((long) (max * 1000));
         });
-        //TODO Cenzura
+    }
+
+    private String replace(String source, String target, String replacement) {
+        StringBuilder sbSource = new StringBuilder(source);
+        StringBuilder sbSourceLower = new StringBuilder(source.toLowerCase());
+        String searchString = target.toLowerCase();
+
+        int idx = 0;
+        while ((idx = sbSourceLower.indexOf(searchString, idx)) != -1) {
+            sbSource.replace(idx, idx + searchString.length(), replacement);
+            sbSourceLower.replace(idx, idx + searchString.length(), replacement);
+            idx += replacement.length();
+        }
+        sbSourceLower.setLength(0);
+        sbSourceLower.trimToSize();
+        sbSourceLower = null;
+
+        return sbSource.toString();
+    }
+
+    private String filterMessage(String message) {
+        for (String badWord : ChatUtil.bannableWords) {
+            message = replace(message, badWord, "*");
+        }
+        return message;
     }
 
     @EventHandler
@@ -111,7 +137,7 @@ public class ChatListener implements Listener {
         String command = e.getMessage().toLowerCase();
         for (String s : blockedCmds) {
             if (command.startsWith("/" + s)) {
-                if(command.startsWith("/helpop")){
+                if (command.startsWith("/helpop")) {
                     e.setCancelled(false);
                     continue;
                 }

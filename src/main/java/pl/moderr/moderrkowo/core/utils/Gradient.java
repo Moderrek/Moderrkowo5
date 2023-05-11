@@ -8,6 +8,7 @@ public class Gradient {
     private final List<Color> colors;
     private final int stepSize;
     private int step, stepIndex;
+
     public Gradient(List<Color> colors, int totalColors) {
         if (colors.size() < 2) {
             throw new IllegalArgumentException("Must provide at least 2 colors");
@@ -19,6 +20,7 @@ public class Gradient {
         this.stepSize = totalColors / (colors.size() - 1);
         this.step = this.stepIndex = 0;
     }
+
     public static Color getGradientInterval(Color start, Color end, float interval) {
         if (0 > interval || interval > 1) {
             throw new IllegalArgumentException("Interval must be between 0 and 1 inclusively.");
@@ -28,6 +30,7 @@ public class Gradient {
         int b = (int) (end.getBlue() * interval + start.getBlue() * (1 - interval));
         return new Color(r, g, b);
     }
+
     public Color next() {
         Color color;
         if (this.stepIndex + 1 < this.colors.size()) {

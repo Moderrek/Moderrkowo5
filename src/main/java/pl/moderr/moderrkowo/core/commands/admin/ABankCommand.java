@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.mysql.User;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
@@ -23,19 +23,19 @@ public class ABankCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         CommandSender p = sender;
         User u = UserManager.getUser(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId());
-        if(args[0].equalsIgnoreCase("odejmij")){
+        if (args[0].equalsIgnoreCase("odejmij")) {
             u.subtractMoney(Double.parseDouble(args[2]));
             p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
         }
-        if(args[0].equalsIgnoreCase("dodaj")){
+        if (args[0].equalsIgnoreCase("dodaj")) {
             u.addMoney(Double.parseDouble(args[2]));
             p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
         }
-        if(args[0].equalsIgnoreCase("ustaw")){
+        if (args[0].equalsIgnoreCase("ustaw")) {
             u.setMoney(Double.parseDouble(args[2]));
             p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
         }
-        if(args[0].equalsIgnoreCase("sprawdz")){
+        if (args[0].equalsIgnoreCase("sprawdz")) {
             p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
         }
         return false;
@@ -44,7 +44,7 @@ public class ABankCommand implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
-        if(args.length == 1){
+        if (args.length == 1) {
             return Arrays.asList("odejmij", "dodaj", "ustaw", "sprawdz");
         }
         return null;

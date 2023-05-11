@@ -21,6 +21,7 @@ public class RandomUtils {
         }
         return location;
     }
+
     public static int getRandomInt(int rangeMin, int rangeMax) {
         Random rand = new Random();
         return rand.nextInt((rangeMax - rangeMin) + 1) + rangeMin;

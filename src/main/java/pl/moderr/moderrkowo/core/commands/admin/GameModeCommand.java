@@ -40,15 +40,15 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
                         Player p2 = Bukkit.getPlayer(args[1]);
                         if (p2 != null) {
                             p2.setGameMode(gameMode);
-                            p.sendMessage(ColorUtils.color("&aZmieniono tryb gry gracza &2" + p2.getName() + " &ana &2" + gameMode.toString()));
-                            Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb &6" + p2.getName() + " &7gry na &6" + gameMode.toString()));
+                            p.sendMessage(ColorUtils.color("&aZmieniono tryb gry gracza &2" + p2.getName() + " &ana &2" + gameMode));
+                            Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb &6" + p2.getName() + " &7gry na &6" + gameMode));
                         } else {
                             p.sendMessage(ColorUtils.color("&cPodany gracz jest offline!"));
                         }
                     } else {
                         p.setGameMode(gameMode);
-                        p.sendMessage(ColorUtils.color("&aZmieniono tryb gry na &2" + gameMode.toString()));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb gry na &6" + gameMode.toString()));
+                        p.sendMessage(ColorUtils.color("&aZmieniono tryb gry na &2" + gameMode));
+                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb gry na &6" + gameMode));
                     }
                     return false;
                 } else {

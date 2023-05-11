@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.listeners.JoinQuitListener;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
@@ -33,7 +33,7 @@ public class VanishCommand implements CommandExecutor {
                     if (players.isOp()) {
                         continue;
                     }
-                    players.showPlayer(Main.getInstance(), p);
+                    players.showPlayer(ModerrkowoPlugin.getInstance(), p);
                 }
                 hidden.remove(p.getUniqueId());
                 p.sendMessage(ColorUtils.color("&cZostałeś odkryty"));
@@ -45,7 +45,7 @@ public class VanishCommand implements CommandExecutor {
                     if (players.isOp()) {
                         continue;
                     }
-                    players.hidePlayer(Main.getInstance(), p);
+                    players.hidePlayer(ModerrkowoPlugin.getInstance(), p);
                 }
                 hidden.add(p.getUniqueId());
                 p.sendMessage(ColorUtils.color("&aZostałeś ukryty"));

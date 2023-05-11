@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.npc.data.npc.NPCData;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -26,7 +26,7 @@ public class ANPCCommand implements CommandExecutor, TabCompleter, Listener {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, Logger.getMessage(args, 0, true));
-            npc.data().set(Main.getInstance().NPCManager.NpcIdKey, Logger.getMessage(args, 0, true));
+            npc.data().set(ModerrkowoPlugin.getInstance().getNpc().NpcIdKey, Logger.getMessage(args, 0, true));
             npc.spawn(p.getLocation());
             npc.setProtected(true);
             Logger.logNpcMessage(ColorUtils.color("&6" + p.getName() + " &7postawił nowego Villager'a &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));
@@ -40,7 +40,7 @@ public class ANPCCommand implements CommandExecutor, TabCompleter, Listener {
         ArrayList<String> list = new ArrayList<>();
         list.add("Losowy teleport");
         list.add("Kowal");
-        for (NPCData data : Main.getInstance().NPCManager.npcs.values()) {
+        for (NPCData data : ModerrkowoPlugin.getInstance().getNpc().npcs.values()) {
             list.add(data.getId());
         }
         return list;

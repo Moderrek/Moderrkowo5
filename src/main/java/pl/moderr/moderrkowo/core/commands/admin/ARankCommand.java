@@ -8,11 +8,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.mysql.User;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
 import pl.moderr.moderrkowo.core.ranks.Rank;
 import pl.moderr.moderrkowo.core.ranks.RankManager;
 import pl.moderr.moderrkowo.core.ranks.StuffRank;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 import java.util.ArrayList;

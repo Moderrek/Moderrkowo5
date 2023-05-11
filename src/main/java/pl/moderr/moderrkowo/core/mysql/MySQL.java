@@ -3,7 +3,8 @@ package pl.moderr.moderrkowo.core.mysql;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -14,11 +15,6 @@ import java.text.MessageFormat;
 
 public class MySQL {
 
-    private Connection connection;
-    public String host, port, database, username, password;
-
-    public MySQLQuery query;
-
     public final String homesTable = "homes";
     public final String usersTable = "users";
     public final String rynekTable = "marketplace";
@@ -26,6 +22,9 @@ public class MySQL {
     public final String notificationTable = "notifications";
     public final String rewardTable = "rewards";
     public final String virtualPln = "virtualpln";
+    public String host, port, database, username, password;
+    public MySQLQuery query;
+    private Connection connection;
 
     public void enable(String host, String port, String database, String username, String password) {
         this.host = host;
@@ -58,12 +57,12 @@ public class MySQL {
                         Logger.logDatabaseMessage(ColorUtils.color(MessageFormat.format("&a+ &2{0} &azostał wczytany", p.getName())));
                     }
                 }
-                Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                    Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-                        int count = UserManager.loadedUsers.values().size();
+                Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), () -> {
+                    Bukkit.getScheduler().scheduleSyncRepeatingTask(ModerrkowoPlugin.getInstance(), () -> {
+                        int count = UserManager.getUsers().size();
                         Logger.logAdminLog("&eAutomatyczne zapisywanie użytkowników [" + count + "]");
                         int i = 1;
-                        for (User u : UserManager.loadedUsers.values()) {
+                        for (User u : UserManager.getUsers()) {
                             try {
                                 query.updateUser(u);
                                 u.getPlayer().sendActionBar(ColorUtils.color("&a✔ Zapisano dane."));
@@ -88,8 +87,9 @@ public class MySQL {
             e.printStackTrace();
         }
     }
+
     public void disable() {
-        for (User u : UserManager.loadedUsers.values()) {
+        for (User u : UserManager.getUsers()) {
             UserManager.unloadUser(u.getPlayer().getUniqueId());
             Logger.logDatabaseMessage(ColorUtils.color(MessageFormat.format("&c- &4{0} &czostał odczytany", u.getName())));
         }
@@ -102,6 +102,7 @@ public class MySQL {
     public Connection getConnection() {
         return connection;
     }
+
     public void setConnection(Connection connection) {
         this.connection = connection;
     }

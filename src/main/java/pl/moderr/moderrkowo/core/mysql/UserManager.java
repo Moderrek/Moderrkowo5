@@ -9,118 +9,133 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCSData;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCSData;
 import pl.moderr.moderrkowo.core.ranks.Rank;
 import pl.moderr.moderrkowo.core.ranks.RankManager;
 import pl.moderr.moderrkowo.core.ranks.StuffRank;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.UserLevel;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UserManager {
 
-    public static Map<UUID, User> loadedUsers = new HashMap<>();
+
+    private static final Map<UUID, User> loadedUsers = new ConcurrentHashMap<>();
+
+    @Contract("_ -> new")
+    public static @NotNull User getDefaultUser(@NotNull Player p) {
+        return new User(p.getUniqueId(), p.getName(), 3000, 0, Rank.None, StuffRank.None, new UserLevel(), new PlayerNPCSData(), new java.sql.Date(Calendar.getInstance().getTime().getTime()), true, p.getStatistic(Statistic.PLAY_ONE_MINUTE), ModerrkowoPlugin.getVersion());
+    }
 
     @Contract(pure = true)
+    public static @NotNull Collection<User> getUsers() {
+        return loadedUsers.values();
+    }
+
     public static boolean isUserLoaded(UUID uuid) {
         return loadedUsers.containsKey(uuid);
     }
 
     public static User getUser(UUID uuid) {
         if (!isUserLoaded(uuid)) {
-            /*if (Bukkit.getPlayer(uuid) != null && Objects.requireNonNull(Bukkit.getPlayer(uuid)).isOnline()) {
-                loadUser(Objects.requireNonNull(Bukkit.getPlayer(uuid)));
-            }*/
-            Logger.logPluginMessage("WYSTĄPIŁ BŁĄD UŻYTKOWNIK NIE JEST WCZYTANY, " + Bukkit.getOfflinePlayer(uuid).getName());
+            final String name = Bukkit.getOfflinePlayer(uuid).getName();
+            Logger.logDatabaseMessage(MessageFormat.format("{0} nie jest w pamięci podręcznej!", name));
         }
         return loadedUsers.get(uuid);
     }
 
-    public static User getDefaultUser(Player p) {
-        return new User(p.getUniqueId(), p.getName(), 3000, 0, Rank.None, StuffRank.None, new UserLevel(), new PlayerNPCSData(), new java.sql.Date(Calendar.getInstance().getTime().getTime()), true, p.getStatistic(Statistic.PLAY_ONE_MINUTE), Main.getVersion());
-    }
-
-    public static void loadUser(Player p) {
+    public static void loadUser(@NotNull Player p) {
         UUID uuid = p.getUniqueId();
-        if (isUserLoaded(uuid)) {
-            return;
-        }
+        if (isUserLoaded(uuid)) return;
         User u = null;
+        // Try load user
         try {
-            if (!Main.getMySQL().getQuery().userExists(uuid)) {
+            if (!ModerrkowoPlugin.getMySQL().getQuery().userExists(uuid)) {
+                // Register user
                 u = getDefaultUser(p);
-                Main.getMySQL().getQuery().insertUser(u);
-                try{
-                    p.teleport(Objects.requireNonNull(Main.getInstance().config.getLocation("spawn.location")));
-                }catch (Exception e){
-                    try{
+                ModerrkowoPlugin.getMySQL().getQuery().insertUser(u);
+                // Teleport to spawn
+                try {
+                    p.teleport(Objects.requireNonNull(ModerrkowoPlugin.getInstance().config.getLocation("spawn.location")));
+                } catch (Exception e) {
+                    try {
                         p.teleport(Objects.requireNonNull(Bukkit.getWorld("void")).getSpawnLocation());
-                    }catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
                 }
-
+                // Starter kit
                 p.getInventory().addItem(new ItemStack(Material.STONE_AXE));
                 p.getInventory().addItem(new ItemStack(Material.OAK_LOG, 2));
                 p.getInventory().addItem(new ItemStack(Material.BREAD, 16));
-                p.sendMessage(ColorUtils.color("&aZostałeś pomyślnie zarejestrowany!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-                Bukkit.broadcastMessage(ColorUtils.color("  &fPowitajcie nowego gracza &a" + p.getName() + " &fna serwerze!"));
+                final Component greet = Component.text()
+                        .content("  Powitajcie nowego gracza")
+                        .color(NamedTextColor.WHITE)
+                        .appendSpace()
+                        .append(Component.text(p.getName()).color(NamedTextColor.GREEN))
+                        .appendSpace()
+                        .append(Component.text("na serwerze!").color(NamedTextColor.WHITE))
+                        .build();
+                ModerrkowoPlugin.getInstance().getServer().broadcast(greet);
             } else {
-                Main.getMySQL().getQuery().updateLastSeen(uuid);
-                u = Main.getMySQL().getQuery().getUser(p.getUniqueId());
+                // Load user
+                ModerrkowoPlugin.getMySQL().getQuery().updateLastSeen(uuid);
+                u = ModerrkowoPlugin.getMySQL().getQuery().getUser(p.getUniqueId());
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
+        // After load
         if (u != null) {
+            // TODO component
             p.setPlayerListName(RankManager.getChat(u.getRank(), u.getStuffRank()) + p.getName());
             if (u.hasRank(Rank.Zelazo)) {
+                // TODO component
                 Bukkit.broadcastMessage(ColorUtils.color(RankManager.getChat(u.getRank(), u.getStuffRank()) + p.getName() + "&e dołączył"));
             }
             loadedUsers.put(uuid, u);
-            if (!u.getVersion().equals(Main.getVersion())) {
-                // TODO wyswielt książke
-                //p.openBook(Main.changeLogItem());
+            if (!u.getVersion().equals(ModerrkowoPlugin.getVersion())) {
                 p.sendMessage(Component.text("Podczas twojej nieobecności serwer przeszedł aktualizację.").color(NamedTextColor.YELLOW));
             }
-            u.LoadNotifications();
-//            try {
-//                Main.getInstance().sidebar.addViewer(p);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            u.tryUpdateScoreboard();
+            u.tryLoadNotifications();
             Logger.logDatabaseMessage("Wczytano gracza");
         }
     }
 
-    public static void saveUser(User user){
+    public static boolean saveUser(User user) {
         try {
-            Main.getMySQL().getQuery().updateUser(user);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            ModerrkowoPlugin.getMySQL().getQuery().updateUser(user);
+            return true;
+        } catch (SQLException errorUpdate) {
+            errorUpdate.printStackTrace();
+            return false;
         }
     }
-    public static void unloadUser(UUID uuid) {
+
+    public static void unloadUser(@Nullable UUID uuid) {
+        if (uuid == null) return;
         if (isUserLoaded(uuid)) {
-            User u = loadedUsers.get(uuid);
-            try {
-                Main.getMySQL().getQuery().updateUser(u);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            final User user = loadedUsers.get(uuid);
+            saveUser(user);
+            // Server leave message
+            if (user.hasRank(Rank.Zelazo)) {
+                // TODO component
+                Bukkit.broadcastMessage(ColorUtils.color(RankManager.getChat(user.getRank(), user.getStuffRank()) + user.getName() + "&e opuścił"));
             }
-            if (u.hasRank(Rank.Zelazo)) {
-                Bukkit.broadcastMessage(ColorUtils.color(RankManager.getChat(u.getRank(), u.getStuffRank()) + u.getName() + "&e opuścił"));
-            }
+            // Remove user from cache
             loadedUsers.remove(uuid);
             Logger.logDatabaseMessage("Odczytano gracza");
-        } else {
-            Logger.logDatabaseMessage("Gracz nie byłwczytany");
         }
-//        try{
-//            Main.getInstance().sidebar.removeViewer(Objects.requireNonNull(Bukkit.getPlayer(uuid)));
-//        }catch (Exception ignored){}
     }
 
 }

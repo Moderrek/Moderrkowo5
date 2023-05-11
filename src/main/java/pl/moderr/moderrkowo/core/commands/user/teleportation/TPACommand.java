@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class TPACommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (Main.getInstance().instanceAntyLogout.inFight(p.getUniqueId())) {
+            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
                 p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;

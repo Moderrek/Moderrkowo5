@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
@@ -17,7 +17,7 @@ public class WPLNCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             try {
-                p.sendMessage(ColorUtils.color("&7Posiadasz: &6" + ChatUtil.getNumber(Main.getMySQL().getQuery().getWPLN(p.getName())) + " wPLN"));
+                p.sendMessage(ColorUtils.color("&7Posiadasz: &6" + ChatUtil.getNumber(ModerrkowoPlugin.getMySQL().getQuery().getWPLN(p.getName())) + " wPLN"));
             } catch (SQLException exception) {
                 p.sendMessage(ColorUtils.color("&cNie udało się pobrać wPLN"));
                 exception.printStackTrace();

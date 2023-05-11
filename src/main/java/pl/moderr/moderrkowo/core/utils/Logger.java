@@ -12,7 +12,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 
 import java.util.logging.Level;
 
@@ -39,16 +39,16 @@ public class Logger {
     }
 
     public static void logNpcMessage(String message) {
-        String prefix = "";
+        final Component component = Component.text().content("[NPC]").color(TextColor.color(0x66cdaa)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color(prefix + "&9NPC &6» &7" + message));
+            if (p.hasPermission("moderrkowo.logs")) {
+                p.sendMessage(component);
             }
         }
     }
 
     public static void logAdminChat(String message) {
-        final Component component = Component.text().content("[ADMINLOG]").color(NamedTextColor.RED).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
+        final Component component = Component.text().content("[ADMINLOG]").color(TextColor.color(0xff3442)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.hasPermission("moderrkowo.logs")) {
                 p.sendMessage(component);
@@ -59,6 +59,7 @@ public class Logger {
     public static void logAdminLog(String message) {
         logAdminChat(message);
     }
+
     public static void logPluginMessage(String message) {
         final Component component = Component.text().content("[PLUGIN]").color(TextColor.color(0xF29111)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -67,13 +68,16 @@ public class Logger {
             }
         }
     }
+
     public static void logCaseMessage(String message) {
+        final Component component = Component.text().content("[CASE]").color(TextColor.color(0xeef200)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.isOp()) {
-                p.sendMessage(ColorUtils.color("&eCASE &6» &f" + message));
+            if (p.hasPermission("moderrkowo.logs")) {
+                p.sendMessage(component);
             }
         }
     }
+
     public static void logDatabaseMessage(String message) {
         final Component component = Component.text().content("[MySQL]").color(TextColor.color(0x00758F)).appendSpace().append(LegacyComponentSerializer.legacyAmpersand().deserialize(message).color(NamedTextColor.WHITE)).build();
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -81,7 +85,7 @@ public class Logger {
                 p.sendMessage(component);
             }
         }
-        Main.getInstance().getLogger().log(Level.SEVERE, PlainTextComponentSerializer.plainText().serialize(component));
+        ModerrkowoPlugin.getInstance().getLogger().log(Level.SEVERE, PlainTextComponentSerializer.plainText().serialize(component));
     }
 
     public static String getMessage(String[] args, int startFromArg, boolean removeFirstSpace) {

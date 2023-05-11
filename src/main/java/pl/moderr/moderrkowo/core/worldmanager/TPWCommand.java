@@ -15,7 +15,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.executers.PlayerCommand;
+import pl.moderr.moderrkowo.core.executors.PlayerCommand;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class TPWCommand implements PlayerCommand, TabCompleter {
 
-    private final Map<World.Environment, NamedTextColor> worldTypeNamedTextColorMap = new HashMap<>(){
+    private final Map<World.Environment, NamedTextColor> worldTypeNamedTextColorMap = new HashMap<>() {
         {
             put(World.Environment.CUSTOM, NamedTextColor.WHITE);
             put(World.Environment.NORMAL, NamedTextColor.GREEN);
@@ -42,7 +42,7 @@ public class TPWCommand implements PlayerCommand, TabCompleter {
             final Title title = Title.title(Component.text(""), Component.text(args[0]).color(NamedTextColor.GREEN));
             p.showTitle(title);
             final Component component = Component.text("Pomyślnie zostałeś przeteleportowany na inny świat.")
-                            .color(NamedTextColor.GREEN);
+                    .color(NamedTextColor.GREEN);
             p.sendMessage(component);
         } else {
             String worldName = p.getWorld().getName();
@@ -53,7 +53,7 @@ public class TPWCommand implements PlayerCommand, TabCompleter {
                     );
             p.sendMessage(component);
             p.sendMessage(Component.text("Wybierz świat: "));
-            for(World world : Bukkit.getWorlds()){
+            for (World world : Bukkit.getWorlds()) {
                 final TextComponent componentWorld = Component.text(" - ")
                         .color(NamedTextColor.YELLOW)
                         .append(Component.text(world.getName() + (world.equals(p.getWorld()) ? "⋆" : ""))

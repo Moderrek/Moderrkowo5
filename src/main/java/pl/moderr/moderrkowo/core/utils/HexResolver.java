@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class HexResolver {
     private static final Pattern GRADIENT_PATTERN = Pattern.compile("<(gradient|g)(:#([a-fA-F0-9]){6})+>");
     private static final Pattern HEX_PATTERN = Pattern.compile("<(#[a-fA-F0-9]{6})>");
+
     public static boolean serverSupportsHex() {
         try {
             ChatColor.of(Color.BLACK);
@@ -21,6 +22,7 @@ public class HexResolver {
             return false;
         }
     }
+
     public static String parseHexString(String text, Pattern hexPattern) {
         Matcher hexColorMatcher = hexPattern.matcher(text);
         if (serverSupportsHex()) {
@@ -37,9 +39,11 @@ public class HexResolver {
 
         return ChatColor.translateAlternateColorCodes('&', text);
     }
+
     public static String parseHexString(String text) {
         return parseHexString(text, HexResolver.HEX_PATTERN);
     }
+
     private static String parseGradients(String text) {
         String parsed = text;
         Matcher matcher = GRADIENT_PATTERN.matcher(parsed);
@@ -63,6 +67,7 @@ public class HexResolver {
         }
         return parsed;
     }
+
     private static int findGradientStop(String content, int searchAfter) {
         Matcher matcher = GRADIENT_PATTERN.matcher(content);
         while (matcher.find()) {

@@ -1,17 +1,15 @@
 name: Moderrkowo
 version: 5.0
-main: pl.moderr.moderrkowo.core.Main
+main: pl.moderr.moderrkowo.core.ModerrkowoPlugin
 api-version: 1.19
 authors: [ MODERR ]
 description: Główny plugin do serwera Minecraft z dodatkami Moderrkowo Sezon 5
-softdepend: [WorldGuard,Citizens]
+softdepend: [ WorldGuard, Citizens, HolographicDisplays ]
 commands:
   asklep:
     permission: moderr.admin
   moderrkowo:
     permission: moderr.admin
-  ranking:
-    description: Komenda umożliwiającą pokazanie top listy graczy
   playerid:
     description: Sprawdza UUID gracza
     permission: moderrkowo.checkid
@@ -64,7 +62,7 @@ commands:
     aliases: [ r ]
     description: Mozliwosc odpisania prywatnej wiadomosci
   tpr:
-    aliases: [tpa]
+    aliases: [ tpa ]
     description: Prosba o teleportacje do gracza
   tpaccept:
     description: Akceptacje teleportacji
@@ -93,7 +91,7 @@ commands:
     aliases: [ withdraw,banknot ]
     description: wyplaca pieniadze z banku
   portfel:
-    aliases: [ bank ]
+    aliases: [ bank, balance, bal, money ]
   home:
     aliases: [ dom, homes ]
   sethome:
@@ -123,7 +121,7 @@ commands:
     aliases: [ tutorial,oprowadzenie,help ]
   odbierz:
   sklep:
-    aliases: [rangi,range,wsparcie,shop,itemshop]
+    aliases: [ rangi,range,wsparcie,shop,itemshop ]
   enderchest:
     aliases: [ ender ]
   crafting:

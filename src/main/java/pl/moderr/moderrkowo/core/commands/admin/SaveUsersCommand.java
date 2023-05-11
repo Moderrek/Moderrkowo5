@@ -6,9 +6,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -21,12 +21,12 @@ public class SaveUsersCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            int count = UserManager.loadedUsers.values().size();
+            int count = UserManager.getUsers().size();
             Logger.logAdminLog("&eAutomatyczne zapisywanie użytkowników [" + count + "]");
             int i = 1;
-            for (User u : UserManager.loadedUsers.values()) {
+            for (User u : UserManager.getUsers()) {
                 try {
-                    Main.getMySQL().getQuery().updateUser(u);
+                    ModerrkowoPlugin.getMySQL().getQuery().updateUser(u);
                     u.getPlayer().sendActionBar(ColorUtils.color("&a✔ Zapisano dane."));
                     Logger.logAdminLog("&a✔. Zapisano &2" + u.getName() + " &f[" + i + "/" + count + "]");
                     i++;
@@ -38,8 +38,6 @@ public class SaveUsersCommand implements CommandExecutor {
                     u.getPlayer().playSound(u.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_HURT, 2, 1);
                     exception.printStackTrace();
                 }
-
-
             }
         }
         return false;

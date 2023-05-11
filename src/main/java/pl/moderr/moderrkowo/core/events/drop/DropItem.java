@@ -5,11 +5,11 @@ import org.jetbrains.annotations.Contract;
 
 public class DropItem {
 
+    public final boolean isRandom;
+    public final Material mat;
     public int min;
     public int max;
     public int count;
-    public final boolean isRandom;
-    public final Material mat;
 
     @Contract(pure = true)
     public DropItem(final Material mat, final int min, final int max) {

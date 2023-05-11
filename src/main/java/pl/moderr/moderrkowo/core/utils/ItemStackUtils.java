@@ -140,9 +140,9 @@ public class ItemStackUtils {
 
     public static int getSameItems(@NotNull Player player, ItemStack item) {
         int found = 0;
-        for(ItemStack is : player.getInventory().getContents()){
-            if(is == null) continue;
-            if(is.isSimilar(item)){
+        for (ItemStack is : player.getInventory().getContents()) {
+            if (is == null) continue;
+            if (is.isSimilar(item)) {
                 found += is.getAmount();
             }
         }
@@ -202,9 +202,9 @@ public class ItemStackUtils {
         if (count > found)
             return false;
 
-        for(ItemStack is : player.getInventory().getContents()){
-            if(is == null) continue;
-            if(!is.isSimilar(item)) continue;
+        for (ItemStack is : player.getInventory().getContents()) {
+            if (is == null) continue;
+            if (!is.isSimilar(item)) continue;
             int removed = Math.min(count, is.getAmount());
             count -= removed;
             is.setAmount(is.getAmount() - removed);
@@ -267,10 +267,10 @@ public class ItemStackUtils {
     public static @NotNull ItemStack generateEnchantmentBook(@NotNull Map<Enchantment, Integer> enchantments) {
         ItemStack itemStack = new ItemStack(Material.ENCHANTED_BOOK);
         EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-        for(Enchantment enchantment : enchantments.keySet()){
+        for (Enchantment enchantment : enchantments.keySet()) {
             meta.addStoredEnchant(enchantment, enchantments.get(enchantment), true);
         }
         itemStack.setItemMeta(meta);
-        return  itemStack;
+        return itemStack;
     }
 }

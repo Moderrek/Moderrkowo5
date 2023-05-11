@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
@@ -32,14 +32,14 @@ public class OdbierzCommand implements CommandExecutor, Listener {
     public final String PrzedmiotyGui_WithoutPage = ColorUtils.color("&eOdbierz &7- &eStrona ");
     public final String PrzedmiotyGUI_Name = ColorUtils.color("&eOdbierz &7- &eStrona %s");
 
-    public OdbierzCommand(Main main) {
-        Bukkit.getPluginManager().registerEvents(this, main);
+    public OdbierzCommand(ModerrkowoPlugin moderrkowoPlugin) {
+        Bukkit.getPluginManager().registerEvents(this, moderrkowoPlugin);
     }
 
     public ArrayList<ItemStack> getItems(UUID uuid) throws SQLException {
         ArrayList<ItemStack> arrayList = new ArrayList<>();
-        String sqlGet = String.format("SELECT * FROM `%s` WHERE `UUID`='%s'", Main.getMySQL().rewardTable, uuid.toString());
-        Statement stmt = Main.getMySQL().getConnection().createStatement();
+        String sqlGet = String.format("SELECT * FROM `%s` WHERE `UUID`='%s'", ModerrkowoPlugin.getMySQL().rewardTable, uuid.toString());
+        Statement stmt = ModerrkowoPlugin.getMySQL().getConnection().createStatement();
         ResultSet rs = stmt.executeQuery(sqlGet);
         if (rs == null) {
             return null;
@@ -56,7 +56,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
     }
 
     private void itemsremove(UUID uniqueId) throws SQLException {
-        Statement statement = Main.getMySQL().getConnection().createStatement();
+        Statement statement = ModerrkowoPlugin.getMySQL().getConnection().createStatement();
         statement.execute("DELETE FROM `rewards` WHERE `UUID`='" + uniqueId.toString());
     }
 
@@ -174,8 +174,8 @@ public class OdbierzCommand implements CommandExecutor, Listener {
             //<editor-fold> Collect items
 
             try {
-                itemsremove( p.getUniqueId());
-                for(ItemStack itemStack :getItems(p.getUniqueId())){
+                itemsremove(p.getUniqueId());
+                for (ItemStack itemStack : getItems(p.getUniqueId())) {
                     if (p.getInventory().firstEmpty() != -1) {
                         p.getInventory().addItem(itemStack);
                     } else {
@@ -191,7 +191,6 @@ public class OdbierzCommand implements CommandExecutor, Listener {
             } catch (SQLException exception) {
                 exception.printStackTrace();
                 p.sendMessage(ColorUtils.color("&cNie udało się zebrać przedmiotu!"));
-                return;
             }
             //</editor-fold> Buy items
 

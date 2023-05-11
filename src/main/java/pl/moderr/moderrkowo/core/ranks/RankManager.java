@@ -182,7 +182,7 @@ public class RankManager {
     }
 
     @Contract(pure = true)
-    public static @NotNull String getMessageColor(@NotNull Rank rank){
+    public static @NotNull String getMessageColor(@NotNull Rank rank) {
         switch (rank) {
             case Zelazo:
             case Zloto:

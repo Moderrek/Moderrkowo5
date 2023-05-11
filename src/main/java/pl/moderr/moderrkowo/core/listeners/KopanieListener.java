@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.mysql.LevelCategory;
-import pl.moderr.moderrkowo.core.mysql.User;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 
 public class KopanieListener implements Listener {
 

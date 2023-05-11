@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 
 public class SetSpawnCommand implements CommandExecutor {
 
@@ -17,9 +17,9 @@ public class SetSpawnCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            Main.getInstance().config.set("spawn.location", p.getLocation());
-            Main.getInstance().config.set("spawn.world", p.getLocation().getWorld().getName());
-            Main.getInstance().saveConfig();
+            ModerrkowoPlugin.getInstance().config.set("spawn.location", p.getLocation());
+            ModerrkowoPlugin.getInstance().config.set("spawn.world", p.getLocation().getWorld().getName());
+            ModerrkowoPlugin.getInstance().saveConfig();
             p.showTitle(Title.title(Component.text(" "), Component.text("Pomyślnie ustawiono spawn").color(NamedTextColor.GREEN)));
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         }

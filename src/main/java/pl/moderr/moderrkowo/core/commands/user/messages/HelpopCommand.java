@@ -28,10 +28,10 @@ public class HelpopCommand implements CommandExecutor {
                 player.sendMessage(ColorUtils.color("&8[!] &aPomyślnie wysłano!"));
                 player.sendMessage(ColorUtils.color("&8[&9Pomoc&8] &7" + player.getName() + "&8: &e" + Logger.getMessage(args, 0, true)));
                 final TextComponent mainTitle = Component.text("Moderrkowo")
-                                .color(NamedTextColor.GOLD)
-                                .decoration(TextDecoration.BOLD, true);
+                        .color(NamedTextColor.GOLD)
+                        .decoration(TextDecoration.BOLD, true);
                 final TextComponent subtitle = Component.text("Wysłano wiadomość.")
-                                .color(NamedTextColor.GREEN);
+                        .color(NamedTextColor.GREEN);
                 final Title title = Title.title(mainTitle, subtitle);
                 player.showTitle(title);
                 int administratorOnlineCount = (int) Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).count();

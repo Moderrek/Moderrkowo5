@@ -6,9 +6,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 public class SidebarCommand implements CommandExecutor {
@@ -23,7 +23,7 @@ public class SidebarCommand implements CommandExecutor {
                 u.UpdateScoreboard();
             } else {
                 p.sendTitle("", ColorUtils.color("&cWyłączono Sidebar"));
-                p.setScoreboard(Main.getInstance().getServer().getScoreboardManager().getMainScoreboard());
+                p.setScoreboard(ModerrkowoPlugin.getInstance().getServer().getScoreboardManager().getMainScoreboard());
             }
             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
         }

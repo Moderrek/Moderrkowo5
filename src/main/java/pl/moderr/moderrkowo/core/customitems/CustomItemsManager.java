@@ -1,5 +1,6 @@
 package pl.moderr.moderrkowo.core.customitems;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
@@ -33,12 +34,16 @@ public class CustomItemsManager implements Listener {
     private static ItemStack oneUseEnderchest = null;
     private static ItemStack zwyklaKey = null;
     private static ItemStack zwyklaChest = null;
+    @Getter
+    private static ItemStack szlacheckaKey = null;
+    @Getter
+    private static ItemStack szlacheckaChest = null;
     private static ItemStack wejsciowkaEnd = null;
     private static ItemStack fragmentEnd = null;
 
     public CustomItemsManager() {
         //Wejściówka do ENDU
-        try{
+        try {
             fragmentEnd = ItemStackUtils.createGuiItem(
                     Material.ENDER_PEARL,
                     1,
@@ -59,10 +64,10 @@ public class CustomItemsManager implements Listener {
 
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try{
+        try {
             wejsciowkaEnd = ItemStackUtils.createGuiItem(
                     Material.BOOK,
                     1,
@@ -78,7 +83,7 @@ public class CustomItemsManager implements Listener {
 
                 @Override
                 public void onClick(Player player, ItemStack itemStack) {
-                    if (Main.getInstance().instanceAntyLogout.inFight(player.getUniqueId())) {
+                    if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(player.getUniqueId())) {
                         player.sendMessage(ColorUtils.color("&cNie możesz używać podczas walki"));
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                         Logger.logAdminLog(player.getName() + " chciał użyć teleportu do kresu podczas walki");
@@ -87,12 +92,12 @@ public class CustomItemsManager implements Listener {
                     ItemStackUtils.consumeItem(player, 1, itemStack);
                     // TELEPORT
                     player.sendMessage(ColorUtils.color("&aPrzeteleportowano do kresu"));
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1,1);
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                     player.teleport(Objects.requireNonNull(Bukkit.getWorld("world_the_end")).getSpawnLocation());
                     player.sendTitle(ColorUtils.color(" "), ColorUtils.color("&dWitaj w kresie!"));
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         try {
@@ -168,7 +173,7 @@ public class CustomItemsManager implements Listener {
 
                 @Override
                 public void onClick(Player player, ItemStack itemStack) {
-                    if (Main.getInstance().instanceAntyLogout.inFight(player.getUniqueId())) {
+                    if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(player.getUniqueId())) {
                         player.sendMessage(ColorUtils.color("&cNie możesz używać podczas walki"));
                         player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                         Logger.logAdminLog(player.getName() + " chciał użyć enderchesta podczas walki");
@@ -226,6 +231,50 @@ public class CustomItemsManager implements Listener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            szlacheckaKey = ItemStackUtils.createGuiItem(
+                    Material.TRIPWIRE_HOOK,
+                    1,
+                    ColorUtils.color("&eKlucz do skrzyni &6&lSZLACHECKA"),
+                    ColorUtils.color("&eAby otworzyć skrzynkę musisz,"),
+                    ColorUtils.color("&ena spawnie znaleźć miejsce do otwierania skrzyń"));
+            szlacheckaKey.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+            szlacheckaKey.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            customItems.put(szlacheckaKey, new CustomItem() {
+                @Override
+                public void onEat(Player player, ItemStack itemStack) {
+
+                }
+
+                @Override
+                public void onClick(Player player, ItemStack itemStack) {
+                    player.sendMessage(ColorUtils.color("&cAby otworzyć udaj się na spawna, z kluczem i skrzynią"));
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            szlacheckaChest = ItemStackUtils.createGuiItem(
+                    Material.CHEST,
+                    1,
+                    ColorUtils.color("&eSkrzynia &6&lSZLACHECKA"),
+                    ColorUtils.color("&eAby otworzyć skrzynkę musisz,"),
+                    ColorUtils.color("&ena spawnie znaleźć miejsce do otwierania skrzyń"));
+            customItems.put(szlacheckaChest, new CustomItem() {
+                @Override
+                public void onEat(Player player, ItemStack itemStack) {
+
+                }
+
+                @Override
+                public void onClick(Player player, ItemStack itemStack) {
+                    player.sendMessage(ColorUtils.color("&cAby otworzyć udaj się na spawna, z kluczem i skrzynią"));
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static ItemStack getCarrot() {
@@ -248,9 +297,13 @@ public class CustomItemsManager implements Listener {
         return zwyklaChest.clone();
     }
 
-    public static ItemStack getWejsciowkaEnd() { return wejsciowkaEnd.clone(); }
+    public static ItemStack getWejsciowkaEnd() {
+        return wejsciowkaEnd.clone();
+    }
 
-    public static ItemStack getFragmentEnd() { return fragmentEnd.clone(); }
+    public static ItemStack getFragmentEnd() {
+        return fragmentEnd.clone();
+    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void preCraft(PrepareItemCraftEvent e) {
@@ -279,7 +332,7 @@ public class CustomItemsManager implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-     public void onEat(PlayerItemConsumeEvent e) {
+    public void onEat(PlayerItemConsumeEvent e) {
         if (e.isCancelled()) {
             return;
         }

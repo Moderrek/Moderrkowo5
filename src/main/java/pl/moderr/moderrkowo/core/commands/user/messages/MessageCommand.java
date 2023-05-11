@@ -42,12 +42,12 @@ public class MessageCommand implements CommandExecutor {
                 final String receiverName = messageReceiver.getName();
 
                 final TextComponent senderComponent = Component.text(MessageFormat.format("Ja -> {0}", receiverName))
-                                .color(NamedTextColor.GOLD)
-                                        .append(
-                                                Component.text(':')
-                                                         .color(NamedTextColor.DARK_GRAY))
-                                        .append(Component.text(message.toString())
-                                                         .color(NamedTextColor.YELLOW));
+                        .color(NamedTextColor.GOLD)
+                        .append(
+                                Component.text(':')
+                                        .color(NamedTextColor.DARK_GRAY))
+                        .append(Component.text(message.toString())
+                                .color(NamedTextColor.YELLOW));
                 messageSender.sendMessage(senderComponent);
                 messageSender.playSound(messageSender.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                 setLastMessageSender(messageSender, messageReceiver);

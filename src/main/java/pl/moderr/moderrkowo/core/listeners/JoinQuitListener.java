@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.commands.admin.VanishCommand;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
@@ -31,11 +31,11 @@ public class JoinQuitListener implements Listener {
     @EventHandler
     public void onPlayerJoin(@NotNull PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        p.sendTitle(ColorUtils.color("&6⚔ ") + Main.getServerName() + ColorUtils.color(" &r&6⚔"), ColorUtils.color("&fWitaj ponownie"));
+        p.sendTitle(ColorUtils.color("&6⚔ ") + ModerrkowoPlugin.getServerName() + ColorUtils.color(" &r&6⚔"), ColorUtils.color("&fWitaj ponownie"));
         p.setPlayerListName(ColorUtils.color("&c" + "Ładowanie.."));
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), () -> {
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
-            p.sendMessage(ChatUtil.centerText("⚔ Moderrkowo ⚔").replace("⚔ Moderrkowo ⚔", ColorUtils.color("&6⚔ ") + Main.getServerName() + ColorUtils.color(" &r&6⚔")));
+            p.sendMessage(ChatUtil.centerText("⚔ Moderrkowo ⚔").replace("⚔ Moderrkowo ⚔", ColorUtils.color("&6⚔ ") + ModerrkowoPlugin.getServerName() + ColorUtils.color(" &r&6⚔")));
             p.sendMessage(ColorUtils.color("  &8▪ &7Witaj ponownie, &6" + p.getName() + " &7na &6Moderrkowo.PL!"));
             p.sendMessage(" ");
             p.sendMessage(ColorUtils.color("  &8▪ &7Discord serwera &9/discord"));
@@ -46,9 +46,9 @@ public class JoinQuitListener implements Listener {
             p.sendMessage(" ");
         }, 40L);
         // Update the highest value of players
-        int maxPlayer = Main.getInstance().dataConfig.getInt("MaxPlayer");
+        int maxPlayer = ModerrkowoPlugin.getInstance().dataConfig.getInt("MaxPlayer");
         if (maxPlayer < Bukkit.getOnlinePlayers().size()) {
-            Main.getInstance().dataConfig.set("MaxPlayer", Bukkit.getOnlinePlayers().size());
+            ModerrkowoPlugin.getInstance().dataConfig.set("MaxPlayer", Bukkit.getOnlinePlayers().size());
             Bukkit.broadcastMessage(ColorUtils.color("  &fRekord graczy został pobity!"));
         }
         // Load User
@@ -66,7 +66,7 @@ public class JoinQuitListener implements Listener {
                 continue;
             }
             assert hidden != null;
-            p.hidePlayer(Main.getInstance(), hidden);
+            p.hidePlayer(ModerrkowoPlugin.getInstance(), hidden);
         }
         // Message
         if (p.isOp()) {
@@ -95,7 +95,7 @@ public class JoinQuitListener implements Listener {
                 + " \n "
                 + " \n&7Administracja online  &8» &6" + administracja
                 + " \n&7Gracze online &8» &6" + gracze
-                + " \n&7Rekord graczy &8» &6" + Main.getInstance().dataConfig.getInt("MaxPlayer")
+                + " \n&7Rekord graczy &8» &6" + ModerrkowoPlugin.getInstance().dataConfig.getInt("MaxPlayer")
                 + " \n ";
         String footer
                 = " \n&7Adres serwera: &amoderrkowo.pl"

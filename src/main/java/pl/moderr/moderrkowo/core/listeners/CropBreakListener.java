@@ -20,15 +20,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.LevelCategory;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.quest.Quest;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItem;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItemCollect;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCData;
-import pl.moderr.moderrkowo.core.npc.data.npc.NPCData;
-import pl.moderr.moderrkowo.core.npc.data.quest.Quest;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItem;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemCollect;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
@@ -138,7 +138,7 @@ public class CropBreakListener implements Listener {
             if (data == null) {
                 return;
             }
-            NPCData villager = Main.getInstance().NPCManager.npcs.get(data.getNpcId());
+            NPCData villager = ModerrkowoPlugin.getInstance().getNpc().npcs.get(data.getNpcId());
             Quest quest = villager.getQuests().get(data.getQuestIndex());
             for (IQuestItem item : quest.getQuestItems()) {
                 if (item instanceof IQuestItemCollect) {
@@ -171,13 +171,16 @@ public class CropBreakListener implements Listener {
         }
         event.setCancelled(true);
     }
+
     private void spawnParticles(@NotNull Location location) {
         location.add(.5, .5, .5);
         location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, location, 10, .5, .5, .5, 0);
     }
+
     private void autoReplant(@NotNull Block block) {
         block.setType(block.getType());
     }
+
     private @Nullable Material getCropSeeds(Block block) {
         if (isNotCrop(block)) {
             return null;
@@ -200,6 +203,7 @@ public class CropBreakListener implements Listener {
         }
         return null;
     }
+
     private boolean isNotCrop(@NotNull Block block) {
         switch (block.getType()) {
             case WHEAT:

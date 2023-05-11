@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
 import java.text.DecimalFormat;
@@ -22,13 +22,14 @@ public class ModerrkowoCommand implements CommandExecutor, TabCompleter {
 
     private final List<String> commands = Arrays.asList("help", "version", "performance");
 
-    private final Main plugin;
-    public ModerrkowoCommand(@NotNull Main plugin){
+    private final ModerrkowoPlugin plugin;
+
+    public ModerrkowoCommand(@NotNull ModerrkowoPlugin plugin) {
         this.plugin = plugin;
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             final double TPS = Bukkit.getServer().getTPS()[0];
             final String textTPS = new DecimalFormat("##.00").format(TPS);
-            if(TPS <= 15){
+            if (TPS <= 15) {
                 Logger.logAdminLog("&eOdnotowano spadek wydajności serwera! TPS = " + textTPS);
             }
         }, 0L, 200L);
@@ -36,17 +37,17 @@ public class ModerrkowoCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
-        if(args.length > 0){
-            if(args[0].equalsIgnoreCase("help")){
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("help")) {
                 TextComponent.Builder component = Component.text("Dostępne polecenia: ").color(NamedTextColor.GREEN).toBuilder();
-                for(String commandName : commands){
+                for (String commandName : commands) {
                     component.append(Component.text(commandName).color(NamedTextColor.WHITE));
                     component.append(Component.text(" "));
                 }
                 sender.sendMessage(component.build());
                 return true;
             }
-            if(args[0].equalsIgnoreCase("performance")){
+            if (args[0].equalsIgnoreCase("performance")) {
                 final TextComponent header = Component.text("Moderrkowo Performance").color(NamedTextColor.YELLOW);
                 final long memoryFree = Runtime.getRuntime().freeMemory() / 1048576;
                 final long memoryMax = Runtime.getRuntime().maxMemory() / 1048576;
@@ -63,9 +64,10 @@ public class ModerrkowoCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(tps);
                 return true;
             }
-            if(args[0].equalsIgnoreCase("version")){
-                final Component component = Component.text("Moderrkowo ").color(NamedTextColor.GREEN).append(Component.text(Main.getVersion()));
+            if (args[0].equalsIgnoreCase("version")) {
+                final Component component = Component.text("Moderrkowo ").color(NamedTextColor.GREEN).append(Component.text(ModerrkowoPlugin.getVersion()));
                 sender.sendMessage(component);
+                return true;
             }
         }
         final TextComponent errorComponent = Component.text(MessageFormat.format("Nie rozpoznano polecenia. Aby uzyskać pomoc wpisz /{0} help", s))
@@ -76,7 +78,7 @@ public class ModerrkowoCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] args) {
-        if(args.length == 1){
+        if (args.length == 1) {
             return commands;
         }
         return null;

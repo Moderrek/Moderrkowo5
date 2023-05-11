@@ -55,6 +55,7 @@ public class Reference {
             Material.GOLDEN_SHOVEL,
             Material.DIAMOND_SHOVEL
     ));
+
     static {
         MINABLE_FORTUNE = new HashMap<>();
         MINABLE_FORTUNE.put(Material.COAL_ORE, Material.COAL);
@@ -65,6 +66,7 @@ public class Reference {
         MINABLE_FORTUNE.put(Material.NETHER_QUARTZ_ORE, Material.QUARTZ);
         MINABLE_FORTUNE.put(Material.GLOWSTONE, Material.GLOWSTONE_DUST);
     }
+
     static {
         DIGGABLE_FORTUNE = new HashMap<>();
 

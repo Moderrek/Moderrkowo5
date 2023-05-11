@@ -7,10 +7,12 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCSData;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCSData;
 import pl.moderr.moderrkowo.core.ranks.Rank;
 import pl.moderr.moderrkowo.core.ranks.StuffRank;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.UserLevel;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
@@ -42,7 +44,7 @@ public class MySQLQuery {
     @Contract(pure = true)
     public MySQLQuery(MySQL mySQL) {
         this.mySQL = mySQL;
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(ModerrkowoPlugin.getInstance(), () -> {
             try {
                 World w = Bukkit.getWorld("spawn");
                 String SQL = "SELECT `NAME`,`MONEY` FROM `" + mySQL.usersTable + "` ORDER BY `" + mySQL.usersTable + "`.`MONEY` DESC LIMIT 10";

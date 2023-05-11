@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.HexResolver;
@@ -28,7 +28,7 @@ public class MotdListener implements Listener {
             return;
         }
         if (LocalDateTime.now().isBefore(SERVER_START_DATE)) {
-            e.setKickMessage(Main.getServerName() + ColorUtils.color("\n&cPoczekaj na start sezonu V!\n&fza " + ChatUtil.getTime(SERVER_START_DATE) + "\n\n&7Więcej informacji\n&9Discord: &f" + Main.getInstance().config.getString("discord-link")));
+            e.setKickMessage(ModerrkowoPlugin.getServerName() + ColorUtils.color("\n&cPoczekaj na start sezonu V!\n&fza " + ChatUtil.getTime(SERVER_START_DATE) + "\n\n&7Więcej informacji\n&9Discord: &f" + ModerrkowoPlugin.getInstance().config.getString("discord-link")));
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             e.setResult(PlayerPreLoginEvent.Result.KICK_OTHER);
 //            Main.getInstance().discordManager.sendTryJoin(e.getName());
@@ -39,13 +39,13 @@ public class MotdListener implements Listener {
     public void ping(PaperServerListPingEvent e) {
         String line1 = ColorUtils.color("&c&k:: &6&lModerrkowo.PL &c&k:: &7[1.19+]");
         if (LocalDateTime.now().isAfter(SERVER_START_DATE)) {
-            String line2 = ColorUtils.color(HexResolver.parseHexString(Main.getInstance().getConfig().getString("motd-secound")));
+            String line2 = ColorUtils.color(HexResolver.parseHexString(ModerrkowoPlugin.getInstance().getConfig().getString("motd-secound")));
             String line3 = ":: Moderrkowo.PL :: [1.19+]";
-            String line4 = Main.getInstance().getConfig().getString("motd-secound2");
+            String line4 = ModerrkowoPlugin.getInstance().getConfig().getString("motd-secound2");
             e.setMotd(centerText(line3).replace(line3, line1) + "\n" + centerText("Zadania - Działki - Ekonomia - Dodatki").replace("Zadania - Działki - Ekonomia - Dodatki", ColorUtils.color("&aZadania &9- &6Działki &9- &eEkonomia &9- &cDodatki")));
         } else {
             String top = "Moderrkowo Sezon V";
-            String coloredTop = Main.getServerName() + ColorUtils.color(" &fSezon V");
+            String coloredTop = ModerrkowoPlugin.getServerName() + ColorUtils.color(" &fSezon V");
             e.setMotd(centerText(top).replace(top, coloredTop) + "\n" + centerText("za " + ChatUtil.getTime(SERVER_START_DATE)));
         }
     }

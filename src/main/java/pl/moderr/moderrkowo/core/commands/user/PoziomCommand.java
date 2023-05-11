@@ -12,11 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.LevelCategory;
-import pl.moderr.moderrkowo.core.mysql.User;
-import pl.moderr.moderrkowo.core.mysql.UserLevelData;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.LevelCategory;
+import pl.moderr.moderrkowo.core.user.level.UserLevelData;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
@@ -28,7 +28,7 @@ public class PoziomCommand implements CommandExecutor, Listener {
     private final String title = ColorUtils.color("&aPoziom");
 
     public PoziomCommand() {
-        Bukkit.getPluginManager().registerEvents(this, Main.getInstance());
+        Bukkit.getPluginManager().registerEvents(this, ModerrkowoPlugin.getInstance());
     }
 
     @Override

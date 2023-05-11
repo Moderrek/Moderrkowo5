@@ -14,18 +14,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.Main;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.commands.user.WithdrawCommand;
 import pl.moderr.moderrkowo.core.customitems.CustomItemsManager;
-import pl.moderr.moderrkowo.core.economy.WithdrawCommand;
-import pl.moderr.moderrkowo.core.mysql.LevelCategory;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.mechanics.npc.NPCManager;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.quest.Quest;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItem;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItemFish;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItemFishingRod;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCData;
-import pl.moderr.moderrkowo.core.npc.data.npc.NPCData;
-import pl.moderr.moderrkowo.core.npc.data.quest.Quest;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItem;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemFish;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemFishingRod;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.RandomUtils;
@@ -146,7 +147,8 @@ public class FishingListener implements Listener {
         if (data == null) {
             return;
         }
-        NPCData villager = Main.getInstance().NPCManager.npcs.get(data.getNpcId());
+        final NPCManager npc = ModerrkowoPlugin.getInstance().getNpc();
+        NPCData villager = npc.npcs.get(data.getNpcId());
         Quest quest = villager.getQuests().get(data.getQuestIndex());
         for (IQuestItem item : quest.getQuestItems()) {
             if (item instanceof IQuestItemFishingRod) {

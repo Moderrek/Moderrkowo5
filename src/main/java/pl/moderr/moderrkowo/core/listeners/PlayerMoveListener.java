@@ -5,14 +5,14 @@ import org.bukkit.block.Biome;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.quest.Quest;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItem;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItemVisit;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCData;
-import pl.moderr.moderrkowo.core.npc.data.npc.NPCData;
-import pl.moderr.moderrkowo.core.npc.data.quest.Quest;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItem;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemVisit;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
@@ -38,7 +38,7 @@ public class PlayerMoveListener implements Listener {
             if (data == null) {
                 return;
             }
-            NPCData villager = Main.getInstance().NPCManager.npcs.get(data.getNpcId());
+            NPCData villager = ModerrkowoPlugin.getInstance().getNpc().npcs.get(data.getNpcId());
             Quest quest = villager.getQuests().get(data.getQuestIndex());
             for (IQuestItem item : quest.getQuestItems()) {
                 if (item instanceof IQuestItemVisit) {

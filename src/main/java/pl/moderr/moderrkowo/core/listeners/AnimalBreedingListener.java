@@ -1,6 +1,7 @@
 package pl.moderr.moderrkowo.core.listeners;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -8,14 +9,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.User;
+import org.jetbrains.annotations.NotNull;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.npc.NPCManager;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.quest.Quest;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItem;
+import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.IQuestItemBreed;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.npc.data.data.PlayerNPCData;
-import pl.moderr.moderrkowo.core.npc.data.npc.NPCData;
-import pl.moderr.moderrkowo.core.npc.data.quest.Quest;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItem;
-import pl.moderr.moderrkowo.core.npc.data.tasks.IQuestItemBreed;
+import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
@@ -28,7 +31,7 @@ public class AnimalBreedingListener implements Listener {
     public ArrayList<Material> breeadableFood = new ArrayList<>();
     public ArrayList<EntityType> breeadableAnimals = new ArrayList<>();
 
-    public AnimalBreedingListener(Plugin p) {
+    public AnimalBreedingListener(@NotNull Plugin p) {
         addBreeadableFood();
         addBreeadableAnimals();
         p.getServer().getPluginManager().registerEvents(this, p);
@@ -74,6 +77,10 @@ public class AnimalBreedingListener implements Listener {
             if (breeadableAnimals.contains(e.getRightClicked().getType())) {
                 Entity AnimalBeingBreed = e.getRightClicked();
                 try {
+                    Ageable ageable = (Ageable) AnimalBeingBreed;
+                    if (!ageable.isAdult()) {
+                        return;
+                    }
                     User u = UserManager.getUser(e.getPlayer().getUniqueId());
                     PlayerNPCData data = null;
                     for (PlayerNPCData villagers : u.getNPCSData().getNPCSData().values()) {
@@ -85,7 +92,8 @@ public class AnimalBreedingListener implements Listener {
                     if (data == null) {
                         return;
                     }
-                    NPCData villager = Main.getInstance().NPCManager.npcs.get(data.getNpcId());
+                    final NPCManager npc = ModerrkowoPlugin.getInstance().getNpc();
+                    NPCData villager = npc.npcs.get(data.getNpcId());
                     Quest quest = villager.getQuests().get(data.getQuestIndex());
                     for (IQuestItem item : quest.getQuestItems()) {
                         if (item instanceof IQuestItemBreed) {

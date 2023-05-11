@@ -9,10 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.mysql.LevelCategory;
-import pl.moderr.moderrkowo.core.mysql.User;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.user.User;
+import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 import pl.moderr.moderrkowo.core.utils.ChatUtil;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.HexResolver;
@@ -59,7 +59,7 @@ public class PlayerDeathListener implements Listener {
     @EventHandler
     public void death(PlayerDeathEvent e) {
         e.getEntity().spawnParticle(Particle.TOTEM, e.getEntity().getLocation().getX(), e.getEntity().getLocation().getY(), e.getEntity().getLocation().getZ(), 20, 1, 1, 1, 0.1f);
-        e.getEntity().sendMessage(Main.getServerName() + " " + ColorUtils.color(String.format("&fUmarłeś na koordynatach X: %s Y: %s Z: %s", e.getEntity().getLocation().getBlockX(), e.getEntity().getLocation().getBlockY(), e.getEntity().getLocation().getBlockZ())));
+        e.getEntity().sendMessage(ModerrkowoPlugin.getServerName() + " " + ColorUtils.color(String.format("&fUmarłeś na koordynatach X: %s Y: %s Z: %s", e.getEntity().getLocation().getBlockX(), e.getEntity().getLocation().getBlockY(), e.getEntity().getLocation().getBlockZ())));
         Logger.logAdminLog(e.getDeathMessage());
         if (e.getEntity().getKiller() != null) {
             Player p = e.getEntity();

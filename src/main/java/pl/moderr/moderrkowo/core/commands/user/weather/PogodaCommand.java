@@ -13,8 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.Main;
-import pl.moderr.moderrkowo.core.automessage.ModerrkowoAutoMessage;
+import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
+import pl.moderr.moderrkowo.core.mechanics.automessage.AutoMessageManager;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
@@ -80,7 +80,7 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                     if (votedList.size() >= i) {
                         Objects.requireNonNull(Bukkit.getWorld("world")).setStorm(false);
-                        ModerrkowoAutoMessage.SendServerMessage(Main.getInstance(), "Przegłosowano zmianę pogody. Pogoda została zmieniona!");
+                        AutoMessageManager.SendServerMessage(ModerrkowoPlugin.getInstance(), "Przegłosowano zmianę pogody. Pogoda została zmieniona!");
 //                        Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Przegłosowano na zmianę pogody! Pogoda została zmieniona."));
                         rain = false;
                         votedList = new ArrayList<>();
@@ -103,7 +103,7 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
         }
         if (e.toWeatherState()) {
             votedList = new ArrayList<>();
-            ModerrkowoAutoMessage.SendServerMessage(Main.getInstance(), "Rozpoczęto głosowanie na zmianę pogody! Aby zagłosować /pogoda");
+            AutoMessageManager.SendServerMessage(ModerrkowoPlugin.getInstance(), "Rozpoczęto głosowanie na zmianę pogody! Aby zagłosować /pogoda");
 //            Bukkit.broadcastMessage(ColorUtils.color("&8[!] &7Rozpoczęto głosowanie na zmianę pogody! &7/pogoda &7aby zagłosować."));
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);

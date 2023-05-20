@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.utils.HexResolver;
 import pl.moderr.moderrkowo.core.utils.Logger;
 
 public class NazwaCommand implements CommandExecutor {
@@ -20,7 +21,7 @@ public class NazwaCommand implements CommandExecutor {
                 String itemName = Logger.getMessage(args, 0, true);
                 if (p.getInventory().getItemInMainHand().getType() != Material.AIR) {
                     ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setDisplayName(ColorUtils.color(itemName));
+                    meta.setDisplayName(ColorUtils.color(HexResolver.parseHexString(itemName)));
                     p.getInventory().getItemInMainHand().setItemMeta(meta);
                     p.sendMessage(ColorUtils.color("&aPomyślnie zmieniono nazwę przedmiotu"));
                     Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił nazwę przedmiotu &8(&6" + ColorUtils.color(itemName) + "&8)"));

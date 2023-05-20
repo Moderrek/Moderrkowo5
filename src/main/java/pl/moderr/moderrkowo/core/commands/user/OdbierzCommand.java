@@ -57,7 +57,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
 
     private void itemsremove(UUID uniqueId) throws SQLException {
         Statement statement = ModerrkowoPlugin.getMySQL().getConnection().createStatement();
-        statement.execute("DELETE FROM `rewards` WHERE `UUID`='" + uniqueId.toString());
+        statement.execute("DELETE FROM `rewards` WHERE `UUID`='" + uniqueId.toString() + "'");
     }
 
     public int getPages(UUID uuid) throws SQLException {
@@ -174,13 +174,8 @@ public class OdbierzCommand implements CommandExecutor, Listener {
             //<editor-fold> Collect items
 
             try {
-                itemsremove(p.getUniqueId());
                 for (ItemStack itemStack : getItems(p.getUniqueId())) {
-                    if (p.getInventory().firstEmpty() != -1) {
-                        p.getInventory().addItem(itemStack);
-                    } else {
-                        p.getWorld().dropItem(p.getLocation(), itemStack);
-                    }
+                    ItemStackUtils.addItemStackToPlayer(p, itemStack);
                     p.sendMessage(ColorUtils.color("&fPomyślnie zabrano przedmiot."));
                     for (Player players : Bukkit.getOnlinePlayers()) {
                         if (players.getOpenInventory().getTitle().contains(PrzedmiotyGui_WithoutPage)) {
@@ -188,6 +183,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
                         }
                     }
                 }
+                itemsremove(p.getUniqueId());
             } catch (SQLException exception) {
                 exception.printStackTrace();
                 p.sendMessage(ColorUtils.color("&cNie udało się zebrać przedmiotu!"));

@@ -14,7 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mechanics.automessage.AutoMessageManager;
+import pl.moderr.moderrkowo.core.tasks.AutoMessageTask;
 import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
 
@@ -39,14 +39,14 @@ public class PrzedmiotyCommand implements CommandExecutor, Listener {
                 item.remove();
             });
             Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1));
-            AutoMessageManager.SendServerMessage(ModerrkowoPlugin.getInstance(), "Zebrano przedmioty z ziemi.");
+            AutoMessageTask.SendServerMessage(ModerrkowoPlugin.getInstance(), "Zebrano przedmioty z ziemi.");
             Bukkit.broadcastMessage(ColorUtils.color("  &aAby odebrać darmowe przedmioty"));
             Bukkit.broadcastMessage(ColorUtils.color("  &fWpisz /przedmioty &f(30s)"));
             Bukkit.broadcastMessage(" ");
             otwarte = true;
             Bukkit.getScheduler().runTaskLater(moderrkowoPlugin, () -> {
                 otwarte = false;
-                AutoMessageManager.SendServerMessage(ModerrkowoPlugin.getInstance(), "Przedmioty zostały zamknięte.");
+                AutoMessageTask.SendServerMessage(ModerrkowoPlugin.getInstance(), "Przedmioty zostały zamknięte.");
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getOpenInventory().getTitle().contains(PrzedmiotyGui_WithoutPage)) {
                         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_AMBIENT, 0.5f, 0.5f);

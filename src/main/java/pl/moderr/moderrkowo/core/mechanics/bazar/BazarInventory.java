@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +19,7 @@ import pl.moderr.moderrkowo.core.utils.ColorUtils;
 import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BazarInventory {
@@ -65,6 +67,8 @@ public class BazarInventory {
                             Component.text("aby kupić")
                     ).build()
             );
+            lore.add(Component.text().content("Kliknij SHIFT aby,").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY).build());
+            lore.add(Component.text().content("kupić cały stack.").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY).build());
         }
         if (valuableMaterial.canSell()) {
             lore.add(Component.empty());
@@ -100,9 +104,55 @@ public class BazarInventory {
                             Component.text("aby sprzedać")
                     ).build()
             );
-            lore.add(Component.text().content("Kliknij SHIFT aby,").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY).build());
-            lore.add(Component.text().content("sprzedać cały stos.").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY).build());
         }
+        meta.lore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public ItemStack createSellCategoryItem(ItemCategory category, @NotNull User user){
+        ItemStack item = new ItemStack(Material.EMERALD);
+        ItemMeta meta = item.getItemMeta();
+
+        double value = 0;
+        List<ValuableMaterial> categoryItems = manager.getByCategory(category);
+        final Player player = user.getPlayer();
+        ItemStack[] playerContent = player.getInventory().getContents();
+
+        meta.displayName(Component.text().content("Sprzedaj cały ekwipunek").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GREEN).build());
+        List<Component> haveItems = new ArrayList<>();
+        for(ValuableMaterial categoryItem : categoryItems){
+            int count = ItemStackUtils.getSameItems(player, new ItemStack(categoryItem.getMaterial()));
+            value += count * categoryItem.getSellCost();
+            if(count > 0) haveItems.add(Component.text().content(count + "x ").color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false).append(Component.translatable(categoryItem.getMaterial())).build());
+        }
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.empty());
+        lore.add(Component.text().content("Wartość ekwipunku").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GREEN).build());
+        lore.add(Component.text().content(ChatUtil.getMoney(value)).decoration(TextDecoration.ITALIC, false).color(NamedTextColor.DARK_GREEN).build());
+        lore.add(Component.empty());
+        if(haveItems.size() > 0){
+            lore.addAll(haveItems);
+            lore.add(Component.empty());
+        }
+        lore.add(Component.text()
+                .content("Kliknij LPM")
+                .color(TextColor.color(0x6F85AB))
+                .decoration(TextDecoration.ITALIC, false)
+                .appendSpace()
+                .append(
+                        Component.text("[").color(NamedTextColor.DARK_GRAY)
+                ).append(
+                        Component.text("▟").color(NamedTextColor.AQUA)
+                ).append(
+                        Component.text("▙").color(NamedTextColor.GRAY)
+                ).append(
+                        Component.text("]").color(NamedTextColor.DARK_GRAY)
+                ).appendSpace()
+                .append(
+                        Component.text("aby sprzedać")
+                ).build());
+
         meta.lore(lore);
         item.setItemMeta(meta);
         return item;
@@ -116,11 +166,13 @@ public class BazarInventory {
             ItemMeta meta = categoryItem.getItemMeta();
             meta.displayName(Component.text(category.getDisplayName()).decoration(TextDecoration.ITALIC, false).color(category.getColorTheme()));
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ITEM_SPECIFICS);
-            meta.lore(List.of(Component.text("Kliknij aby zmienić").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GREEN)));
-            categoryItem.setItemMeta(meta);
-            if (category.equals(selectedCategory)) {
+            if(selectedCategory == category){
                 categoryItem.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+                meta.lore(List.of(Component.text("Wybrana kategoria przedmiotów").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY)));
+            }else{
+                meta.lore(List.of(Component.text("Kliknij aby zmienić kategorię").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GREEN)));
             }
+            categoryItem.setItemMeta(meta);
             inventory.setItem(i, categoryItem);
         }
 
@@ -129,6 +181,8 @@ public class BazarInventory {
         emptyItemMeta.displayName(Component.empty());
         emptyItem.setItemMeta(emptyItemMeta);
         fillRow(inventory, 1, emptyItem);
+
+        inventory.setItem(13, createSellCategoryItem(selectedCategory, user));
 
         List<ValuableMaterial> items = manager.getByCategory(selectedCategory);
         for (int i = 0; i < items.size(); i += 1) {

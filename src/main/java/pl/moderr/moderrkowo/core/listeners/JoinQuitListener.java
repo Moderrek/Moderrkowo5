@@ -105,16 +105,18 @@ public class JoinQuitListener implements Listener {
                 + " \n ";
         e.setPlayerListHeader(ColorUtils.color(header));
         e.setPlayerListFooter(ColorUtils.color(footer));
-
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         UserManager.unloadUser(e.getPlayer().getUniqueId());
         // Update Tab
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            updateTab(players);
-        }
+        Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getOnlinePlayers().forEach(players -> updateTab(players));
+            }
+        }, 1L);
         // Vanish
         if (VanishCommand.hidden.contains(e.getPlayer().getUniqueId())) {
             VanishCommand.hidden.remove(e.getPlayer().getUniqueId());

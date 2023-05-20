@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.commands.ModerrkowoCommand;
@@ -21,7 +20,6 @@ import pl.moderr.moderrkowo.core.customitems.CustomItemsManager;
 import pl.moderr.moderrkowo.core.events.EventManager;
 import pl.moderr.moderrkowo.core.listeners.*;
 import pl.moderr.moderrkowo.core.mechanics.antylogout.AntyLogoutManager;
-import pl.moderr.moderrkowo.core.mechanics.automessage.AutoMessageManager;
 import pl.moderr.moderrkowo.core.mechanics.bazar.BazarManager;
 import pl.moderr.moderrkowo.core.mechanics.cuboids.CuboidsManager;
 import pl.moderr.moderrkowo.core.mechanics.leaderboard.LeaderboardManager;
@@ -31,9 +29,11 @@ import pl.moderr.moderrkowo.core.mechanics.npc.NPCManager;
 import pl.moderr.moderrkowo.core.mechanics.opening.ModerrCaseManager;
 import pl.moderr.moderrkowo.core.mechanics.timevoter.TimeVoterManager;
 import pl.moderr.moderrkowo.core.mysql.MySQL;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.*;
+import pl.moderr.moderrkowo.core.tasks.TaskManager;
+import pl.moderr.moderrkowo.core.utils.ChatUtil;
+import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.utils.HexResolver;
+import pl.moderr.moderrkowo.core.utils.Logger;
 import pl.moderr.moderrkowo.core.worldmanager.TPWCommand;
 import pl.moderr.moderrkowo.core.worldmanager.WorldManager;
 
@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -61,15 +60,19 @@ public final class ModerrkowoPlugin extends JavaPlugin {
     private TimeVoterManager timeVoter;
     @Getter
     private AntyLogoutManager antyLogout;
+    @Getter
+    private TaskManager task;
 
     // Server Mechanics
-    @Getter
-    private AutoMessageManager autoMessage;
     @Getter
     private BazarManager bazar;
     // TODO next update
     @Getter
     private EventManager event;
+    // Kit
+    // Warp
+    // Asynchroniczny rynek
+
     // TODO rework (w kolejności)
     @Getter
     private RynekManager rynek;
@@ -85,15 +88,16 @@ public final class ModerrkowoPlugin extends JavaPlugin {
     }
 
     public static @NotNull String getVersion() {
-        return "v1.2.0";
+        return "v1.2.2";
     }
 
     @Override
     public void onEnable() {
         long start = System.currentTimeMillis();
         instance = this;
-        Logger.logPluginMessage("Wczytywanie..");
+        Logger.logPluginMessage("Wczytywanie ModerrkowoPlugin");
         if (getServer().getPluginManager().getPlugin("Citizens") == null || !Objects.requireNonNull(getServer().getPluginManager().getPlugin("Citizens")).isEnabled()) {
+            Logger.logPluginMessage("Brak zainstalowanej biblioteki!");
             getLogger().log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -142,21 +146,16 @@ public final class ModerrkowoPlugin extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new FishingListener(), this);
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(ModerrkowoPlugin.getInstance(), () -> {
-            for (User u : UserManager.getUsers()) {
-                final Player player = u.getPlayer();
-                double randomIncome = RandomUtils.getRandomInt(2, 6)
-                        * u.getUserLevel().playerLevel()
-                        * u.getRank().getIncomeMultiplierTime();
-                u.addMoney(randomIncome);
-                player.sendMessage(ColorUtils.color("&aOtrzymano " + ChatUtil.getMoney(randomIncome)) + " za aktywność na serwerze");
-            }
-        }, 0, 20L * 60L * 15L);
+        task = new TaskManager();
+        task.Start(this);
         Logger.logPluginMessage(MessageFormat.format("Wczytano w &a{0}ms", System.currentTimeMillis() - start));
     }
 
     @Override
     public void onDisable() {
+        if(task != null){
+            task.Disable(this);
+        }
         if (timeVoter != null) {
             timeVoter.Disable(this);
         }
@@ -289,15 +288,5 @@ public final class ModerrkowoPlugin extends JavaPlugin {
             Bukkit.broadcastMessage(ChatUtil.centerText("▪ Zobacz rangi pod /sklep").replace("▪ Zobacz rangi pod /sklep", ColorUtils.color("&8▪ &7Zobacz rangi pod &e/sklep")));
             Bukkit.broadcastMessage(" ");
         }, 0, 20 * 60 * 30);
-        autoMessage = new AutoMessageManager(this, 60 * 8, Arrays.asList(
-                "Aby przenieść się do znajomego użyj /tpa <nick>",
-                "Zgłoś błąd/problem na /helpop",
-                "Zadania jak i sklepy znajdziesz na /spawn",
-                "Dołącz do naszego DISCORD'a /discord",
-                "Pieniądze można wypłacić za pomocą /wyplac <kwota>",
-                "Skrzynie mozesz otwierać na spawnie",
-                "Jest brzydka pogoda? Stwórz głosowanie! /pogoda"
-        ));
-        Logger.logPluginMessage("Wczytano AutoMessage");
     }
 }

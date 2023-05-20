@@ -15,6 +15,7 @@ public enum ItemCategory {
     LOWIENIE(Material.FISHING_ROD, "Łowienie", TextColor.color(0x77A9DF)),
     DREWNO(Material.OAK_LOG, "Drewno", TextColor.color(0xFF641E)),
 //    RZADKIE(Material.NAME_TAG, "Rzadkie", TextColor.color(0xFF62BE)),
+    // TODO mechanizmy
     JEDZENIE(Material.COOKED_BEEF, "Jedzenie", NamedTextColor.GREEN);
 
     @Getter

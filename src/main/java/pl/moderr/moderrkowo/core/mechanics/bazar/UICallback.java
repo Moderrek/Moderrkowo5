@@ -10,4 +10,6 @@ public interface UICallback {
 
     void onRightClick(int slot);
 
+    void onShiftClick(int slot);
+
 }

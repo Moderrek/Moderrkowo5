@@ -3649,6 +3649,7 @@ public class NPCManager implements Listener {
         if (npc.getName().equalsIgnoreCase("/bazar")) {
             e.setCancelled(true);
             p.performCommand("bazar");
+            return;
         }
         if (npc.getName().equals("Losowy teleport")) {
             e.setCancelled(true);

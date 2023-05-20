@@ -55,9 +55,15 @@ public class BazarListener implements Listener {
             BazarUIData cache = manager.getGuiCache().get(uuid);
             if (e.getAction().equals(InventoryAction.PICKUP_ALL)) {
                 cache.getCallback().onLeftClick(e.getSlot());
+                return;
             }
             if (e.getAction().equals(InventoryAction.PICKUP_HALF)) {
                 cache.getCallback().onRightClick(e.getSlot());
+                return;
+            }
+            if(e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)){
+                cache.getCallback().onShiftClick(e.getSlot());
+                return;
             }
         }
     }

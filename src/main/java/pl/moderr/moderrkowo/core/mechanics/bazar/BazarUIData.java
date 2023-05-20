@@ -7,5 +7,7 @@ public class BazarUIData {
 
     private final UICallback callback;
     private ItemCategory selectedCategory = ItemCategory.MATERIALY;
+    private double income = 0;
+    private double outcome = 0;
 
 }

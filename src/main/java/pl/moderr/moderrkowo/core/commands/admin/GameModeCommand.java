@@ -10,8 +10,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,28 +40,27 @@ public class GameModeCommand implements CommandExecutor, TabCompleter {
                         Player p2 = Bukkit.getPlayer(args[1]);
                         if (p2 != null) {
                             p2.setGameMode(gameMode);
-                            p.sendMessage(ColorUtils.color("&aZmieniono tryb gry gracza &2" + p2.getName() + " &ana &2" + gameMode));
-                            Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb &6" + p2.getName() + " &7gry na &6" + gameMode));
+                            p.sendMessage(ColorUtil.color("&aZmieniono tryb gry gracza &2" + p2.getName() + " &ana &2" + gameMode));
+                            Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił tryb &6" + p2.getName() + " &7gry na &6" + gameMode));
                         } else {
-                            p.sendMessage(ColorUtils.color("&cPodany gracz jest offline!"));
+                            p.sendMessage(ColorUtil.color("&cPodany gracz jest offline!"));
                         }
                     } else {
                         p.setGameMode(gameMode);
-                        p.sendMessage(ColorUtils.color("&aZmieniono tryb gry na &2" + gameMode));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił tryb gry na &6" + gameMode));
+                        p.sendMessage(ColorUtil.color("&aZmieniono tryb gry na &2" + gameMode));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił tryb gry na &6" + gameMode));
                     }
-                    return false;
                 } else {
-                    p.sendMessage(ColorUtils.color("&cPodano niepoprawny tryb gry!"));
+                    p.sendMessage(ColorUtil.color("&cPodano niepoprawny tryb gry!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                    return false;
                 }
+                return false;
             }
-            p.sendMessage(ColorUtils.color("&cUżyj: /gamemode <tryb gry>"));
+            p.sendMessage(ColorUtil.color("&cUżyj: /gamemode <tryb gry>"));
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return false;
         }
-        sender.sendMessage(ColorUtils.color("&cNie jesteś graczem!"));
+        sender.sendMessage(ColorUtil.color("&cNie jesteś graczem!"));
         return false;
     }
 

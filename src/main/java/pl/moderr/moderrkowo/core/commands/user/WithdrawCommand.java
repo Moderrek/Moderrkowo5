@@ -17,20 +17,20 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ItemStackUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
 
 public class WithdrawCommand implements CommandExecutor, Listener {
 
-    public static final String banknotPrefix = ColorUtils.color("&ePieniądz &2");
-    public static final String banknotSuffix = ColorUtils.color("$");
+    public static final String banknotPrefix = ColorUtil.color("&ePieniądz &2");
+    public static final String banknotSuffix = ColorUtil.color("$");
 
     public static @NotNull ItemStack generateItemStatic(int count, int money) {
-        return ItemStackUtils.createGuiItem(Material.GOLD_NUGGET, count, banknotPrefix + money + banknotSuffix);
+        return ItemStackUtil.createGuiItem(Material.GOLD_NUGGET, count, banknotPrefix + money + banknotSuffix);
     }
 
     @Override
@@ -43,39 +43,39 @@ public class WithdrawCommand implements CommandExecutor, Listener {
                 try {
                     money = Integer.parseInt(args[0]);
                 } catch (Exception e) {
-                    player.sendMessage(ColorUtils.color("&cPodano niepoprawną kwotę!"));
+                    player.sendMessage(ColorUtil.color("&cPodano niepoprawną kwotę!"));
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
                 if (money < 100) {
-                    player.sendMessage(ColorUtils.color("&cKwota nie może być mniejsza niż " + ChatUtil.getMoney(100) + "!"));
+                    player.sendMessage(ColorUtil.color("&cKwota nie może być mniejsza niż " + ChatUtil.formatMoney(100) + "!"));
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
                 if (money > 100000) {
-                    player.sendMessage(ColorUtils.color("&cKwota nie może być większa niż " + ChatUtil.getMoney(100000) + "!"));
+                    player.sendMessage(ColorUtil.color("&cKwota nie może być większa niż " + ChatUtil.formatMoney(100000) + "!"));
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
                 if (!user.hasMoney(money)) {
-                    player.sendMessage(ColorUtils.color("&cNie posiadasz tyle pieniędzy!"));
+                    player.sendMessage(ColorUtil.color("&cNie posiadasz tyle pieniędzy!"));
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
-                Logger.logAdminLog(ColorUtils.color("&6" + player.getName() + " &7wypłacił w banknocie &6" + ChatUtil.getMoney(money)));
+                Logger.logAdminLog(ColorUtil.color("&6" + player.getName() + " &7wypłacił w banknocie &6" + ChatUtil.formatMoney(money)));
                 user.subtractMoney(money);
-                player.sendMessage(ColorUtils.color("&9Wypłata &c- " + ChatUtil.getMoney(money)));
-                ItemStackUtils.addItemStackToPlayer(player, generateItem(1, money));
+                player.sendMessage(ColorUtil.color("&9Wypłata &c- " + ChatUtil.formatMoney(money)));
+                ItemStackUtil.addItemStackToPlayer(player, generateItem(1, money));
                 player.showTitle(Title.title(Component.empty(), Component.text("Pomyslnie wypłacono").color(NamedTextColor.GREEN)));
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                 return true;
             } else {
-                player.sendMessage(ColorUtils.color("&cUżycie: /wyplac <kwota>"));
+                player.sendMessage(ColorUtil.color("&cUżycie: /wyplac <kwota>"));
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
         } else {
-            sender.sendMessage(ColorUtils.color("&cTylko gracz może używać tej komendy!"));
+            sender.sendMessage(ColorUtil.color("&cTylko gracz może używać tej komendy!"));
             return false;
         }
     }
@@ -86,7 +86,7 @@ public class WithdrawCommand implements CommandExecutor, Listener {
      * @return {@link ItemStack Banknot}
      */
     public ItemStack generateItem(int count, int money) {
-        return ItemStackUtils.createGuiItem(Material.GOLD_NUGGET, count, banknotPrefix + money + banknotSuffix);
+        return ItemStackUtil.createGuiItem(Material.GOLD_NUGGET, count, banknotPrefix + money + banknotSuffix);
     }
 
     /**
@@ -141,7 +141,7 @@ public class WithdrawCommand implements CommandExecutor, Listener {
                             // dodanie pieniedzy
                             user.addMoney(money);
                             // wyswietlenie informacji
-                            player.sendMessage(ColorUtils.color("&9Wpłata &a+ " + ChatUtil.getMoney(money)));
+                            player.sendMessage(ColorUtil.color("&9Wpłata &a+ " + ChatUtil.formatMoney(money)));
                             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                         }
                     }

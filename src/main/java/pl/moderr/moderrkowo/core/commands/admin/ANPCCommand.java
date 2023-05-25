@@ -12,9 +12,9 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mechanics.npc.data.npc.NPCData;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.npc.data.npc.NPCData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class ANPCCommand implements CommandExecutor, TabCompleter, Listener {
             npc.data().set(ModerrkowoPlugin.getInstance().getNpc().NpcIdKey, Logger.getMessage(args, 0, true));
             npc.spawn(p.getLocation());
             npc.setProtected(true);
-            Logger.logNpcMessage(ColorUtils.color("&6" + p.getName() + " &7postawił nowego Villager'a &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));
+            Logger.logNpcMessage(ColorUtil.color("&6" + p.getName() + " &7postawił nowego Villager'a &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));
         }
         return false;
     }

@@ -6,8 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class HoloCommand implements CommandExecutor {
 
@@ -23,10 +23,10 @@ public class HoloCommand implements CommandExecutor {
             e.setSmall(true);
             e.setGravity(false);
             e.setBasePlate(false);
-            e.setCustomName(ColorUtils.color(Logger.getMessage(args, 0, true).replace("\\n", "\n")));
+            e.setCustomName(ColorUtil.color(Logger.getMessage(args, 0, true).replace("\\n", "\n")));
             e.setSilent(true);
             e.setRemoveWhenFarAway(false);
-            Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7postawił hologram &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));
+            Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7postawił hologram &8(&f" + Logger.getMessage(args, 0, true) + "&8)"));
         }
         return false;
     }

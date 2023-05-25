@@ -13,8 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class HelpopCommand implements CommandExecutor {
 
@@ -25,8 +25,8 @@ public class HelpopCommand implements CommandExecutor {
             if (args.length > 0) {
                 Logger.logHelpMessage(player, Logger.getMessage(args, 0, true));
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
-                player.sendMessage(ColorUtils.color("&8[!] &aPomyślnie wysłano!"));
-                player.sendMessage(ColorUtils.color("&8[&9Pomoc&8] &7" + player.getName() + "&8: &e" + Logger.getMessage(args, 0, true)));
+                player.sendMessage(ColorUtil.color("&8[!] &aPomyślnie wysłano!"));
+                player.sendMessage(ColorUtil.color("&8[&9Pomoc&8] &7" + player.getName() + "&8: &e" + Logger.getMessage(args, 0, true)));
                 final TextComponent mainTitle = Component.text("Moderrkowo")
                         .color(NamedTextColor.GOLD)
                         .decoration(TextDecoration.BOLD, true);
@@ -39,7 +39,7 @@ public class HelpopCommand implements CommandExecutor {
                 return true;
             } else {
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                player.sendMessage(ColorUtils.color("&cUżycie: &e/helpop <wiadomość>"));
+                player.sendMessage(ColorUtil.color("&cUżycie: &e/helpop <wiadomość>"));
                 return false;
             }
         } else {

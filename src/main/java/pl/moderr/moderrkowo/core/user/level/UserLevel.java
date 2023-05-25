@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import org.bukkit.boss.BarColor;
 import org.jetbrains.annotations.Contract;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 import java.util.HashMap;
 
@@ -51,13 +51,13 @@ public class UserLevel {
         switch (category) {
             case Walka:
             case Kopanie:
-                return ColorUtils.color("&c");
+                return ColorUtil.color("&c");
             case Uprawa:
-                return ColorUtils.color("&a");
+                return ColorUtil.color("&a");
             case Lowienie:
-                return ColorUtils.color("&9");
+                return ColorUtil.color("&9");
             default:
-                return ColorUtils.color("&f");
+                return ColorUtil.color("&f");
         }
     }
 

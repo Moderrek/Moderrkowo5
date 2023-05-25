@@ -7,8 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class InvseeCommand implements CommandExecutor {
 
@@ -20,7 +20,7 @@ public class InvseeCommand implements CommandExecutor {
                 return false;
             }
             if (args.length == 0) {
-                p.sendMessage(ColorUtils.color("&cUżycie: /ainvsee <nick>"));
+                p.sendMessage(ColorUtil.color("&cUżycie: /ainvsee <nick>"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             } else {
@@ -29,11 +29,11 @@ public class InvseeCommand implements CommandExecutor {
                     //
                     p.openInventory(p2.getInventory());
                     //
-                    p.sendMessage(ColorUtils.color("&eOtworzono ekwipunek gracza &6" + p2.getName()));
+                    p.sendMessage(ColorUtil.color("&eOtworzono ekwipunek gracza &6" + p2.getName()));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                     Logger.logAdminLog(p.getName() + " otworzył ekwipunek gracza " + p2.getName());
                 } else {
-                    p.sendMessage(ColorUtils.color("&cGracz jest offline!"));
+                    p.sendMessage(ColorUtil.color("&cGracz jest offline!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     Logger.logAdminLog(p.getName() + " chciał otworzyć ekwipunek gracza offline " + args[0]);
                     return false;

@@ -1,185 +1,185 @@
 package pl.moderr.moderrkowo.core.user;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Statistic;
+import lombok.Data;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mechanics.npc.NPCManager;
-import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCData;
-import pl.moderr.moderrkowo.core.mechanics.npc.data.data.PlayerNPCSData;
-import pl.moderr.moderrkowo.core.mechanics.npc.data.quest.Quest;
-import pl.moderr.moderrkowo.core.mechanics.npc.data.tasks.*;
-import pl.moderr.moderrkowo.core.ranks.Rank;
-import pl.moderr.moderrkowo.core.ranks.RankManager;
-import pl.moderr.moderrkowo.core.ranks.StuffRank;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ItemStackUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
+import pl.moderr.moderrkowo.core.services.npc.NPCManager;
+import pl.moderr.moderrkowo.core.services.npc.data.data.PlayerNPCData;
+import pl.moderr.moderrkowo.core.services.npc.data.data.PlayerNPCSData;
+import pl.moderr.moderrkowo.core.services.npc.data.quest.Quest;
+import pl.moderr.moderrkowo.core.services.npc.data.tasks.*;
 import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 import pl.moderr.moderrkowo.core.user.level.UserLevel;
 import pl.moderr.moderrkowo.core.user.notification.MNotification;
-import pl.moderr.moderrkowo.core.user.notification.NotifycationType;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.user.notification.NotificationType;
+import pl.moderr.moderrkowo.core.user.ranks.Rank;
+import pl.moderr.moderrkowo.core.user.ranks.RankManager;
+import pl.moderr.moderrkowo.core.user.ranks.StuffRank;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+@Data
 public class User {
-    // VARIABLES
-    private final UUID _UUID;
-    private final String _NAME;
-    private final PlayerNPCSData _QUEST_DATA;
-    private final Date _REGISTERED;
-    private double _MONEY;
-    private int _SEASON_ONE_COINS;
-    private Rank _RANK;
-    private StuffRank _STUFF_RANK;
-    private UserLevel _LEVELS;
-    private boolean _SIDEBAR;
-    private int _PLAYING_TIME;
-    private String _VERSION;
 
-    // CONSTRUCTOR
-    public User(UUID _UUID, String _NAME, double _MONEY, int _SEASON_ONE_COINS, Rank _RANK, StuffRank _STUFF_RANK, UserLevel _LEVELS, PlayerNPCSData _QUEST_DATA, Date _REGISTERED, boolean _SIDEBAR, int _PLAYING_TIME, String _VERSION) {
-        this._UUID = _UUID;
-        this._NAME = _NAME;
-        this._MONEY = _MONEY;
-        this._SEASON_ONE_COINS = _SEASON_ONE_COINS;
-        this._RANK = _RANK;
-        this._STUFF_RANK = _STUFF_RANK;
-        this._LEVELS = _LEVELS;
-        if (_LEVELS.getOwner() == null) {
-            _LEVELS.setOwner(this);
+    private final UUID uuid;
+    private final String name;
+    private final PlayerNPCSData questData;
+    private final Date registered;
+    private double money;
+    private int coins;
+    private Rank rank;
+    private StuffRank stuffRank;
+    private UserLevel level;
+    private boolean sidebar;
+    private int playtimeTicks;
+    private String version;
+    public User(UUID uuid, String name, double money, int coins, Rank rank, StuffRank stuffRank, @NotNull UserLevel level, PlayerNPCSData questData, Date registered, boolean sidebar, int playtimeTicks, String version) {
+        this.uuid = uuid;
+        this.name = name;
+        this.money = money;
+        this.coins = coins;
+        this.rank = rank;
+        this.stuffRank = stuffRank;
+        this.level = level;
+        if (level.getOwner() == null) {
+            level.setOwner(this);
         }
-        this._QUEST_DATA = _QUEST_DATA;
-        this._REGISTERED = _REGISTERED;
-        this._SIDEBAR = _SIDEBAR;
-        this._PLAYING_TIME = _PLAYING_TIME;
-        this._VERSION = _VERSION;
+        this.questData = questData;
+        this.registered = registered;
+        this.sidebar = sidebar;
+        this.playtimeTicks = playtimeTicks;
+        this.version = version;
     }
 
-    //Notifications
-    public boolean tryLoadNotifications() {
+    @Contract("_ -> new")
+    public static @NotNull User CreateDefault(@NotNull Player player) {
+        final UUID uuid = player.getUniqueId();
+        final String name = player.getName();
+        final Date registered = new Date(Calendar.getInstance().getTime().getTime());
+        final int playtime = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
+        return new User(uuid, name, 3000, 0, Rank.None, StuffRank.None, new UserLevel(), new PlayerNPCSData(), registered, true, playtime, ModerrkowoPlugin.getVersion());
+    }
+
+    public static @Nullable User Get(UUID uuid) {
+        return UserManager.getUser(uuid);
+    }
+
+    public static @Nullable User Get(@NotNull Player player) {
+        return Get(player.getUniqueId());
+    }
+
+    public static @Nullable User Get(String name) {
+        final OfflinePlayer cachedPlayer = Bukkit.getOfflinePlayerIfCached(name);
+        if (cachedPlayer == null) return null;
+        if (!cachedPlayer.hasPlayedBefore()) return null;
+        return Get(cachedPlayer.getUniqueId());
+    }
+
+    public void save() {
+        UserManager.saveUser(this);
+    }
+
+    public boolean isCached() {
+        return UserManager.isUserLoaded(uuid);
+    }
+
+    public void tryLoadNotifications() {
         try {
             String sqlGet = "SELECT * FROM `" + ModerrkowoPlugin.getMySQL().notificationTable + "` WHERE `OWNER`=?";
             PreparedStatement stmt = ModerrkowoPlugin.getMySQL().getConnection().prepareStatement(sqlGet);
-            stmt.setString(1, _UUID.toString());
+            stmt.setString(1, uuid.toString());
             ResultSet rs = stmt.executeQuery();
-            if (rs == null) {
-                return true;
-            }
+            if (rs == null) return;
             while (rs.next()) {
                 try {
-                    MNotification notify = new MNotification(UUID.fromString(rs.getString("ID")), true, UUID.fromString(rs.getString("OWNER")), NotifycationType.valueOf(rs.getString("TYPE")), rs.getString("DATA"));
-                    getPlayer().sendMessage(ColorUtils.color(notify.getData()));
-                    notify.Delete();
+                    MNotification notify = new MNotification(UUID.fromString(rs.getString("ID")), UUID.fromString(rs.getString("OWNER")), NotificationType.valueOf(rs.getString("TYPE")), true, rs.getString("DATA"));
+                    getPlayer().sendMessage(ColorUtil.color(notify.getData()));
+                    notify.remove();
                 } catch (Exception e) {
                     Logger.logAdminLog("Wystąpił problem z powiadomieniem");
                     e.printStackTrace();
                 }
             }
-            return true;
         } catch (Exception exception) {
             exception.printStackTrace();
             Logger.logAdminLog("Wystąpił problem podczas ładowania powiadomieniu");
-            return false;
         }
     }
 
-    // MONEY
-    public double getMoney() {
-        return _MONEY;
-    }
-
     public void setMoney(double money) {
-        this._MONEY = money;
-        if (_SIDEBAR) {
+        this.money = money;
+        if (sidebar) {
             UpdateScoreboard();
         } else {
-            getPlayer().sendMessage(ColorUtils.color("&7= " + ChatUtil.getMoney(money)));
+            getPlayer().sendMessage(ColorUtil.color("&7= " + ChatUtil.formatMoney(money)));
         }
     }
 
     public void addMoney(double money) {
-        this._MONEY += money;
-        if (_SIDEBAR) {
+        this.money += money;
+        if (sidebar) {
             UpdateScoreboard();
         } else {
-            getPlayer().sendMessage(ColorUtils.color("&a+ " + ChatUtil.getMoney(money)));
+            getPlayer().sendMessage(ColorUtil.color("&a+ " + ChatUtil.formatMoney(money)));
         }
     }
 
     public void subtractMoney(double money) {
-        this._MONEY -= money;
-        if (_SIDEBAR) {
+        this.money -= money;
+        if (sidebar) {
             UpdateScoreboard();
         } else {
-            getPlayer().sendMessage(ColorUtils.color("&c- " + ChatUtil.getMoney(money)));
+            getPlayer().sendMessage(ColorUtil.color("&c- " + ChatUtil.formatMoney(money)));
         }
     }
 
     public boolean hasMoney(double money) {
-        return this._MONEY >= money;
+        return this.money >= money;
     }
 
     public void addExp(LevelCategory category, double exp) {
-        _LEVELS.get(category).addExp(exp);
+        level.get(category).addExp(exp);
     }
 
-    // SEASON ONE COINS
-    public int getSeasonOneCoins() {
-        return _SEASON_ONE_COINS;
-    }
-
-    public void setSeasonOneCoins(int seasonOneCoins) {
-        this._SEASON_ONE_COINS = seasonOneCoins;
-    }
-
-    public void addSeasonOneCoins(int seasonOneCoins) {
-        this._SEASON_ONE_COINS += seasonOneCoins;
-    }
-
-    public void subtractSeasonOneCoins(int seasonOneCoins) {
-        this._SEASON_ONE_COINS -= seasonOneCoins;
-    }
-
-    public boolean hasSeasonOneCoins(int seasonOneCoins) {
-        return this._SEASON_ONE_COINS >= seasonOneCoins;
-    }
-
-    // QUEST DATA
-    public PlayerNPCSData getNPCSData() {
-        return _QUEST_DATA;
-    }
-
-    // PLAYER
     public UUID getUniqueId() {
-        return _UUID;
+        return uuid;
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(_UUID);
+        return Bukkit.getPlayer(uuid);
     }
 
-    public String getName() {
-        return _NAME;
-    }
-
-    // SCOREBOARD
     public void UpdateScoreboard() {
-        if (!_SIDEBAR) {
+        if (!sidebar) {
             return;
         }
         ScoreboardManager sm = Bukkit.getScoreboardManager();
         Scoreboard scoreboard = sm.getNewScoreboard();
         Objective objective;
-        objective = scoreboard.registerNewObjective("Moderrkowo", "dummy", ColorUtils.color("&6⚔ Moderrkowo ⚔"), RenderType.INTEGER);
+        objective = scoreboard.registerNewObjective("Moderrkowo", "dummy", ColorUtil.color("&6⚔ Moderrkowo ⚔"), RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         PlayerNPCData data = null;
         try {
-            for (PlayerNPCData villagers : getNPCSData().getNPCSData().values()) {
+            for (PlayerNPCData villagers : getQuestData().getNPCSData().values()) {
                 if (villagers.isActiveQuest()) {
                     data = villagers;
                     break;
@@ -190,12 +190,12 @@ public class User {
         }
 //        Score score1 = objective.getScore(ColorUtils.color(RankManager.getRankNameShort(_RANK, true) + "&9" + _NAME));
         Score score1 = objective.getScore(" ");
-        Score score2 = objective.getScore(ColorUtils.color("&fPostać &c" + _LEVELS.playerLevel() + " lvl"));
-        Score score3 = objective.getScore(ColorUtils.color("&fPortfel &6" + ChatUtil.getMoney(getMoney())));
-        Score score4 = objective.getScore(ColorUtils.color("&fCzas gry &a" + ChatUtil.getTicksToTime(getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE))));
-        Score score7 = objective.getScore(ColorUtils.color("&6moderrkowo.pl"));
+        Score score2 = objective.getScore(ColorUtil.color("&fPostać &c" + level.playerLevel() + " lvl"));
+        Score score3 = objective.getScore(ColorUtil.color("&fPortfel &6" + ChatUtil.formatMoney(getMoney())));
+        Score score4 = objective.getScore(ColorUtil.color("&fCzas gry &a" + ChatUtil.getTicksToTime(getPlayer().getStatistic(Statistic.PLAY_ONE_MINUTE))));
+        Score score7 = objective.getScore(ColorUtil.color("&6moderrkowo.pl"));
         if (data == null) {
-            Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest &abrak"));
+            Score score5 = objective.getScore(ColorUtil.color("&fAktywny quest &abrak"));
             Score score6 = objective.getScore("  ");
             score1.setScore(-1);
             score2.setScore(-2);
@@ -208,7 +208,7 @@ public class User {
             final NPCManager npc = ModerrkowoPlugin.getInstance().getNpc();
             ;
             if (!npc.npcs.containsKey(data.getNpcId())) {
-                Score score5 = objective.getScore(ColorUtils.color("&fAktywny quest &abrak"));
+                Score score5 = objective.getScore(ColorUtil.color("&fAktywny quest &abrak"));
                 Score score6 = objective.getScore("  ");
                 score1.setScore(-1);
                 score2.setScore(-2);
@@ -221,7 +221,7 @@ public class User {
                 return;
             }
             Quest q = npc.npcs.get(data.getNpcId()).getQuests().get(data.getQuestIndex());
-            Score score6 = objective.getScore(ColorUtils.color("&fAktywny quest &a" + q.getName()));
+            Score score6 = objective.getScore(ColorUtil.color("&fAktywny quest &a" + q.getName()));
             int itemI = 0;
             int last = 0;
             for (int i = -6; i != -6 - npc.npcs.get(data.getNpcId()).getQuests().get(data.getQuestIndex()).getQuestItems().size(); i--) {
@@ -232,13 +232,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
                         }
                         tempScore.setScore(i);
                     }
@@ -247,13 +247,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
                         }
                         tempScore.setScore(i);
                     }
@@ -262,13 +262,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + ChatUtil.getMoney(item.getCount())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + ChatUtil.formatMoney(item.getCount())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + ChatUtil.getMoney(count)));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + ChatUtil.formatMoney(count)));
                         }
                         tempScore.setScore(i);
                     }
@@ -277,13 +277,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
                         }
                         tempScore.setScore(i);
                     }
@@ -292,13 +292,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
                         }
                         tempScore.setScore(i);
                     }
@@ -307,13 +307,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getMaterial())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getMaterial())));
                         }
                         tempScore.setScore(i);
                     }
@@ -322,13 +322,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getEntityType())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getEntityType())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getEntityType())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getEntityType())));
                         }
                         tempScore.setScore(i);
                     }
@@ -337,13 +337,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getEntityType().toEntity())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " " + ChatUtil.materialName(item.getEntityType().toEntity())));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getEntityType().toEntity())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " " + ChatUtil.materialName(item.getEntityType().toEntity())));
                         }
                         tempScore.setScore(i);
                     }
@@ -352,13 +352,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= item.getCount()) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " razy"));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + item.getCount() + " razy"));
                         } else {
                             int count = item.getCount() - temp;
                             if (count > item.getCount()) {
                                 count = item.getCount();
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " razy"));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + count + " razy"));
                         }
                         tempScore.setScore(i);
                     }
@@ -367,13 +367,13 @@ public class User {
                         int temp = data.getQuestItemData().get(item.getQuestItemDataId());
                         Score tempScore;
                         if (temp >= 1) {
-                            tempScore = objective.getScore(ColorUtils.color("&a✔ " + item.getQuestItemPrefix() + " " + ChatUtil.materialName(item.getBiome())));
+                            tempScore = objective.getScore(ColorUtil.color("&a✔ " + item.getQuestItemPrefix() + " " + ChatUtil.materialName(item.getBiome())));
                         } else {
                             int count = 1 - temp;
                             if (count > 1) {
                                 count = 1;
                             }
-                            tempScore = objective.getScore(ColorUtils.color("&c✘ " + item.getQuestItemPrefix() + " " + ChatUtil.materialName(item.getBiome())));
+                            tempScore = objective.getScore(ColorUtil.color("&c✘ " + item.getQuestItemPrefix() + " " + ChatUtil.materialName(item.getBiome())));
                         }
                         tempScore.setScore(i);
                     }
@@ -396,79 +396,60 @@ public class User {
         getPlayer().setScoreboard(scoreboard);
     }
 
-    public boolean tryUpdateScoreboard() {
+    public void tryUpdateScoreboard() {
         try {
             UpdateScoreboard();
-            return true;
         } catch (Exception ignored) {
-            return false;
         }
     }
 
-    // Rank
-    public Rank getRank() {
-        return _RANK;
-    }
-
-    public void setRank(Rank _RANK) {
-        this._RANK = _RANK;
-    }
-
-    // StuffRank
-    public StuffRank getStuffRank() {
-        return _STUFF_RANK;
-    }
-
-    public void setStuffRank(StuffRank _STUFF_RANK) {
-        this._STUFF_RANK = _STUFF_RANK;
-    }
-
-    // UserLevel
-    public UserLevel getUserLevel() {
-        return _LEVELS;
-    }
-
-    public void setUserLevel(UserLevel _LEVELS) {
-        this._LEVELS = _LEVELS;
-    }
-
-    // Registered
-    public Date getRegistered() {
-        return _REGISTERED;
-    }
-
-    // Sidebar
-    public boolean isSidebar() {
-        return _SIDEBAR;
-    }
-
-    public void setSidebar(boolean _SIDEBAR) {
-        this._SIDEBAR = _SIDEBAR;
-    }
-
-    // Playing Time
-    public int getPlayingTime() {
-        return _PLAYING_TIME;
-    }
-
-    public void setPlayingTime(int _PLAYING_TIME) {
-        this._PLAYING_TIME = _PLAYING_TIME;
-    }
-
-    // Version
-    public String getVersion() {
-        return _VERSION;
-    }
-
-    public void setVersion(String _VERSION) {
-        this._VERSION = _VERSION;
-    }
-
     public boolean hasRank(Rank rank) {
-        return RankManager.getPriority(this._RANK) >= RankManager.getPriority(rank);
+        return RankManager.getPriority(this.rank) >= RankManager.getPriority(rank);
     }
 
-    public boolean hasRank(int rank) {
-        return RankManager.getPriority(this._RANK) >= rank;
+    public boolean isFighting() {
+        return ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(uuid);
     }
+
+    public void message(Component component) {
+        getPlayer().sendMessage(component);
+    }
+
+    public void message(String content) {
+        getPlayer().sendMessage(content);
+    }
+
+    public void message(String content, TextColor color){
+        getPlayer().sendMessage(Component.text().content(content).color(color).build());
+    }
+
+    public void title(Title title) {
+        getPlayer().showTitle(title);
+    }
+
+    public void playSound(Sound sound) {
+        playSound(sound, 1.0F, 1.0F);
+    }
+
+    public void playSound(Sound sound, float volume, float pitch) {
+        final Player player = getPlayer();
+        player.playSound(player.getLocation(), sound, volume, pitch);
+    }
+
+    public void inventory(Inventory inventory) {
+        getPlayer().openInventory(inventory);
+    }
+
+    public Inventory getEnderChest() {
+        return getPlayer().getEnderChest();
+    }
+
+    public void give(ItemStack itemStack) {
+        ItemStackUtil.addItemStackToPlayer(getPlayer(), itemStack);
+    }
+
+    public void give(Material material) {
+        ItemStackUtil.addItemStackToPlayer(getPlayer(), new ItemStack(material));
+    }
+
 }

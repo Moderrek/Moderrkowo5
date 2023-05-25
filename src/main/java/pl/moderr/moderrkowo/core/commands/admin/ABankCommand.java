@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -25,18 +25,18 @@ public class ABankCommand implements CommandExecutor, TabCompleter {
         User u = UserManager.getUser(Objects.requireNonNull(Bukkit.getPlayer(args[1])).getUniqueId());
         if (args[0].equalsIgnoreCase("odejmij")) {
             u.subtractMoney(Double.parseDouble(args[2]));
-            p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
+            p.sendMessage(ColorUtil.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.formatMoney(u.getMoney()))));
         }
         if (args[0].equalsIgnoreCase("dodaj")) {
             u.addMoney(Double.parseDouble(args[2]));
-            p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
+            p.sendMessage(ColorUtil.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.formatMoney(u.getMoney()))));
         }
         if (args[0].equalsIgnoreCase("ustaw")) {
             u.setMoney(Double.parseDouble(args[2]));
-            p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
+            p.sendMessage(ColorUtil.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.formatMoney(u.getMoney()))));
         }
         if (args[0].equalsIgnoreCase("sprawdz")) {
-            p.sendMessage(ColorUtils.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.getMoney(u.getMoney()))));
+            p.sendMessage(ColorUtil.color(MessageFormat.format("&8[!] &2{0} &aposiada {1}", u.getName(), ChatUtil.formatMoney(u.getMoney()))));
         }
         return false;
     }

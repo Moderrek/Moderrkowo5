@@ -15,10 +15,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
-import pl.moderr.moderrkowo.core.utils.ModerrkowoSerialization;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ItemStackUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,8 +28,8 @@ import java.util.UUID;
 
 public class OdbierzCommand implements CommandExecutor, Listener {
 
-    public final String PrzedmiotyGui_WithoutPage = ColorUtils.color("&eOdbierz &7- &eStrona ");
-    public final String PrzedmiotyGUI_Name = ColorUtils.color("&eOdbierz &7- &eStrona %s");
+    public final String PrzedmiotyGui_WithoutPage = ColorUtil.color("&eOdbierz &7- &eStrona ");
+    public final String PrzedmiotyGUI_Name = ColorUtil.color("&eOdbierz &7- &eStrona %s");
 
     public OdbierzCommand(ModerrkowoPlugin moderrkowoPlugin) {
         Bukkit.getPluginManager().registerEvents(this, moderrkowoPlugin);
@@ -46,7 +45,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
         }
         while (rs.next()) {
             try {
-                arrayList.add(ModerrkowoSerialization.fromBase64(rs.getString("ITEM")));
+                arrayList.add(ItemStackUtil.fromBase64(rs.getString("ITEM")));
             } catch (Exception e) {
                 Logger.logAdminLog("Wystąpił problem z pobraniem przedmiotem na nagrodach");
                 e.printStackTrace();
@@ -89,13 +88,13 @@ public class OdbierzCommand implements CommandExecutor, Listener {
         int availablePages = getPages(uuid);
         Inventory inv = Bukkit.createInventory(null, 54, String.format(PrzedmiotyGUI_Name, page + ""));
         for (int i = size - 8; i != size + 1; i++) {
-            inv.setItem(i, ItemStackUtils.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
+            inv.setItem(i, ItemStackUtil.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
         }
         if (page > 1) {
-            inv.setItem(size - 8, ItemStackUtils.createGuiItem(Material.ARROW, 1, ColorUtils.color("&aPoprzednia strona")));
+            inv.setItem(size - 8, ItemStackUtil.createGuiItem(Material.ARROW, 1, ColorUtil.color("&aPoprzednia strona")));
         }
         if (page < availablePages) {
-            inv.setItem(size, ItemStackUtils.createGuiItem(Material.ARROW, 1, ColorUtils.color("&aNastępna strona")));
+            inv.setItem(size, ItemStackUtil.createGuiItem(Material.ARROW, 1, ColorUtil.color("&aNastępna strona")));
         }
         if (pageItems.size() > 0) {
             for (int i = 0; i != pageItems.size(); i++) {
@@ -114,7 +113,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             } catch (SQLException exception) {
                 exception.printStackTrace();
-                p.sendMessage(ColorUtils.color("&cNie udało się otworzyć /odbierz"));
+                p.sendMessage(ColorUtil.color("&cNie udało się otworzyć /odbierz"));
             }
 
         }
@@ -175,8 +174,8 @@ public class OdbierzCommand implements CommandExecutor, Listener {
 
             try {
                 for (ItemStack itemStack : getItems(p.getUniqueId())) {
-                    ItemStackUtils.addItemStackToPlayer(p, itemStack);
-                    p.sendMessage(ColorUtils.color("&fPomyślnie zabrano przedmiot."));
+                    ItemStackUtil.addItemStackToPlayer(p, itemStack);
+                    p.sendMessage(ColorUtil.color("&fPomyślnie zabrano przedmiot."));
                     for (Player players : Bukkit.getOnlinePlayers()) {
                         if (players.getOpenInventory().getTitle().contains(PrzedmiotyGui_WithoutPage)) {
                             players.openInventory(getPrzedmiotyInventory(Integer.parseInt(players.getOpenInventory().getTitle().replace(PrzedmiotyGui_WithoutPage, "")), p.getUniqueId()));
@@ -186,7 +185,7 @@ public class OdbierzCommand implements CommandExecutor, Listener {
                 itemsremove(p.getUniqueId());
             } catch (SQLException exception) {
                 exception.printStackTrace();
-                p.sendMessage(ColorUtils.color("&cNie udało się zebrać przedmiotu!"));
+                p.sendMessage(ColorUtil.color("&cNie udało się zebrać przedmiotu!"));
             }
             //</editor-fold> Buy items
 

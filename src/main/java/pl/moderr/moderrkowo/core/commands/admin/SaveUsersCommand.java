@@ -7,10 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
 
 import java.sql.SQLException;
 
@@ -27,14 +27,14 @@ public class SaveUsersCommand implements CommandExecutor {
             for (User u : UserManager.getUsers()) {
                 try {
                     ModerrkowoPlugin.getMySQL().getQuery().updateUser(u);
-                    u.getPlayer().sendActionBar(ColorUtils.color("&a✔ Zapisano dane."));
+                    u.getPlayer().sendActionBar(ColorUtil.color("&a✔ Zapisano dane."));
                     Logger.logAdminLog("&a✔. Zapisano &2" + u.getName() + " &f[" + i + "/" + count + "]");
                     i++;
                 } catch (SQLException exception) {
                     Logger.logAdminLog("&c✘. Nie udało się zapisać " + u.getName());
                     i++;
-                    u.getPlayer().sendActionBar(ColorUtils.color("&c✘ Nie udało się zapisać danych."));
-                    u.getPlayer().sendMessage(ColorUtils.color("&eAutomatyczny zapis\n&cWystąpił błąd podczas zapisywania danych zgłoś się do administracji"));
+                    u.getPlayer().sendActionBar(ColorUtil.color("&c✘ Nie udało się zapisać danych."));
+                    u.getPlayer().sendMessage(ColorUtil.color("&eAutomatyczny zapis\n&cWystąpił błąd podczas zapisywania danych zgłoś się do administracji"));
                     u.getPlayer().playSound(u.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_HURT, 2, 1);
                     exception.printStackTrace();
                 }

@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -24,8 +24,8 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
-                p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki"));
+            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(p.getUniqueId())) {
+                p.sendMessage(ColorUtil.color("&cNie możesz uciec podczas walki"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 Logger.logAdminLog(p.getName() + " chciał uciec podczas walki [home]");
                 return false;
@@ -33,12 +33,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             if (args.length > 0) {
                 Location loc = ModerrkowoPlugin.getInstance().dataConfig.getLocation("homes." + p.getUniqueId() + "." + args[0]);
                 if (loc == null) {
-                    p.sendMessage(ColorUtils.color("&cNajpierw ustaw dom /sethome <nazwa>"));
+                    p.sendMessage(ColorUtil.color("&cNajpierw ustaw dom /sethome <nazwa>"));
                     return false;
                 }
                 p.teleport(loc);
                 //Logger.logAdminLog(p.getName() + " przeteleportował się do domu");
-                p.sendMessage(ColorUtils.color("&8[!] &aWitaj w domu"));
+                p.sendMessage(ColorUtil.color("&8[!] &aWitaj w domu"));
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                 return true;
             }

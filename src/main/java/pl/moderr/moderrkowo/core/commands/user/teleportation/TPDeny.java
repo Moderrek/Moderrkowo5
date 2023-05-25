@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 
 import java.util.UUID;
 
@@ -18,8 +18,8 @@ public class TPDeny implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
-                p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki!"));
+            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(p.getUniqueId())) {
+                p.sendMessage(ColorUtil.color("&cNie możesz uciec podczas walki!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
@@ -28,17 +28,17 @@ public class TPDeny implements CommandExecutor {
                     UUID to = TPACommand.getInstance().tpaRequests.get(request);
                     if (to == p.getUniqueId()) {
                         TPACommand.getInstance().tpaRequests.remove(request, to);
-                        p.sendMessage(ColorUtils.color("&cAnulowano teleportacje!"));
+                        p.sendMessage(ColorUtil.color("&cAnulowano teleportacje!"));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                         Player requestP = Bukkit.getPlayer(request);
                         if (requestP != null) {
                             requestP.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                            requestP.sendMessage(ColorUtils.color("&c" + p.getName() + " anulował prośbę o teleportacje"));
+                            requestP.sendMessage(ColorUtil.color("&c" + p.getName() + " anulował prośbę o teleportacje"));
                         }
                         return true;
                     }
                 }
-                p.sendMessage(ColorUtils.color("&cNie możesz anulować żadnej teleportacji!"));
+                p.sendMessage(ColorUtil.color("&cNie możesz anulować żadnej teleportacji!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             }
         }

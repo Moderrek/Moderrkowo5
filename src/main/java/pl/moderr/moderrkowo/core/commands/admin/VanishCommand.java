@@ -10,9 +10,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.listeners.JoinQuitListener;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.events.server.JoinQuitListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class VanishCommand implements CommandExecutor {
 
 
-    public final static BossBar bossBar = Bukkit.createBossBar(ColorUtils.color("&9>>> JESTEŚ UKRYTY <<<"), BarColor.BLUE, BarStyle.SOLID);
+    public final static BossBar bossBar = Bukkit.createBossBar(ColorUtil.color("&9>>> JESTEŚ UKRYTY <<<"), BarColor.BLUE, BarStyle.SOLID);
 
     public final static ArrayList<UUID> hidden = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public class VanishCommand implements CommandExecutor {
                     players.showPlayer(ModerrkowoPlugin.getInstance(), p);
                 }
                 hidden.remove(p.getUniqueId());
-                p.sendMessage(ColorUtils.color("&cZostałeś odkryty"));
+                p.sendMessage(ColorUtil.color("&cZostałeś odkryty"));
                 Bukkit.broadcastMessage(JoinQuitListener.getJoinMessage(p));
                 Logger.logAdminLog(p.getName() + " został odkryty");
                 bossBar.removePlayer(p);
@@ -48,7 +48,7 @@ public class VanishCommand implements CommandExecutor {
                     players.hidePlayer(ModerrkowoPlugin.getInstance(), p);
                 }
                 hidden.add(p.getUniqueId());
-                p.sendMessage(ColorUtils.color("&aZostałeś ukryty"));
+                p.sendMessage(ColorUtil.color("&aZostałeś ukryty"));
                 Bukkit.broadcastMessage(JoinQuitListener.getQuitMessage(p));
                 Logger.logAdminLog(p.getName() + " został ukryty");
                 bossBar.addPlayer(p);

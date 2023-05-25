@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -22,8 +22,8 @@ public class DelHomeCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
-                p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki"));
+            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(p.getUniqueId())) {
+                p.sendMessage(ColorUtil.color("&cNie możesz uciec podczas walki"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 Logger.logAdminLog(p.getName() + " chciał uciec podczas walki [home]");
                 return false;
@@ -46,13 +46,13 @@ public class DelHomeCommand implements CommandExecutor, TabCompleter {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    p.sendMessage(ColorUtils.color("&aPomyślnie usunięto dom"));
+                    p.sendMessage(ColorUtil.color("&aPomyślnie usunięto dom"));
                     return true;
                 } else {
-                    p.sendMessage(ColorUtils.color("&cTen dom nie istnieje!"));
+                    p.sendMessage(ColorUtil.color("&cTen dom nie istnieje!"));
                 }
             } else {
-                p.sendMessage(ColorUtils.color("&c/delhome <nazwa>"));
+                p.sendMessage(ColorUtil.color("&c/delhome <nazwa>"));
             }
             return false;
         }

@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 
 public class ReplyCommand implements CommandExecutor {
 
@@ -15,13 +15,13 @@ public class ReplyCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (!MessageCommand.lastMessageSender.containsKey(p)) {
-                p.sendMessage(ColorUtils.color("&cNie możesz nikomu odpowiedzieć!"));
+                p.sendMessage(ColorUtil.color("&cNie możesz nikomu odpowiedzieć!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
             Player p2 = MessageCommand.lastMessageSender.get(p);
             if (args.length == 0) {
-                p.sendMessage(ColorUtils.color("&cUżycie: /r <treść>"));
+                p.sendMessage(ColorUtil.color("&cUżycie: /r <treść>"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
@@ -31,13 +31,13 @@ public class ReplyCommand implements CommandExecutor {
                     message.append(" ").append(args[i]);
                 }
                 // SEND MESSAGE
-                p.sendMessage(ColorUtils.color("&6Ja -> " + p2.getDisplayName() + "&8:&e" + message));
+                p.sendMessage(ColorUtil.color("&6Ja -> " + p2.getDisplayName() + "&8:&e" + message));
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 
-                p2.sendMessage(ColorUtils.color("&6" + p.getDisplayName() + " &6-> Ja&8:&e" + message));
+                p2.sendMessage(ColorUtil.color("&6" + p.getDisplayName() + " &6-> Ja&8:&e" + message));
                 p2.playSound(p2.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             } else {
-                p.sendMessage(ColorUtils.color("&cGracz do którego chcesz odpowiedzieć jest offline!"));
+                p.sendMessage(ColorUtil.color("&cGracz do którego chcesz odpowiedzieć jest offline!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }

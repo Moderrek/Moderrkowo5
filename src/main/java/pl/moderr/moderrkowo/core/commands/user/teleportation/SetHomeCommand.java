@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -22,8 +22,8 @@ public class SetHomeCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
-                p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki"));
+            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(p.getUniqueId())) {
+                p.sendMessage(ColorUtil.color("&cNie możesz uciec podczas walki"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 Logger.logAdminLog(p.getName() + " chciał uciec podczas walki [sethome]");
                 return false;
@@ -48,7 +48,7 @@ public class SetHomeCommand implements CommandExecutor {
                         break;
                 }
                 if (temp >= max) {
-                    p.sendMessage(ColorUtils.color("&cPosiadasz już limit domów!"));
+                    p.sendMessage(ColorUtil.color("&cPosiadasz już limit domów!"));
                     return false;
                 }
                 boolean isReplace = ModerrkowoPlugin.getInstance().dataConfig.isSet("homes." + p.getUniqueId() + "." + args[0]);
@@ -64,10 +64,10 @@ public class SetHomeCommand implements CommandExecutor {
                 } catch (IOException e) {
                     p.sendMessage(Component.text("Nie udało sie zapisać domu!").color(NamedTextColor.RED));
                 }
-                p.sendMessage(ColorUtils.color("&8[!] &aUstawiono nowe miejsce domu"));
+                p.sendMessage(ColorUtil.color("&8[!] &aUstawiono nowe miejsce domu"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
             } else {
-                p.sendMessage(ColorUtils.color("&e/sethome <nazwa>"));
+                p.sendMessage(ColorUtil.color("&e/sethome <nazwa>"));
             }
         }
         return false;

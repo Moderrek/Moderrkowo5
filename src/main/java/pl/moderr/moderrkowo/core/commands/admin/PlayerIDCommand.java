@@ -12,7 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 
 public class PlayerIDCommand implements CommandExecutor {
     @Override
@@ -26,7 +26,7 @@ public class PlayerIDCommand implements CommandExecutor {
                     if (target == null) {
                         OfflinePlayer op = Bukkit.getOfflinePlayer(args[0]);
                         if (!op.hasPlayedBefore()) {
-                            p.sendMessage(ColorUtils.color("&cGracz " + op.getName() + " nigdy nie grał"));
+                            p.sendMessage(ColorUtil.color("&cGracz " + op.getName() + " nigdy nie grał"));
                             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                             return false;
                         } else {
@@ -35,7 +35,7 @@ public class PlayerIDCommand implements CommandExecutor {
                             tc.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, op.getUniqueId().toString()));
                             tc.setText(op.getUniqueId().toString());
                             tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(op.getUniqueId().toString())));
-                            p.sendMessage(ColorUtils.color("&aUUID gracza offline &2" + op.getName()));
+                            p.sendMessage(ColorUtil.color("&aUUID gracza offline &2" + op.getName()));
                             p.spigot().sendMessage(tc);
                             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                             return true;
@@ -46,19 +46,19 @@ public class PlayerIDCommand implements CommandExecutor {
                         tc.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, target.getUniqueId().toString()));
                         tc.setText(target.getUniqueId().toString());
                         tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(target.getUniqueId().toString())));
-                        p.sendMessage(ColorUtils.color("&aUUID gracza &2" + target.getName()));
+                        p.sendMessage(ColorUtil.color("&aUUID gracza &2" + target.getName()));
                         p.spigot().sendMessage(tc);
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                         return true;
                     }
                 } else {
-                    sender.sendMessage(ColorUtils.color("&cPodaj nazwę gracza!"));
-                    sender.sendMessage(ColorUtils.color("&c/playerid <nick>"));
+                    sender.sendMessage(ColorUtil.color("&cPodaj nazwę gracza!"));
+                    sender.sendMessage(ColorUtil.color("&c/playerid <nick>"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
             } else {
-                p.sendMessage(ColorUtils.color("&cNie posiadasz permisji!"));
+                p.sendMessage(ColorUtil.color("&cNie posiadasz permisji!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
@@ -69,19 +69,19 @@ public class PlayerIDCommand implements CommandExecutor {
                 if (p == null) {
                     OfflinePlayer op = Bukkit.getOfflinePlayer(args[0]);
                     if (!op.hasPlayedBefore()) {
-                        sender.sendMessage(ColorUtils.color("&cGracz nigdy nie grał na serwerze!"));
+                        sender.sendMessage(ColorUtil.color("&cGracz nigdy nie grał na serwerze!"));
                         return false;
                     } else {
-                        sender.sendMessage(ColorUtils.color("&aID gracza &2" + op.getName() + " &8>> &a" + op.getUniqueId()));
+                        sender.sendMessage(ColorUtil.color("&aID gracza &2" + op.getName() + " &8>> &a" + op.getUniqueId()));
                         return true;
                     }
                 } else {
-                    sender.sendMessage(ColorUtils.color("&aID gracza &2" + p.getName() + " &8>> &a" + p.getUniqueId()));
+                    sender.sendMessage(ColorUtil.color("&aID gracza &2" + p.getName() + " &8>> &a" + p.getUniqueId()));
                 }
                 return false;
             }
-            sender.sendMessage(ColorUtils.color("&cPodaj nazwę gracza!"));
-            sender.sendMessage(ColorUtils.color("&c/playerid <nick>"));
+            sender.sendMessage(ColorUtil.color("&cPodaj nazwę gracza!"));
+            sender.sendMessage(ColorUtil.color("&c/playerid <nick>"));
             return false;
         }
     }

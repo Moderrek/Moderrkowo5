@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 
 import java.util.UUID;
 
@@ -18,8 +18,8 @@ public class TPAccept implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(p.getUniqueId())) {
-                p.sendMessage(ColorUtils.color("&cNie możesz uciec podczas walki!"));
+            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(p.getUniqueId())) {
+                p.sendMessage(ColorUtil.color("&cNie możesz uciec podczas walki!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }
@@ -33,21 +33,21 @@ public class TPAccept implements CommandExecutor {
                             p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                             p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
                             requestP.playSound(requestP.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-                            p.sendMessage(ColorUtils.color("&aTeleportowanie..."));
-                            if (ModerrkowoPlugin.getInstance().getAntyLogout().isFighting(requestP.getUniqueId())) {
-                                p.sendMessage(ColorUtils.color("&cNie można teleportować gracz jest podczas walki"));
+                            p.sendMessage(ColorUtil.color("&aTeleportowanie..."));
+                            if (ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(requestP.getUniqueId())) {
+                                p.sendMessage(ColorUtil.color("&cNie można teleportować gracz jest podczas walki"));
                                 return true;
                             }
-                            requestP.sendMessage(ColorUtils.color("&a" + p.getName() + " zaakceptował prośbę o teleportacje!"));
+                            requestP.sendMessage(ColorUtil.color("&a" + p.getName() + " zaakceptował prośbę o teleportacje!"));
                             requestP.teleport(p);
                             return true;
                         }
-                        p.sendMessage(ColorUtils.color("&cGracz jest już offline"));
+                        p.sendMessage(ColorUtil.color("&cGracz jest już offline"));
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                         return false;
                     }
                 }
-                p.sendMessage(ColorUtils.color("&cNie możesz zaakceptować żadnej teleportacji"));
+                p.sendMessage(ColorUtil.color("&cNie możesz zaakceptować żadnej teleportacji"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }

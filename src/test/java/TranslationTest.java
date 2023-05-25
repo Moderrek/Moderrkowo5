@@ -1,4 +1,4 @@
-import pl.moderr.moderrkowo.core.listeners.BreedingAnimal;
+import pl.moderr.moderrkowo.core.events.user.quest.BreedingAnimal;
 
 public class TranslationTest {
 

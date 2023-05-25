@@ -14,17 +14,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.tasks.AutoMessageTask;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ItemStackUtil;
+import pl.moderr.moderrkowo.core.services.tasks.AutoMessageTask;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class PrzedmiotyCommand implements CommandExecutor, Listener {
 
-    public final String PrzedmiotyGui_WithoutPage = ColorUtils.color("&6Przedmioty z ziemi &7- &eStrona ");
-    public final String PrzedmiotyGUI_Name = ColorUtils.color("&6Przedmioty z ziemi &7- &eStrona %s");
+    public final String PrzedmiotyGui_WithoutPage = ColorUtil.color("&6Przedmioty z ziemi &7- &eStrona ");
+    public final String PrzedmiotyGUI_Name = ColorUtil.color("&6Przedmioty z ziemi &7- &eStrona %s");
     public boolean otwarte = false;
     public ArrayList<ItemStack> items = new ArrayList<>();
 
@@ -40,8 +40,8 @@ public class PrzedmiotyCommand implements CommandExecutor, Listener {
             });
             Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1));
             AutoMessageTask.SendServerMessage(ModerrkowoPlugin.getInstance(), "Zebrano przedmioty z ziemi.");
-            Bukkit.broadcastMessage(ColorUtils.color("  &aAby odebrać darmowe przedmioty"));
-            Bukkit.broadcastMessage(ColorUtils.color("  &fWpisz /przedmioty &f(30s)"));
+            Bukkit.broadcastMessage(ColorUtil.color("  &aAby odebrać darmowe przedmioty"));
+            Bukkit.broadcastMessage(ColorUtil.color("  &fWpisz /przedmioty &f(30s)"));
             Bukkit.broadcastMessage(" ");
             otwarte = true;
             Bukkit.getScheduler().runTaskLater(moderrkowoPlugin, () -> {
@@ -87,13 +87,13 @@ public class PrzedmiotyCommand implements CommandExecutor, Listener {
         int availablePages = getPages();
         Inventory inv = Bukkit.createInventory(null, 54, String.format(PrzedmiotyGUI_Name, page + ""));
         for (int i = size - 8; i != size + 1; i++) {
-            inv.setItem(i, ItemStackUtils.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
+            inv.setItem(i, ItemStackUtil.createGuiItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
         }
         if (page > 1) {
-            inv.setItem(size - 8, ItemStackUtils.createGuiItem(Material.ARROW, 1, ColorUtils.color("&aPoprzednia strona")));
+            inv.setItem(size - 8, ItemStackUtil.createGuiItem(Material.ARROW, 1, ColorUtil.color("&aPoprzednia strona")));
         }
         if (page < availablePages) {
-            inv.setItem(size, ItemStackUtils.createGuiItem(Material.ARROW, 1, ColorUtils.color("&aNastępna strona")));
+            inv.setItem(size, ItemStackUtil.createGuiItem(Material.ARROW, 1, ColorUtil.color("&aNastępna strona")));
         }
         if (pageItems.size() > 0) {
             for (int i = 0; i != pageItems.size(); i++) {
@@ -112,7 +112,7 @@ public class PrzedmiotyCommand implements CommandExecutor, Listener {
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
             } else {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                p.sendMessage(ColorUtils.color("&cPrzedmioty z ziemi są zamknięte!"));
+                p.sendMessage(ColorUtil.color("&cPrzedmioty z ziemi są zamknięte!"));
             }
         }
         return false;
@@ -169,7 +169,7 @@ public class PrzedmiotyCommand implements CommandExecutor, Listener {
                 p.getWorld().dropItem(p.getLocation(), itemStack);
             }
             items.remove(itemStack);
-            p.sendMessage(ColorUtils.color("&fPomyślnie zabrano przedmiot."));
+            p.sendMessage(ColorUtil.color("&fPomyślnie zabrano przedmiot."));
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (players.getOpenInventory().getTitle().contains(PrzedmiotyGui_WithoutPage)) {
                     players.openInventory(getPrzedmiotyInventory(Integer.parseInt(players.getOpenInventory().getTitle().replace(PrzedmiotyGui_WithoutPage, ""))));

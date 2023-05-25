@@ -14,9 +14,9 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.tasks.AutoMessageTask;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
+import pl.moderr.moderrkowo.core.services.tasks.AutoMessageTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,8 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                         assert w != null;
                         w.setStorm(false);
                         w.setThundering(false);
-                        p.sendMessage(ColorUtils.color("&aZmieniono pogodę na ładną"));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił pogodę na ładną"));
+                        p.sendMessage(ColorUtil.color("&aZmieniono pogodę na ładną"));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił pogodę na ładną"));
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("rain")) {
@@ -49,8 +49,8 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                         assert w != null;
                         w.setStorm(true);
                         w.setThundering(false);
-                        p.sendMessage(ColorUtils.color("&aZmieniono pogodę na deszcz"));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił pogodę na deszczową"));
+                        p.sendMessage(ColorUtil.color("&aZmieniono pogodę na deszcz"));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił pogodę na deszczową"));
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("thunder")) {
@@ -58,15 +58,15 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                         assert w != null;
                         w.setStorm(true);
                         w.setThundering(false);
-                        p.sendMessage(ColorUtils.color("&aZmieniono pogodę na burzę"));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił pogodę na burzową"));
+                        p.sendMessage(ColorUtil.color("&aZmieniono pogodę na burzę"));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił pogodę na burzową"));
                         return false;
                     }
                 }
             }
             if (Objects.requireNonNull(Bukkit.getWorld("world")).hasStorm()) {
                 if (votedList.contains(p.getUniqueId())) {
-                    p.sendMessage(ColorUtils.color("&cJuż zagłosowałeś!"));
+                    p.sendMessage(ColorUtil.color("&cJuż zagłosowałeś!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 } else {
@@ -75,8 +75,8 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                     if (i == 0) {
                         i = 1;
                     }
-                    p.sendMessage(ColorUtils.color("&aZagłosowano pomyślnie! " + "&8(&a" + votedList.size() + "&8/&7" + i + "&8)"));
-                    Bukkit.broadcastMessage(ColorUtils.color("&6" + p.getName() + " &7zagłosował na zmianę pogody! " + "&8(&a" + votedList.size() + "&8/&7" + i + "&8)"));
+                    p.sendMessage(ColorUtil.color("&aZagłosowano pomyślnie! " + "&8(&a" + votedList.size() + "&8/&7" + i + "&8)"));
+                    Bukkit.broadcastMessage(ColorUtil.color("&6" + p.getName() + " &7zagłosował na zmianę pogody! " + "&8(&a" + votedList.size() + "&8/&7" + i + "&8)"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                     if (votedList.size() >= i) {
                         Objects.requireNonNull(Bukkit.getWorld("world")).setStorm(false);
@@ -88,7 +88,7 @@ public class PogodaCommand implements CommandExecutor, Listener, TabCompleter {
                     return true;
                 }
             } else {
-                p.sendMessage(ColorUtils.color("&cAktualnie jest ładna pogoda nie można głosować!"));
+                p.sendMessage(ColorUtil.color("&cAktualnie jest ładna pogoda nie można głosować!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }

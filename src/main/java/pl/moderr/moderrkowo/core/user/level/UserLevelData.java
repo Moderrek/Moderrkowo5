@@ -9,10 +9,10 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 import pl.moderr.moderrkowo.core.user.User;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
 
 import java.text.MessageFormat;
 import java.util.UUID;
@@ -91,11 +91,11 @@ public class UserLevelData {
         }
 
         if (hasLeveledUp) {
-            player.sendMessage(ColorUtils.color("  "));
-            player.sendMessage(ColorUtils.color("  "));
-            player.sendMessage(ColorUtils.color("  &fGratulacje odblokowałeś &a" + getLevel() + " poziom &f" + category.toString() + "!"));
-            player.sendMessage(ColorUtils.color("  "));
-            player.sendMessage(ColorUtils.color("  "));
+            player.sendMessage(ColorUtil.color("  "));
+            player.sendMessage(ColorUtil.color("  "));
+            player.sendMessage(ColorUtil.color("  &fGratulacje odblokowałeś &a" + getLevel() + " poziom &f" + category.toString() + "!"));
+            player.sendMessage(ColorUtil.color("  "));
+            player.sendMessage(ColorUtil.color("  "));
             final String title = MessageFormat.format("{0}&l{1}",
                     UserLevel.levelCategoryColorString(category),
                     category.toString().toUpperCase());
@@ -104,7 +104,7 @@ public class UserLevelData {
                     level,
                     UserLevel.levelCategoryColorString(category),
                     this.level);
-            player.sendTitle(ColorUtils.color(title), ColorUtils.color(subtitle));
+            player.sendTitle(ColorUtil.color(title), ColorUtil.color(subtitle));
             player.spawnParticle(Particle.TOTEM, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 20, 1, 1, 1, 0.1f);
             player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SHOOT, 1, 2);
         }
@@ -112,8 +112,8 @@ public class UserLevelData {
             bossBar = Bukkit.createBossBar(null, UserLevel.levelCategoryColor(category), BarStyle.SOLID);
         }
         try {
-            final String title = MessageFormat.format("{0}+{1}pd {2} &f({3}/{4})", UserLevel.levelCategoryColorString(category), ChatUtil.getNumber(exp), category, ChatUtil.getNumber(this.exp), ChatUtil.getNumber(expNeededToNextLevel(this.level)));
-            bossBar.setTitle(ColorUtils.color(title));
+            final String title = MessageFormat.format("{0}+{1}pd {2} &f({3}/{4})", UserLevel.levelCategoryColorString(category), ChatUtil.formatNumber(exp), category, ChatUtil.formatNumber(this.exp), ChatUtil.formatNumber(expNeededToNextLevel(this.level)));
+            bossBar.setTitle(ColorUtil.color(title));
             bossBar.setProgress(this.exp / expNeededToNextLevel(this.level));
             bossBar.addPlayer(player);
             bossBar.setStyle(BarStyle.SEGMENTED_6);

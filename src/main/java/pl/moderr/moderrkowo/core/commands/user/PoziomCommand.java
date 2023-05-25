@@ -13,19 +13,19 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
-import pl.moderr.moderrkowo.core.mysql.UserManager;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ItemStackUtil;
+import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.user.level.LevelCategory;
 import pl.moderr.moderrkowo.core.user.level.UserLevelData;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.ItemStackUtils;
 
 import java.util.ArrayList;
 
 public class PoziomCommand implements CommandExecutor, Listener {
 
-    private final String title = ColorUtils.color("&aPoziom");
+    private final String title = ColorUtil.color("&aPoziom");
 
     public PoziomCommand() {
         Bukkit.getPluginManager().registerEvents(this, ModerrkowoPlugin.getInstance());
@@ -36,7 +36,7 @@ public class PoziomCommand implements CommandExecutor, Listener {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             p.openInventory(getInventory(UserManager.getUser(p.getUniqueId())));
-            p.sendMessage(ColorUtils.color("&aOtworzono podgląd poziomów"));
+            p.sendMessage(ColorUtil.color("&aOtworzono podgląd poziomów"));
             p.playSound(p.getLocation(), Sound.BLOCK_CHEST_OPEN, 1, 1);
         }
         return false;
@@ -44,19 +44,19 @@ public class PoziomCommand implements CommandExecutor, Listener {
 
     public Inventory getInventory(User u) {
         Inventory inv = Bukkit.createInventory(null, 27, title);
-        inv.setItem(4, ItemStackUtils.GetUUIDHead(ColorUtils.color("&cPoziom postaci"), 1, u.getPlayer(), new ArrayList<String>() {
+        inv.setItem(4, ItemStackUtil.GetUUIDHead(ColorUtil.color("&cPoziom postaci"), 1, u.getPlayer(), new ArrayList<String>() {
             {
-                add(ColorUtils.color("&ePosiadasz: &c" + u.getUserLevel().playerLevel() + " poziom"));
+                add(ColorUtil.color("&ePosiadasz: &c" + u.getLevel().playerLevel() + " poziom"));
             }
         }));
-        UserLevelData walka = u.getUserLevel().get(LevelCategory.Walka);
-        inv.setItem(10, ItemStackUtils.createGuiItem(Material.IRON_SWORD, 1, ColorUtils.color("&cWalka " + walka.getLevel() + "lvl &f(" + ChatUtil.getNumber(walka.getExp()) + "/" + ChatUtil.getNumber(walka.expNeededToNextLevel(walka.getLevel())) + ")")));
-        UserLevelData kopanie = u.getUserLevel().get(LevelCategory.Kopanie);
-        inv.setItem(12, ItemStackUtils.createGuiItem(Material.IRON_PICKAXE, 1, ColorUtils.color("&cKopanie " + kopanie.getLevel() + "lvl &f(" + ChatUtil.getNumber(kopanie.getExp()) + "/" + ChatUtil.getNumber(kopanie.expNeededToNextLevel(kopanie.getLevel())) + ")")));
-        UserLevelData uprawa = u.getUserLevel().get(LevelCategory.Uprawa);
-        inv.setItem(14, ItemStackUtils.createGuiItem(Material.IRON_HOE, 1, ColorUtils.color("&aUprawa " + uprawa.getLevel() + "lvl &f(" + ChatUtil.getNumber(uprawa.getExp()) + "/" + ChatUtil.getNumber(uprawa.expNeededToNextLevel(uprawa.getLevel())) + ")")));
-        UserLevelData lowienie = u.getUserLevel().get(LevelCategory.Lowienie);
-        inv.setItem(16, ItemStackUtils.createGuiItem(Material.FISHING_ROD, 1, ColorUtils.color("&9Łowienie " + lowienie.getLevel() + "lvl &f(" + ChatUtil.getNumber(lowienie.getExp()) + "/" + ChatUtil.getNumber(lowienie.expNeededToNextLevel(lowienie.getLevel())) + ")")));
+        UserLevelData walka = u.getLevel().get(LevelCategory.Walka);
+        inv.setItem(10, ItemStackUtil.createGuiItem(Material.IRON_SWORD, 1, ColorUtil.color("&cWalka " + walka.getLevel() + "lvl &f(" + ChatUtil.formatNumber(walka.getExp()) + "/" + ChatUtil.formatNumber(walka.expNeededToNextLevel(walka.getLevel())) + ")")));
+        UserLevelData kopanie = u.getLevel().get(LevelCategory.Kopanie);
+        inv.setItem(12, ItemStackUtil.createGuiItem(Material.IRON_PICKAXE, 1, ColorUtil.color("&cKopanie " + kopanie.getLevel() + "lvl &f(" + ChatUtil.formatNumber(kopanie.getExp()) + "/" + ChatUtil.formatNumber(kopanie.expNeededToNextLevel(kopanie.getLevel())) + ")")));
+        UserLevelData uprawa = u.getLevel().get(LevelCategory.Uprawa);
+        inv.setItem(14, ItemStackUtil.createGuiItem(Material.IRON_HOE, 1, ColorUtil.color("&aUprawa " + uprawa.getLevel() + "lvl &f(" + ChatUtil.formatNumber(uprawa.getExp()) + "/" + ChatUtil.formatNumber(uprawa.expNeededToNextLevel(uprawa.getLevel())) + ")")));
+        UserLevelData lowienie = u.getLevel().get(LevelCategory.Lowienie);
+        inv.setItem(16, ItemStackUtil.createGuiItem(Material.FISHING_ROD, 1, ColorUtil.color("&9Łowienie " + lowienie.getLevel() + "lvl &f(" + ChatUtil.formatNumber(lowienie.getExp()) + "/" + ChatUtil.formatNumber(lowienie.expNeededToNextLevel(lowienie.getLevel())) + ")")));
         return inv;
     }
 

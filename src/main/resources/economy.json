@@ -1,0 +1,559 @@
+{
+   "MATERIALY": [
+      {
+         "material": "DIRT",
+         "buyCost": 5,
+         "sellCost": 0.1
+      },
+      {
+         "material": "COBBLESTONE",
+         "buyCost": 3,
+         "sellCost": 0.2
+      },
+      {
+         "material": "STONE",
+         "buyCost": 7,
+         "sellCost": 0.5
+      },
+      {
+         "material": "STONE_BRICKS",
+         "buyCost": 20,
+         "sellCost": 2
+      },
+      {
+         "material": "GRANITE",
+         "buyCost": 5,
+         "sellCost": 1
+      },
+      {
+         "material": "ANDESITE",
+         "buyCost": 5,
+         "sellCost": 1
+      },
+      {
+         "material": "DIORITE",
+         "buyCost": 5,
+         "sellCost": 1
+      },
+      {
+         "material": "GRAVEL",
+         "buyCost": 8,
+         "sellCost": 0.8
+      },
+      {
+         "material": "FLINT",
+         "buyCost": 24,
+         "sellCost": 5
+      },
+      {
+         "material": "COAL",
+         "buyCost": 18,
+         "sellCost": 4.5
+      },
+      {
+         "material": "CHARCOAL",
+         "buyCost": 17,
+         "sellCost": 4
+      },
+      {
+         "material": "IRON_INGOT",
+         "buyCost": 65,
+         "sellCost": 8.6
+      },
+      {
+         "material": "COPPER_INGOT",
+         "buyCost": 52,
+         "sellCost": 5
+      },
+      {
+         "material": "GOLD_INGOT",
+         "buyCost": 250,
+         "sellCost": 12.5
+      },
+      {
+         "material": "REDSTONE",
+         "buyCost": 15,
+         "sellCost": 2.5
+      },
+      {
+         "material": "LAPIS_LAZULI",
+         "buyCost": 32,
+         "sellCost": 1.8
+      },
+      {
+         "material": "AMETHYST_SHARD",
+         "buyCost": 0,
+         "sellCost": 7
+      },
+      {
+         "material": "DIAMOND",
+         "buyCost": 0,
+         "sellCost": 300
+      },
+      {
+         "material": "QUARTZ",
+         "buyCost": 38,
+         "sellCost": 7
+      },
+      {
+         "material": "OBSIDIAN",
+         "buyCost": 150,
+         "sellCost": 42
+      },
+      {
+         "material": "LAVA_BUCKET",
+         "buyCost": 325,
+         "sellCost": 42
+      }
+   ],
+   "MOBY":[
+      {
+         "material": "STRING",
+         "buyCost": 8,
+         "sellCost": 2
+      },
+      {
+         "material": "FEATHER",
+         "buyCost": 6,
+         "sellCost": 1.5
+      },
+      {
+         "material": "LEATHER",
+         "buyCost": 20,
+         "sellCost": 6.5
+      },
+      {
+         "material": "BONE",
+         "buyCost": 26,
+         "sellCost": 3.2
+      },
+      {
+         "material": "ROTTEN_FLESH",
+         "buyCost": 9,
+         "sellCost": 1.5
+      },
+      {
+         "material": "SPIDER_EYE",
+         "buyCost": 12,
+         "sellCost": 1.8
+      },
+      {
+         "material": "ENDER_PEARL",
+         "buyCost": 55,
+         "sellCost": 5
+      },
+      {
+         "material": "BLAZE_ROD",
+         "buyCost": 75,
+         "sellCost": 8
+      },
+      {
+         "material": "BLAZE_POWDER",
+         "buyCost": 50,
+         "sellCost": 16
+      },
+      {
+         "material": "ZOMBIE_HEAD",
+         "buyCost": 10000,
+         "sellCost": 1250
+      },
+      {
+         "material": "CREEPER_HEAD",
+         "buyCost": 10000,
+         "sellCost": 1250
+      },
+      {
+         "material": "WET_SPONGE",
+         "buyCost": 0,
+         "sellCost": 200
+      },
+      {
+         "material": "PRISMARINE_SHARD",
+         "buyCost": 90,
+         "sellCost": 15
+      },
+      {
+         "material": "PRISMARINE_CRYSTALS",
+         "buyCost": 60,
+         "sellCost": 7
+      },
+      {
+         "material": "GUNPOWDER",
+         "buyCost": 200,
+         "sellCost": 6
+      },
+      {
+         "material": "MAGMA_CREAM",
+         "buyCost": 80,
+         "sellCost": 9
+      },
+      {
+         "material": "PEARLESCENT_FROGLIGHT",
+         "buyCost": 0,
+         "sellCost": 25
+      },
+      {
+         "material": "VERDANT_FROGLIGHT",
+         "buyCost": 0,
+         "sellCost": 25
+      },
+      {
+         "material": "OCHRE_FROGLIGHT",
+         "buyCost": 0,
+         "sellCost": 25
+      },
+      {
+         "material": "ARROW",
+         "buyCost": 50,
+         "sellCost": 4
+      },
+      {
+         "material": "SHULKER_SHELL",
+         "buyCost": 0,
+         "sellCost": 75
+      },
+      {
+         "material": "SADDLE",
+         "buyCost": 0,
+         "sellCost": 20
+      },
+      {
+         "material": "SLIME_BALL",
+         "buyCost": 125,
+         "sellCost": 7.5
+      },
+      {
+         "material": "NETHER_STAR",
+         "buyCost": 0,
+         "sellCost": 5000
+      }
+   ],
+   "ROLNICTWO": [
+      {
+         "material": "WHEAT_SEEDS",
+         "buyCost": 2.5,
+         "sellCost": 0.25
+      },
+      {
+         "material": "WHEAT",
+         "buyCost": 5,
+         "sellCost": 1
+      },
+      {
+         "material": "BEETROOT_SEEDS",
+         "buyCost": 3,
+         "sellCost": 0.40
+      },
+      {
+         "material": "BEETROOT",
+         "buyCost": 5,
+         "sellCost": 0.6
+      },
+      {
+         "material": "CARROT",
+         "buyCost": 5,
+         "sellCost": 2
+      },
+      {
+         "material": "POTATO",
+         "buyCost": 5,
+         "sellCost": 1.2
+      },
+      {
+         "material": "HONEY_BOTTLE",
+         "buyCost": 0,
+         "sellCost": 12
+      },
+      {
+         "material": "HONEYCOMB",
+         "buyCost": 0,
+         "sellCost": 12
+      },
+      {
+         "material": "SUGAR_CANE",
+         "buyCost": 15,
+         "sellCost": 3
+      },
+      {
+         "material": "CACTUS",
+         "buyCost": 9.5,
+         "sellCost": 1.1
+      },
+      {
+         "material": "MELON_SLICE",
+         "buyCost": 7.3,
+         "sellCost": 0.9
+      },
+      {
+         "material": "PUMPKIN",
+         "buyCost": 30,
+         "sellCost": 3.5
+      },
+      {
+         "material": "NETHER_WART",
+         "buyCost": 0,
+         "sellCost": 2
+      },
+      {
+         "material": "EGG",
+         "buyCost": 0,
+         "sellCost": 0.2
+      },
+      {
+         "material": "SWEET_BERRIES",
+         "buyCost": 0,
+         "sellCost": 0.2
+      },
+      {
+         "material": "BAKED_POTATO",
+         "buyCost": 10,
+         "sellCost": 2
+      },
+      {
+         "material": "CHORUS_FRUIT",
+         "buyCost": 0,
+         "sellCost": 7
+      },
+      {
+         "material": "GLOW_BERRIES",
+         "buyCost": 0,
+         "sellCost": 5
+      },
+      {
+         "material": "SUGAR",
+         "buyCost": 0,
+         "sellCost": 3.2
+      },
+      {
+         "material": "INK_SAC",
+         "buyCost": 0,
+         "sellCost": 4
+      },
+      {
+         "material": "GLOW_INK_SAC",
+         "buyCost": 0,
+         "sellCost": 6
+      },
+      {
+         "material": "SLIME_BALL",
+         "buyCost": 120,
+         "sellCost": 7
+      },
+      {
+         "material": "POPPED_CHORUS_FRUIT",
+         "buyCost": 0,
+         "sellCost": 10
+      }
+   ],
+   "DREWNO": [
+      {
+         "material": "OAK_LOG",
+         "buyCost": 0,
+         "sellCost": 1.1
+      },
+      {
+         "material": "BIRCH_LOG",
+         "buyCost": 0,
+         "sellCost": 0.6
+      },
+      {
+         "material": "SPRUCE_LOG",
+         "buyCost": 0,
+         "sellCost": 1
+      },
+      {
+         "material": "ACACIA_LOG",
+         "buyCost": 0,
+         "sellCost": 6
+      },
+      {
+         "material": "MANGROVE_LOG",
+         "buyCost": 0,
+         "sellCost": 5
+      },
+      {
+         "material": "DARK_OAK_LOG",
+         "buyCost": 0,
+         "sellCost": 2
+      },
+      {
+         "material": "JUNGLE_LOG",
+         "buyCost": 0,
+         "sellCost": 2.25
+      },
+      {
+         "material": "WARPED_STEM",
+         "buyCost": 0,
+         "sellCost": 4
+      },
+      {
+         "material": "CRIMSON_STEM",
+         "buyCost": 0,
+         "sellCost": 4
+      },
+      {
+         "material": "STRIPPED_OAK_LOG",
+         "buyCost": 0,
+         "sellCost": 2
+      },
+      {
+         "material": "STRIPPED_BIRCH_LOG",
+         "buyCost": 0,
+         "sellCost": 0.9
+      },
+      {
+         "material": "STRIPPED_SPRUCE_LOG",
+         "buyCost": 0,
+         "sellCost": 1.5
+      },
+      {
+         "material": "STRIPPED_ACACIA_LOG",
+         "buyCost": 0,
+         "sellCost": 9
+      },
+      {
+         "material": "STRIPPED_MANGROVE_LOG",
+         "buyCost": 0,
+         "sellCost": 7
+      },
+      {
+         "material": "STRIPPED_DARK_OAK_LOG",
+         "buyCost": 0,
+         "sellCost": 3
+      }
+   ],
+   "LOWIENIE":[
+      {
+         "material": "COD",
+         "buyCost": 36,
+         "sellCost": 6
+      },
+      {
+         "material": "COOKED_COD",
+         "buyCost": 60.5,
+         "sellCost": 8.5
+      },
+      {
+         "material": "SALMON",
+         "buyCost": 45,
+         "sellCost": 7.7
+      },
+      {
+         "material": "COOKED_SALMON",
+         "buyCost": 70.2,
+         "sellCost": 10
+      },
+      {
+         "material": "TROPICAL_FISH",
+         "buyCost": 0,
+         "sellCost": 8.5
+      },
+      {
+         "material": "PUFFERFISH",
+         "buyCost": 0,
+         "sellCost": 12.4
+      },
+      {
+         "material": "NAUTILUS_SHELL",
+         "buyCost": 0,
+         "sellCost": 24
+      },
+      {
+         "material": "KELP",
+         "buyCost": 0,
+         "sellCost": 0.5
+      },
+      {
+         "material": "DRIED_KELP",
+         "buyCost": 0,
+         "sellCost": 0.8
+      },
+      {
+         "material": "DRIED_KELP_BLOCK",
+         "buyCost": 0,
+         "sellCost": 7.4
+      },
+      {
+         "material": "TURTLE_EGG",
+         "buyCost": 320,
+         "sellCost": 50
+      },
+      {
+         "material": "SCUTE",
+         "buyCost": 0,
+         "sellCost": 18.25
+      },
+      {
+         "material": "SEAGRASS",
+         "buyCost": 0,
+         "sellCost": 2.5
+      },
+      {
+         "material": "SEA_PICKLE",
+         "buyCost": 0,
+         "sellCost": 1.5
+      }
+   ],
+   "JEDZENIE":[
+      {
+         "material": "BEEF",
+         "buyCost": 30,
+         "sellCost": 12
+      },
+      {
+         "material": "COOKED_BEEF",
+         "buyCost": 49.99,
+         "sellCost": 15
+      },
+      {
+         "material": "PORKCHOP",
+         "buyCost": 25,
+         "sellCost": 10
+      },
+      {
+         "material": "COOKED_PORKCHOP",
+         "buyCost": 29.99,
+         "sellCost": 13
+      },
+      {
+         "material": "MUTTON",
+         "buyCost": 45,
+         "sellCost": 13
+      },
+      {
+         "material": "COOKED_MUTTON",
+         "buyCost": 59.99,
+         "sellCost": 15
+      },
+      {
+         "material": "CHICKEN",
+         "buyCost": 20,
+         "sellCost": 5
+      },
+      {
+         "material": "COOKED_CHICKEN",
+         "buyCost": 25,
+         "sellCost": 7
+      },
+      {
+         "material": "RABBIT",
+         "buyCost": 70,
+         "sellCost": 20
+      },
+      {
+         "material": "COOKED_RABBIT",
+         "buyCost": 80,
+         "sellCost": 25
+      },
+      {
+         "material": "COOKIE",
+         "buyCost": 10,
+         "sellCost": 3
+      },
+      {
+         "material": "MILK_BUCKET",
+         "buyCost": 120,
+         "sellCost": 40
+      }
+   ]
+}

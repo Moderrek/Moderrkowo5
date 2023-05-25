@@ -7,8 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class AHelpopCommand implements CommandExecutor {
 
@@ -28,31 +28,31 @@ public class AHelpopCommand implements CommandExecutor {
 
 
                         answerTo.sendMessage(" ");
-                        answerTo.sendMessage(ColorUtils.color(String.format("&8[&9Pomoc&8] &c&lADM &e%s&8: &e%s", p.getName(), answer)));
+                        answerTo.sendMessage(ColorUtil.color(String.format("&8[&9Pomoc&8] &c&lADM &e%s&8: &e%s", p.getName(), answer)));
                         answerTo.sendMessage(" ");
                         answerTo.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                         for (Player player : Bukkit.getOnlinePlayers()) {
                             if (player.isOp()) {
-                                player.sendMessage(ColorUtils.color(String.format("&8[&9Pomoc&8] &c&lADM &e%s&8: &e%s", p.getName(), answer)));
+                                player.sendMessage(ColorUtil.color(String.format("&8[&9Pomoc&8] &c&lADM &e%s&8: &e%s", p.getName(), answer)));
                             }
                         }
                         //p.sendTitle(new Title(ColorUtils.color("&c&lModerrkowo"), ColorUtils.color("&eOdpowiedziano.")));
-                        p.sendMessage(ColorUtils.color("&aWysłano odpowiedź."));
+                        p.sendMessage(ColorUtil.color("&aWysłano odpowiedź."));
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                         return true;
                     } else {
                         p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                        p.sendMessage(ColorUtils.color("&cUżycie: &e/ahelpop <nick> &m<odpowiedź>"));
+                        p.sendMessage(ColorUtil.color("&cUżycie: &e/ahelpop <nick> &m<odpowiedź>"));
                         return false;
                     }
                 } else {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                    p.sendMessage(ColorUtils.color("&cGracz jest offline!"));
+                    p.sendMessage(ColorUtil.color("&cGracz jest offline!"));
                     return false;
                 }
             } else {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-                p.sendMessage(ColorUtils.color("&cUżycie: &e/ahelpop <nick> <odpowiedź>"));
+                p.sendMessage(ColorUtil.color("&cUżycie: &e/ahelpop <nick> <odpowiedź>"));
                 return false;
             }
         } else {

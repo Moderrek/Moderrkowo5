@@ -9,9 +9,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.moderr.moderrkowo.core.utils.ChatUtil;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ChatUtil;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,25 +29,25 @@ public class ChatCommand implements CommandExecutor, TabCompleter {
                     if (args[0].equalsIgnoreCase("clear")) {
                         for (Player players : Bukkit.getOnlinePlayers()) {
                             ChatUtil.clearChat(players);
-                            players.sendMessage(ColorUtils.color("&7Czat został wyczyszczony"));
+                            players.sendMessage(ColorUtil.color("&7Czat został wyczyszczony"));
                         }
-                        Logger.logPluginMessage(ColorUtils.color("&6" + sender.getName() + " &7wyczyścił czat"));
+                        Logger.logPluginMessage(ColorUtil.color("&6" + sender.getName() + " &7wyczyścił czat"));
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("on")) {
                         canChat = true;
-                        Bukkit.broadcastMessage(ColorUtils.color("&cChat &6> &aZostał włączony"));
-                        Logger.logPluginMessage(ColorUtils.color("&6" + p.getName() + " &7włączył czat"));
+                        Bukkit.broadcastMessage(ColorUtil.color("&cChat &6> &aZostał włączony"));
+                        Logger.logPluginMessage(ColorUtil.color("&6" + p.getName() + " &7włączył czat"));
                         return false;
                     }
                     if (args[0].equalsIgnoreCase("off")) {
                         canChat = false;
-                        Bukkit.broadcastMessage(ColorUtils.color("&cChat &6> &cZostał wyłączony"));
-                        Logger.logPluginMessage(ColorUtils.color("&6" + p.getName() + " &7wyłączył czat"));
+                        Bukkit.broadcastMessage(ColorUtil.color("&cChat &6> &cZostał wyłączony"));
+                        Logger.logPluginMessage(ColorUtil.color("&6" + p.getName() + " &7wyłączył czat"));
                         return false;
                     }
                 }
-                p.sendMessage(ColorUtils.color("&cUżyj: /chat <clear/on/off>"));
+                p.sendMessage(ColorUtil.color("&cUżyj: /chat <clear/on/off>"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }

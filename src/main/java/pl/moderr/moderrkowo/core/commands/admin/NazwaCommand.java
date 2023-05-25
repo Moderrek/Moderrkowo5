@@ -8,9 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.HexResolver;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.HexResolver;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class NazwaCommand implements CommandExecutor {
     @Override
@@ -21,17 +21,17 @@ public class NazwaCommand implements CommandExecutor {
                 String itemName = Logger.getMessage(args, 0, true);
                 if (p.getInventory().getItemInMainHand().getType() != Material.AIR) {
                     ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-                    meta.setDisplayName(ColorUtils.color(HexResolver.parseHexString(itemName)));
+                    meta.setDisplayName(ColorUtil.color(HexResolver.parseHexString(itemName)));
                     p.getInventory().getItemInMainHand().setItemMeta(meta);
-                    p.sendMessage(ColorUtils.color("&aPomyślnie zmieniono nazwę przedmiotu"));
-                    Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7zmienił nazwę przedmiotu &8(&6" + ColorUtils.color(itemName) + "&8)"));
+                    p.sendMessage(ColorUtil.color("&aPomyślnie zmieniono nazwę przedmiotu"));
+                    Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7zmienił nazwę przedmiotu &8(&6" + ColorUtil.color(itemName) + "&8)"));
                 } else {
-                    p.sendMessage(ColorUtils.color("&cAby ustawić nazwę przedmiotu musisz go trzymać w ręku!"));
+                    p.sendMessage(ColorUtil.color("&cAby ustawić nazwę przedmiotu musisz go trzymać w ręku!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }
             } else {
-                p.sendMessage(ColorUtils.color("&cPodaj jaką nazwę przedmiotu ustawić!"));
+                p.sendMessage(ColorUtil.color("&cPodaj jaką nazwę przedmiotu ustawić!"));
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 return false;
             }

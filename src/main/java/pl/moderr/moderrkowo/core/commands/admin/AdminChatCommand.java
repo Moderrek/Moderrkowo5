@@ -6,8 +6,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 import java.text.MessageFormat;
 
@@ -26,7 +26,7 @@ public class AdminChatCommand implements CommandExecutor {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
                     return true;
                 } else {
-                    p.sendMessage(ColorUtils.color("&cNapisz wiadomość!"));
+                    p.sendMessage(ColorUtil.color("&cNapisz wiadomość!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                     return false;
                 }

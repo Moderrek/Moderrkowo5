@@ -8,8 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import pl.moderr.moderrkowo.core.utils.ColorUtils;
-import pl.moderr.moderrkowo.core.utils.Logger;
+import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.Logger;
 
 public class FlyCommand implements CommandExecutor {
     @Override
@@ -21,27 +21,27 @@ public class FlyCommand implements CommandExecutor {
                 if (p2 != null) {
                     p2.setAllowFlight(!p2.getAllowFlight());
                     if (p2.getAllowFlight()) {
-                        p.sendTitle(ColorUtils.color("&2" + p2.getName()), ColorUtils.color("&aMoże już latać"));
+                        p.sendTitle(ColorUtil.color("&2" + p2.getName()), ColorUtil.color("&aMoże już latać"));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7włączył graczu &6" + p2.getName() + " &7latanie"));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7włączył graczu &6" + p2.getName() + " &7latanie"));
                     } else {
-                        p.sendTitle(new Title(ColorUtils.color("&4" + p2.getName()), ColorUtils.color("&cNie może już latać")));
-                        Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7wyłączył graczu &6" + p2.getName() + " &7latanie"));
+                        p.sendTitle(new Title(ColorUtil.color("&4" + p2.getName()), ColorUtil.color("&cNie może już latać")));
+                        Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7wyłączył graczu &6" + p2.getName() + " &7latanie"));
                         p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                     }
                 } else {
-                    p.sendMessage(ColorUtils.color("&cPodany gracz jest offline!"));
+                    p.sendMessage(ColorUtil.color("&cPodany gracz jest offline!"));
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
                 }
             } else {
                 p.setAllowFlight(!p.getAllowFlight());
                 if (p.getAllowFlight()) {
-                    p.sendTitle(new Title("", ColorUtils.color("&aMożesz już latać")));
+                    p.sendTitle(new Title("", ColorUtil.color("&aMożesz już latać")));
                     p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
-                    Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7włączył latanie"));
+                    Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7włączył latanie"));
                 } else {
-                    p.sendTitle(new Title("", ColorUtils.color("&cNie możesz już latać")));
-                    Logger.logAdminLog(ColorUtils.color("&6" + p.getName() + " &7wyłączył latanie"));
+                    p.sendTitle(new Title("", ColorUtil.color("&cNie możesz już latać")));
+                    Logger.logAdminLog(ColorUtil.color("&6" + p.getName() + " &7wyłączył latanie"));
                     p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
                 }
             }

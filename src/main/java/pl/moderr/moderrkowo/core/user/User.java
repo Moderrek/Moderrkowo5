@@ -37,11 +37,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Represents User of Moderrkowo which stores data and is saved to users repository.
+ */
 @Data
 public class User {
 
+    // Identifying
     private final UUID uuid;
     private final String name;
+
+    // Data
     private final PlayerNPCSData questData;
     private final Date registered;
     private double money;
@@ -52,6 +58,7 @@ public class User {
     private boolean sidebar;
     private int playtimeTicks;
     private String version;
+
     public User(UUID uuid, String name, double money, int coins, Rank rank, StuffRank stuffRank, @NotNull UserLevel level, PlayerNPCSData questData, Date registered, boolean sidebar, int playtimeTicks, String version) {
         this.uuid = uuid;
         this.name = name;
@@ -70,6 +77,11 @@ public class User {
         this.version = version;
     }
 
+    /**
+     * Creates new default instance of {@link User} for given Minecraft player.
+     * @param player The Minecraft player
+     * @return The new instance of User
+     */
     @Contract("_ -> new")
     public static @NotNull User CreateDefault(@NotNull Player player) {
         final UUID uuid = player.getUniqueId();
@@ -79,14 +91,32 @@ public class User {
         return new User(uuid, name, 3000, 0, Rank.None, StuffRank.None, new UserLevel(), new PlayerNPCSData(), registered, true, playtime, ModerrkowoPlugin.getVersion());
     }
 
+    /**
+     * Gets loaded {@link User} instance from cache by given player UUID
+     *
+     * @param uuid The online Minecraft player UUID
+     * @return The loaded user instance
+     */
     public static @Nullable User Get(UUID uuid) {
         return UserManager.getUser(uuid);
     }
 
+    /**
+     * Gets loaded {@link User} instance from cache by given player instance.
+     *
+     * @param player The player instance
+     * @return The loaded user instance
+     */
     public static @Nullable User Get(@NotNull Player player) {
         return Get(player.getUniqueId());
     }
 
+    /**
+     * Gets loaded {@link User} instance from cache by given player name.
+     *
+     * @param name The player name
+     * @return The loaded user instance
+     */
     public static @Nullable User Get(String name) {
         final OfflinePlayer cachedPlayer = Bukkit.getOfflinePlayerIfCached(name);
         if (cachedPlayer == null) return null;
@@ -94,64 +124,70 @@ public class User {
         return Get(cachedPlayer.getUniqueId());
     }
 
+    /**
+     * Saves {@link User} to users repository.
+     */
     public void save() {
         UserManager.saveUser(this);
     }
 
+    /**
+     * Check is User loaded in cache
+     *
+     * @return Is loaded in cache
+     */
     public boolean isCached() {
         return UserManager.isUserLoaded(uuid);
     }
 
-    public void tryLoadNotifications() {
-        try {
-            String sqlGet = "SELECT * FROM `" + ModerrkowoPlugin.getMySQL().notificationTable + "` WHERE `OWNER`=?";
-            PreparedStatement stmt = ModerrkowoPlugin.getMySQL().getConnection().prepareStatement(sqlGet);
-            stmt.setString(1, uuid.toString());
-            ResultSet rs = stmt.executeQuery();
-            if (rs == null) return;
-            while (rs.next()) {
-                try {
-                    MNotification notify = new MNotification(UUID.fromString(rs.getString("ID")), UUID.fromString(rs.getString("OWNER")), NotificationType.valueOf(rs.getString("TYPE")), true, rs.getString("DATA"));
-                    getPlayer().sendMessage(ColorUtil.color(notify.getData()));
-                    notify.remove();
-                } catch (Exception e) {
-                    Logger.logAdminLog("Wystąpił problem z powiadomieniem");
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            Logger.logAdminLog("Wystąpił problem podczas ładowania powiadomieniu");
-        }
-    }
-
+    /**
+     * Sets new amount of money and updates player scoreboard.
+     *
+     * @param money The new amount of money
+     */
     public void setMoney(double money) {
         this.money = money;
         if (sidebar) {
-            UpdateScoreboard();
+            updateScoreboard();
         } else {
             getPlayer().sendMessage(ColorUtil.color("&7= " + ChatUtil.formatMoney(money)));
         }
     }
 
+    /**
+     * Adds given amount of money and updates player scoreboard.
+     *
+     * @param money The given amount of money
+     */
     public void addMoney(double money) {
         this.money += money;
         if (sidebar) {
-            UpdateScoreboard();
+            updateScoreboard();
         } else {
             getPlayer().sendMessage(ColorUtil.color("&a+ " + ChatUtil.formatMoney(money)));
         }
     }
 
+    /**
+     * Subtracts given amount of money and updates player scoreboard.
+     *
+     * @param money The given amount of money
+     */
     public void subtractMoney(double money) {
         this.money -= money;
         if (sidebar) {
-            UpdateScoreboard();
+            updateScoreboard();
         } else {
             getPlayer().sendMessage(ColorUtil.color("&c- " + ChatUtil.formatMoney(money)));
         }
     }
 
+    /**
+     * Checks is user can afford to buy.
+     *
+     * @param money The cost
+     * @return Is user can afford to buy
+     */
     public boolean hasMoney(double money) {
         return this.money >= money;
     }
@@ -160,15 +196,141 @@ public class User {
         level.get(category).addExp(exp);
     }
 
+    /**
+     * Gets unique id
+     *
+     * @return The unique id
+     */
     public UUID getUniqueId() {
         return uuid;
     }
 
+    /**
+     * Gets player instance
+     *
+     * @return The player instance
+     */
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
     }
 
-    public void UpdateScoreboard() {
+    /**
+     * Checks is user have given {@link Rank} or higher
+     *
+     * @param rank The given rank
+     * @return Is having rank or higher
+     */
+    public boolean hasRank(Rank rank) {
+        return RankManager.getPriority(this.rank) >= RankManager.getPriority(rank);
+    }
+
+    /**
+     * Checks is player fighting any other player.
+     *
+     * @return Is fighting
+     */
+    public boolean isFighting() {
+        return ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(uuid);
+    }
+
+    /**
+     * Sends message to player
+     *
+     * @param component The message component
+     */
+    public void message(Component component) {
+        getPlayer().sendMessage(component);
+    }
+
+    /**
+     * Sends raw text message to player
+     *
+     * @param content The raw text message
+     */
+    public void message(String content) {
+        getPlayer().sendMessage(content);
+    }
+
+    /**
+     * Sends message to player with given content and text color.
+     *
+     * @param content The content
+     * @param color   The text color
+     */
+    public void message(String content, TextColor color) {
+        getPlayer().sendMessage(Component.text().content(content).color(color).build());
+    }
+
+    /**
+     * Shows title to player
+     *
+     * @param title The title
+     */
+    public void title(Title title) {
+        getPlayer().showTitle(title);
+    }
+
+    /**
+     * Plays sound at player location with default params.
+     *
+     * @param sound The sound
+     */
+    public void playSound(Sound sound) {
+        playSound(sound, 1.0F, 1.0F);
+    }
+
+    /**
+     * Plays sound at player location.
+     *
+     * @param sound  The sound
+     * @param volume The volume (default 1.0F)
+     * @param pitch  The pitch (default 1.0F)
+     */
+    public void playSound(Sound sound, float volume, float pitch) {
+        final Player player = getPlayer();
+        player.playSound(player.getLocation(), sound, volume, pitch);
+    }
+
+    /**
+     * Shows inventory for player
+     *
+     * @param inventory The inventory
+     */
+    public void inventory(Inventory inventory) {
+        getPlayer().openInventory(inventory);
+    }
+
+    /**
+     * Gets player ender chest inventory
+     *
+     * @return The ender chest
+     */
+    public Inventory getEnderChest() {
+        return getPlayer().getEnderChest();
+    }
+
+    /**
+     * Gives player item stack if he doesn't have space in inventory, item stack drops on ground.
+     *
+     * @param itemStack The item stack
+     */
+    public void give(ItemStack itemStack) {
+        ItemStackUtil.addItemStackToPlayer(getPlayer(), itemStack);
+    }
+
+    /**
+     * Gives player item if he doesn't have space in inventory, item drops on ground.
+     *
+     * @param material The item type
+     */
+    public void give(Material material) {
+        ItemStackUtil.addItemStackToPlayer(getPlayer(), new ItemStack(material));
+    }
+
+    /**
+     * Updates scoreboard for player
+     */
+    public void updateScoreboard() {
         if (!sidebar) {
             return;
         }
@@ -396,60 +558,41 @@ public class User {
         getPlayer().setScoreboard(scoreboard);
     }
 
+    /**
+     * @deprecated Going to change this because swallowing exceptions is bad.
+     */
+    @Deprecated
     public void tryUpdateScoreboard() {
         try {
-            UpdateScoreboard();
+            updateScoreboard();
         } catch (Exception ignored) {
         }
     }
 
-    public boolean hasRank(Rank rank) {
-        return RankManager.getPriority(this.rank) >= RankManager.getPriority(rank);
-    }
-
-    public boolean isFighting() {
-        return ModerrkowoPlugin.getInstance().getAntyLogoutService().isFighting(uuid);
-    }
-
-    public void message(Component component) {
-        getPlayer().sendMessage(component);
-    }
-
-    public void message(String content) {
-        getPlayer().sendMessage(content);
-    }
-
-    public void message(String content, TextColor color){
-        getPlayer().sendMessage(Component.text().content(content).color(color).build());
-    }
-
-    public void title(Title title) {
-        getPlayer().showTitle(title);
-    }
-
-    public void playSound(Sound sound) {
-        playSound(sound, 1.0F, 1.0F);
-    }
-
-    public void playSound(Sound sound, float volume, float pitch) {
-        final Player player = getPlayer();
-        player.playSound(player.getLocation(), sound, volume, pitch);
-    }
-
-    public void inventory(Inventory inventory) {
-        getPlayer().openInventory(inventory);
-    }
-
-    public Inventory getEnderChest() {
-        return getPlayer().getEnderChest();
-    }
-
-    public void give(ItemStack itemStack) {
-        ItemStackUtil.addItemStackToPlayer(getPlayer(), itemStack);
-    }
-
-    public void give(Material material) {
-        ItemStackUtil.addItemStackToPlayer(getPlayer(), new ItemStack(material));
+    /**
+     * TODO change this function to async
+     */
+    public void tryLoadNotifications() {
+        try {
+            String sqlGet = "SELECT * FROM `" + ModerrkowoPlugin.getMySQL().notificationTable + "` WHERE `OWNER`=?";
+            PreparedStatement stmt = ModerrkowoPlugin.getMySQL().getConnection().prepareStatement(sqlGet);
+            stmt.setString(1, uuid.toString());
+            ResultSet rs = stmt.executeQuery();
+            if (rs == null) return;
+            while (rs.next()) {
+                try {
+                    MNotification notify = new MNotification(UUID.fromString(rs.getString("ID")), UUID.fromString(rs.getString("OWNER")), NotificationType.valueOf(rs.getString("TYPE")), true, rs.getString("DATA"));
+                    getPlayer().sendMessage(ColorUtil.color(notify.getData()));
+                    notify.remove();
+                } catch (Exception e) {
+                    Logger.logAdminLog("Wystąpił problem z powiadomieniem");
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            Logger.logAdminLog("Wystąpił problem podczas ładowania powiadomieniu");
+        }
     }
 
 }

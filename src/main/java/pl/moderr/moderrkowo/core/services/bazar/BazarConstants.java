@@ -6,7 +6,6 @@ import pl.moderr.moderrkowo.core.services.bazar.data.ItemCategory;
 public class BazarConstants {
 
     public static String GUI_TITLE = ColorUtil.color("&eBazar");
-    ;
     public static ItemCategory DEFAULT_CATEGORY = ItemCategory.MATERIALY;
 
 }

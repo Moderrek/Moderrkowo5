@@ -42,6 +42,11 @@ public class ChatUtil {
         return centerText(line, 53);
     }
 
+    /**
+     * @deprecated Old solution
+     * @param ticks The ticks (20t = 1s)
+     * @return The formatted ticks to time string
+     */
     @Deprecated
     public static @NotNull String getTicksToTime(final int ticks) {
         if (ticks > 20 * 60) {
@@ -61,6 +66,11 @@ public class ChatUtil {
         }
     }
 
+    /**
+     * @deprecated Use {@link net.kyori.adventure.text.TranslatableComponent}
+     * @param biome The biome
+     * @return The name
+     */
     @Deprecated
     public static String materialName(final @NotNull Biome biome) {
         String materialName = biome.toString();
@@ -69,6 +79,11 @@ public class ChatUtil {
         return WordUtils.capitalizeFully(materialName);
     }
 
+    /**
+     * @deprecated Use {@link net.kyori.adventure.text.TranslatableComponent}
+     * @param name The string
+     * @return The name
+     */
     @Deprecated
     public static String materialName(final String name) {
         String materialName = name;
@@ -77,6 +92,11 @@ public class ChatUtil {
         return WordUtils.capitalizeFully(materialName);
     }
 
+    /**
+     * @deprecated Use {@link net.kyori.adventure.text.TranslatableComponent}
+     * @param material The item type
+     * @return The name
+     */
     @Deprecated
     public static String materialName(final @NotNull Material material) {
         String materialName = material.toString();
@@ -85,6 +105,11 @@ public class ChatUtil {
         return WordUtils.capitalizeFully(materialName);
     }
 
+    /**
+     * @deprecated Use {@link net.kyori.adventure.text.TranslatableComponent}
+     * @param material The entity type
+     * @return The name
+     */
     @Deprecated
     public static String materialName(final @NotNull EntityType material) {
         String materialName = material.toString();

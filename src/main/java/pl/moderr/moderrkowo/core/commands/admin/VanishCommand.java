@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.ModerrkowoPlugin;
 import pl.moderr.moderrkowo.core.api.util.ColorUtil;
 import pl.moderr.moderrkowo.core.api.util.Logger;
-import pl.moderr.moderrkowo.core.events.server.JoinQuitListener;
+import pl.moderr.moderrkowo.core.events.server.PlayerJoinQuitListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class VanishCommand implements CommandExecutor {
                 }
                 hidden.remove(p.getUniqueId());
                 p.sendMessage(ColorUtil.color("&cZostałeś odkryty"));
-                Bukkit.broadcastMessage(JoinQuitListener.getJoinMessage(p));
+                Bukkit.broadcastMessage(PlayerJoinQuitListener.getJoinMessage(p));
                 Logger.logAdminLog(p.getName() + " został odkryty");
                 bossBar.removePlayer(p);
             } else {
@@ -49,7 +49,7 @@ public class VanishCommand implements CommandExecutor {
                 }
                 hidden.add(p.getUniqueId());
                 p.sendMessage(ColorUtil.color("&aZostałeś ukryty"));
-                Bukkit.broadcastMessage(JoinQuitListener.getQuitMessage(p));
+                Bukkit.broadcastMessage(PlayerJoinQuitListener.getQuitMessage(p));
                 Logger.logAdminLog(p.getName() + " został ukryty");
                 bossBar.addPlayer(p);
             }

@@ -147,7 +147,7 @@ public class CropBreakListener implements Listener {
                     temp += 1;
                     data.getQuestItemData().replace(item.getQuestItemDataId(), items, temp);
                     player.sendMessage(ColorUtil.color("&c&lQ &6» &aZebrano &2" + ChatUtil.materialName(block.getType())));
-                    u.UpdateScoreboard();
+                    u.updateScoreboard();
                 }
             }
         } catch (Exception exception) {

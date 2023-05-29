@@ -145,12 +145,8 @@ public final class ModerrkowoPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (task != null) {
-            task.Disable(this);
-        }
-        if (timeVoter != null) {
-            timeVoter.Disable(this);
-        }
+        if (task != null) task.Disable(this);
+        if (timeVoter != null) timeVoter.Disable(this);
         try {
             rynek.save();
         } catch (SQLException throwable) {

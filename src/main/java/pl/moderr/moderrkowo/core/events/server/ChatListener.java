@@ -1,5 +1,7 @@
 package pl.moderr.moderrkowo.core.events.server;
 
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,10 +11,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 import pl.moderr.moderrkowo.core.api.util.ChatUtil;
 import pl.moderr.moderrkowo.core.api.util.ColorUtil;
+import pl.moderr.moderrkowo.core.api.util.ComponentUtil;
 import pl.moderr.moderrkowo.core.commands.admin.ChatCommand;
 import pl.moderr.moderrkowo.core.user.User;
 import pl.moderr.moderrkowo.core.user.ranks.RankManager;
 
+import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.Map;
 import java.util.UUID;
@@ -29,36 +33,43 @@ public class ChatListener implements Listener {
     }
 
     @EventHandler
-    public void chat(@NotNull final AsyncPlayerChatEvent e) {
-        if (!e.getPlayer().isOp() && !ChatCommand.canChat) {
-            e.getPlayer().sendMessage(ColorUtil.color("&cChat jest wyłączony!"));
-            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            e.setCancelled(true);
+    public void chat(@NotNull AsyncPlayerChatEvent event) {
+        final Player player = event.getPlayer();
+        if (!(player.isOp() || ChatCommand.canChat)) {
+            player.sendMessage(ComponentUtil.coloredText("Chat jest wyłączony!", NamedTextColor.RED));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0F, 1.0F);
+            event.setCancelled(true);
             return;
         }
-        final User user = User.Get(e.getPlayer().getUniqueId());
+        final User user = User.Get(player.getUniqueId());
         if (user == null) {
-            e.getPlayer().sendMessage(ColorUtil.color("&cWystąpił problem podczas wysyłania wiadomości."));
-            e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-            e.setCancelled(true);
+            player.sendMessage(ComponentUtil.coloredText("Wystąpił problem ze strony serwera.", NamedTextColor.RED)
+                    .hoverEvent(HoverEvent.showText(ComponentUtil.coloredText("Nie załadowano użytkownika", NamedTextColor.YELLOW))));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0F, 1.0F);
+            event.setCancelled(true);
             return;
         }
         final Instant now = Instant.now();
-        chatDelay.compute(e.getPlayer().getUniqueId(), (uuid, instant) -> {
+        chatDelay.compute(player.getUniqueId(), (uuid, instant) -> {
             if (instant != null && now.isBefore(instant)) {
-                e.getPlayer().sendActionBar(ColorUtil.color("&cOdczekaj chwilę miedzy wysyłaniem wiadomości"));
-                e.setCancelled(true);
+                player.sendActionBar(ComponentUtil.coloredText("Odczekaj chwilę między wysyłaniem wiadomości!", NamedTextColor.RED));
+                event.setCancelled(true);
                 return instant;
             }
-            e.setCancelled(false);
-            e.setMessage(e.getMessage().replace("%", "%%"));
-            e.setMessage(filterMessage(e.getMessage()));
-            e.setFormat(ColorUtil.color(RankManager.getChat(user.getRank(), user.getStuffRank()) + e.getPlayer().getName() + " " + RankManager.getMessageColor(user.getRank())) + e.getMessage());
+            event.setCancelled(false);
+            event.setMessage(filterMessage(event.getMessage().replace("%", "%%")));
+
+            event.setFormat(ColorUtil.color(
+                    MessageFormat.format("{0}{1} {2}",
+                        RankManager.getChat(user.getRank(), user.getStuffRank()),
+                        event.getPlayer().getName(),
+                        RankManager.getMessageColor(user.getRank()))
+            ) + event.getMessage());
             return now.plusMillis((long) (user.getRank().getChatSecondsDelay() * 1_000L));
         });
     }
 
-    private @NotNull String replace(String source, @NotNull String target, String replacement) {
+    private @NotNull String fastScanReplace(String source, @NotNull String target, String replacement) {
         StringBuilder sbSource = new StringBuilder(source);
         StringBuilder sbSourceLower = new StringBuilder(source.toLowerCase());
         String searchString = target.toLowerCase();
@@ -76,30 +87,29 @@ public class ChatListener implements Listener {
     }
 
     private String filterMessage(String message) {
-        for (String badWord : ChatUtil.blockedWords) {
-            message = replace(message, badWord, "*");
-        }
+        for (String badWord : ChatUtil.blockedWords) message = fastScanReplace(message, badWord, "*");
         return message;
     }
 
     @EventHandler
-    public void preCommand(@NotNull PlayerCommandPreprocessEvent e) {
-        final Player player = e.getPlayer();
+    public void preCommand(@NotNull PlayerCommandPreprocessEvent event) {
+        final Player player = event.getPlayer();
         if (player.isOp()) return;
-        e.setCancelled(true);
-        User user = User.Get(player);
+        event.setCancelled(true);
+        final User user = User.Get(player);
         if (user == null) {
-            e.getPlayer().sendMessage(ColorUtil.color("&cNie załadowano użytkownika!"));
+            player.sendMessage(ComponentUtil.coloredText("Wystąpił problem ze strony serwera.", NamedTextColor.RED)
+                    .hoverEvent(HoverEvent.showText(ComponentUtil.coloredText("Nie załadowano użytkownika", NamedTextColor.YELLOW))));
             return;
         }
         final Instant now = Instant.now();
-        commandDelay.compute(e.getPlayer().getUniqueId(), (uuid, instant) -> {
+        commandDelay.compute(player.getUniqueId(), (uuid, instant) -> {
             if (instant != null && now.isBefore(instant)) {
-                e.getPlayer().sendActionBar(ColorUtil.color("&cOdczekaj chwilę miedzy wpisywaniem komend"));
+                player.sendActionBar(ComponentUtil.coloredText("Odczekaj chwilę między wpisywaniem komend.", NamedTextColor.RED));
                 return instant;
             }
-            e.setCancelled(false);
-            return now.plusNanos((long) (user.getRank().getCommandSecondsDelay() * 1_000));
+            event.setCancelled(false);
+            return now.plusMillis((long) (user.getRank().getCommandSecondsDelay() * 1_000L));
         });
     }
 

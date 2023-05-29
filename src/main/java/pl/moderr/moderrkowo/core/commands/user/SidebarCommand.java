@@ -21,7 +21,7 @@ public class SidebarCommand implements UserCommand {
         Title title;
         if (user.isSidebar()) {
             title = Title.title(Component.space(), ComponentUtil.coloredText("Włączono sidebar", NamedTextColor.GREEN));
-            user.UpdateScoreboard();
+            user.updateScoreboard();
         } else {
             title = Title.title(Component.space(), ComponentUtil.coloredText("Wyłączono sidebar", NamedTextColor.RED));
             player.setScoreboard(ModerrkowoPlugin.getInstance().getServer().getScoreboardManager().getMainScoreboard());

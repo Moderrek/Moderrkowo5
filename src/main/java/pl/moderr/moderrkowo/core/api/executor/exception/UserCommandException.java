@@ -8,6 +8,9 @@ import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents Command Exception thrown during user command execution, which can be shown to player.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserCommandException extends RuntimeException {

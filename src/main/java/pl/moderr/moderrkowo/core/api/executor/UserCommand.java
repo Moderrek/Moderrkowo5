@@ -20,14 +20,14 @@ public interface UserCommand extends CommandExecutor {
     @Override
     default boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Musisz być zarejestrowanym użytkownikiem aby wykonać tą komendę.");
+            sender.sendMessage(ComponentUtil.coloredText("Musisz być zarejestrowanym użytkownikiem aby wykonać tą komendę!", NamedTextColor.RED));
             return false;
         }
         final Player player = (Player) sender;
         final UUID uuid = player.getUniqueId();
         if (!UserManager.isUserLoaded(uuid)) {
             player.sendMessage(ComponentUtil.coloredText("Nie udało się wykonać komendy. Spróbuj ponownie dołączyć na serwer.", NamedTextColor.RED));
-            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0F, 1.0F);
             return true;
         }
         try {
@@ -36,7 +36,7 @@ public interface UserCommand extends CommandExecutor {
         } catch (UserCommandException commandException) {
             player.sendMessage(ComponentUtil.coloredText(commandException.getDisplayMessage(), commandException.getMessageColor()));
             if (commandException.getSound() != null)
-                player.playSound(player.getLocation(), commandException.getSound(), 1, 1);
+                player.playSound(player.getLocation(), commandException.getSound(), 1.0F, 1.0F);
         } catch (Exception e) {
             player.sendMessage(ComponentUtil.coloredText("Wystąpił niezidentyfikowany błąd podczas wykonywania komendy.", NamedTextColor.YELLOW));
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5F, 1.0F);

@@ -18,7 +18,7 @@ import pl.moderr.moderrkowo.core.services.mysql.UserManager;
 
 import java.util.UUID;
 
-public class JoinQuitListener implements Listener {
+public class PlayerJoinQuitListener implements Listener {
 
     public static @NotNull String getJoinMessage(@NotNull Player p) {
         return ColorUtil.color("&e" + p.getName() + " &7dołączył");
@@ -32,9 +32,8 @@ public class JoinQuitListener implements Listener {
     public void onPlayerJoin(@NotNull PlayerJoinEvent e) {
         Player p = e.getPlayer();
         p.sendTitle(ColorUtil.color("&6⚔ ") + ModerrkowoPlugin.getServerName() + ColorUtil.color(" &r&6⚔"), ColorUtil.color("&fWitaj ponownie"));
-        p.setPlayerListName(ColorUtil.color("&c" + "Ładowanie.."));
         Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), () -> {
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1.0F, 1.0F);
             p.sendMessage(ChatUtil.centerMotdLine("⚔ Moderrkowo ⚔").replace("⚔ Moderrkowo ⚔", ColorUtil.color("&6⚔ ") + ModerrkowoPlugin.getServerName() + ColorUtil.color(" &r&6⚔")));
             p.sendMessage(ColorUtil.color("  &8▪ &7Witaj ponownie, &6" + p.getName() + " &7na &6Moderrkowo.PL!"));
             p.sendMessage(" ");
@@ -52,6 +51,7 @@ public class JoinQuitListener implements Listener {
             Bukkit.broadcastMessage(ColorUtil.color("  &fRekord graczy został pobity!"));
         }
         // Load User
+        p.setPlayerListName(ColorUtil.color("&c" + "Ładowanie.."));
         UserManager.loadUser(p);
         // TAB
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -70,24 +70,20 @@ public class JoinQuitListener implements Listener {
         }
         // Message
         if (p.isOp()) {
-            e.setJoinMessage(JoinQuitListener.getJoinMessage(p));
+            e.setJoinMessage(PlayerJoinQuitListener.getJoinMessage(p));
         } else {
-            Logger.logAdminLog(JoinQuitListener.getJoinMessage(e.getPlayer()));
+            Logger.logAdminLog(PlayerJoinQuitListener.getJoinMessage(e.getPlayer()));
             e.setJoinMessage(null);
         }
     }
 
-    public void updateTab(Player e) {
+    public void updateTab(Player player) {
         int administracja = 0;
         int gracze = 0;
-        for (Player admin : Bukkit.getOnlinePlayers()) {
-            if (VanishCommand.hidden.contains(admin.getUniqueId())) {
-                continue;
-            }
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (VanishCommand.hidden.contains(onlinePlayer.getUniqueId())) continue;
             gracze++;
-            if (admin.hasPermission("moderr.admin")) {
-                administracja++;
-            }
+            if (onlinePlayer.hasPermission("moderr.admin")) administracja++;
         }
         String header
                 = " \n "
@@ -103,31 +99,26 @@ public class JoinQuitListener implements Listener {
                 + " \n&7Strona: &awww.moderrkowo.pl"
                 + " \n&7Sklep: &asklep.moderrkowo.pl"
                 + " \n ";
-        e.setPlayerListHeader(ColorUtil.color(header));
-        e.setPlayerListFooter(ColorUtil.color(footer));
+        player.setPlayerListHeader(ColorUtil.color(header));
+        player.setPlayerListFooter(ColorUtil.color(footer));
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        UserManager.unloadUser(e.getPlayer().getUniqueId());
+    public void onPlayerQuit(@NotNull PlayerQuitEvent event) {
+        UserManager.unloadUser(event.getPlayer().getUniqueId());
         // Update Tab
-        Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                Bukkit.getOnlinePlayers().forEach(players -> updateTab(players));
-            }
-        }, 1L);
+        Bukkit.getScheduler().runTaskLater(ModerrkowoPlugin.getInstance(), () -> Bukkit.getOnlinePlayers().forEach(this::updateTab), 1L);
         // Vanish
-        if (VanishCommand.hidden.contains(e.getPlayer().getUniqueId())) {
-            VanishCommand.hidden.remove(e.getPlayer().getUniqueId());
-            Logger.logAdminLog("  &fGracz &a" + e.getPlayer().getName() + " &fwyszedł z serwera i został pokazany");
+        if (VanishCommand.hidden.contains(event.getPlayer().getUniqueId())) {
+            VanishCommand.hidden.remove(event.getPlayer().getUniqueId());
+            Logger.logAdminLog("  &fGracz &a" + event.getPlayer().getName() + " &fwyszedł z serwera i został pokazany");
         }
         // Message
-        if (e.getPlayer().isOp()) {
-            e.setQuitMessage(JoinQuitListener.getQuitMessage(e.getPlayer()));
+        if (event.getPlayer().isOp()) {
+            event.setQuitMessage(PlayerJoinQuitListener.getQuitMessage(event.getPlayer()));
         } else {
-            Logger.logAdminLog(JoinQuitListener.getQuitMessage(e.getPlayer()));
-            e.setQuitMessage(null);
+            Logger.logAdminLog(PlayerJoinQuitListener.getQuitMessage(event.getPlayer()));
+            event.setQuitMessage(null);
         }
     }
 

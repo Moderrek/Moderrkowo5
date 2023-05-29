@@ -6,7 +6,7 @@ import pl.moderr.moderrkowo.core.api.ServerService;
 import pl.moderr.moderrkowo.core.commands.user.WithdrawCommand;
 import pl.moderr.moderrkowo.core.commands.user.weather.PogodaCommand;
 import pl.moderr.moderrkowo.core.events.server.ChatListener;
-import pl.moderr.moderrkowo.core.events.server.JoinQuitListener;
+import pl.moderr.moderrkowo.core.events.server.PlayerJoinQuitListener;
 import pl.moderr.moderrkowo.core.events.server.MotdListener;
 import pl.moderr.moderrkowo.core.events.server.TNTListener;
 import pl.moderr.moderrkowo.core.events.user.CropBreakListener;
@@ -30,7 +30,7 @@ public class EventHandlerService implements ServerService {
         registerListener(new PlayerDeathListener());
         registerListener(new ChatListener());
         registerListener(new MotdListener());
-        registerListener(new JoinQuitListener());
+        registerListener(new PlayerJoinQuitListener());
         registerListener(new CropBreakListener());
         registerListener(new PogodaCommand());
         registerListener(new TNTListener());

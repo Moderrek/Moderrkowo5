@@ -164,7 +164,7 @@ public class FishingListener implements Listener {
                         .append(Component.text("Zarzucono wędkę"))
                         .build();
                 e.getPlayer().sendMessage(component);
-                u.UpdateScoreboard();
+                u.updateScoreboard();
             }
             if (item instanceof IQuestItemFish) {
                 IQuestItemFish craftItem = (IQuestItemFish) item;
@@ -185,7 +185,7 @@ public class FishingListener implements Listener {
                             .append(Component.translatable(is.getItemStack().getType().translationKey()))
                             .build();
                     e.getPlayer().sendMessage(component);
-                    u.UpdateScoreboard();
+                    u.updateScoreboard();
                 }
             }
         }

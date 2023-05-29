@@ -52,7 +52,7 @@ public class PlayerMoveListener implements Listener {
                         e.getPlayer().sendMessage(ColorUtil.color("&c&lQ &6» &aOdwiedzono &2" + ChatUtil.materialName(biome)));
                         e.getPlayer().playSound(e.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_CELEBRATE, 1, 1);
                         e.getPlayer().sendTitle(ColorUtil.color("&aOdwiedzono"), ColorUtil.color("&2" + ChatUtil.materialName(biome)));
-                        u.UpdateScoreboard();
+                        u.updateScoreboard();
                     }
                 }
             }

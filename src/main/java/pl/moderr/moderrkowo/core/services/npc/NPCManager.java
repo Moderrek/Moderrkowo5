@@ -3329,7 +3329,7 @@ public class NPCManager implements Listener {
                         } else {
                             data.getQuestItemData().clear();
                         }
-                        u.UpdateScoreboard();
+                        u.updateScoreboard();
                         if (!u.hasRank(Rank.Zelazo)) {
                             u.subtractMoney(200);
                             p.sendMessage(ColorUtil.color("&9" + NPCData.getId() + " &6» &c-" + ChatUtil.formatMoney(200)));
@@ -3367,7 +3367,7 @@ public class NPCManager implements Listener {
                                         haveItem++;
                                     }
                                 }
-                                u.UpdateScoreboard();
+                                u.updateScoreboard();
                             }
                             if (item instanceof IQuestItemPay) {
                                 IQuestItemPay itemGive = (IQuestItemPay) item;
@@ -3394,7 +3394,7 @@ public class NPCManager implements Listener {
                                         haveItem++;
                                     }
                                 }
-                                u.UpdateScoreboard();
+                                u.updateScoreboard();
                             }
                             if (item instanceof IQuestItemCraft) {
                                 IQuestItemCraft itemCraft = (IQuestItemCraft) item;
@@ -3555,7 +3555,7 @@ public class NPCManager implements Listener {
                                 }
                             }
                             Logger.logNpcMessage(ColorUtil.color("&6" + p.getName() + " &7zakończył Questa &6" + activeQuest.getName() + " &7od &9" + NPCData.getId()));
-                            u.UpdateScoreboard();
+                            u.updateScoreboard();
                         } else {
                             p.sendMessage(ColorUtil.color("&9" + NPCData.getId() + " &6» &7Nie wykonałeś wszystkich zadań.."));
                             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
@@ -3597,7 +3597,7 @@ public class NPCManager implements Listener {
                         data.getQuestItemData().put(item.getQuestItemDataId(), 0);
                     }
                     p.sendMessage(ColorUtil.color("&9" + NPCData.getId() + " &6» &aDzięki, że przyjąłeś zadanie."));
-                    u.UpdateScoreboard();
+                    u.updateScoreboard();
                     p.openInventory(getInventoryOfVillager(NPCData, p));
                     p.playSound(p.getLocation(), Sound.ENTITY_ITEM_PICKUP, 2, 1);
                 }
@@ -3744,7 +3744,7 @@ public class NPCManager implements Listener {
                         temp += recipeAmount;
                         data.getQuestItemData().replace(craftItem.getQuestItemDataId(), items, temp);
                         p.sendMessage(ColorUtil.color("&c&lQ &6» &aZabito &2" + ChatUtil.materialName(e.getEntityType())));
-                        u.UpdateScoreboard();
+                        u.updateScoreboard();
                     }
                 }
             }
@@ -3788,7 +3788,7 @@ public class NPCManager implements Listener {
                         data.getQuestItemData().replace(breakItem.getQuestItemDataId(), items, temp);
                         p.sendMessage(ColorUtil.color("&c&lQ &6» &aWydobyto &2" + ChatUtil.materialName(e.getBlock().getType())));
                         //p.sendMessage(ColorUtils.color("&9" + villager.getId() + " &6> &aWydobyto " + ChatUtil.materialName(e.getBlock().getType())));
-                        u.UpdateScoreboard();
+                        u.updateScoreboard();
                     }
                 }
             }
@@ -3860,7 +3860,7 @@ public class NPCManager implements Listener {
                         temp += recipeAmount;
                         data.getQuestItemData().replace(craftItem.getQuestItemDataId(), items, temp);
                         p.sendMessage(ColorUtil.color("&c&lQ &6» &aWytworzono &2" + recipeAmount + " " + ChatUtil.materialName(e.getInventory().getResult().getType())));
-                        u.UpdateScoreboard();
+                        u.updateScoreboard();
                     }
                 }
             }

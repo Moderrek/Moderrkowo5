@@ -102,7 +102,7 @@ public class AnimalBreedingListener implements Listener {
                             temp += 1;
                             data.getQuestItemData().replace(item.getQuestItemDataId(), items, temp);
                             e.getPlayer().sendMessage(ColorUtil.color("&c&lQ &6» &aRozmnożono &2" + ChatUtil.materialName(AnimalBeingBreed.getType())));
-                            u.UpdateScoreboard();
+                            u.updateScoreboard();
                         }
                     }
                 } catch (Exception exception) {
